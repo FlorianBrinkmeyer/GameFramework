@@ -12,6 +12,8 @@
 !.gitignore
 !launch.json
 !*.code-workspace
+!*.md
+!LICENSE
 
 !*/
 
