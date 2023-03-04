@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="Enumerable2DArray.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Euclid2DCoords\Euclid2DCoords.fsproj" />
+    <ProjectReference Include="..\..\..\ReadableArrayType\ReadableArrayType.csproj" />
+  </ItemGroup>
+
+</Project>

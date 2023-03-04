@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="ImmutableZeroSumBoardGameSelfCalculatingPieces.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\GameInterfaces\GameInterfacesForAIsAndCompanion\GameInterfacesForAIsAndCompanion.fsproj" />
+    <ProjectReference Include="..\..\GameInterfaces\GameInterfacesForCompanion\GameInterfacesForCompanion.csproj" />
+    <ProjectReference Include="..\..\PieceInterfaces\PieceInterfacesForGameClasses\PieceInterfacesForGameClasses.fsproj" />
+    <ProjectReference Include="..\..\ImmutableArray\ImmutableArray.fsproj" />
+    <ProjectReference Include="..\..\PieceInterfaces\PieceBase\PieceBase.csproj" />
+    <ProjectReference Include="..\..\ZeroSumHelperTypes\ZeroSumHelperTypes.fsproj" />
+  </ItemGroup>
+
+</Project>

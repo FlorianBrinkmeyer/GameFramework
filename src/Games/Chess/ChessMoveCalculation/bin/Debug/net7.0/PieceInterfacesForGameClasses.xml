@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doc>
+<assembly><name>PieceInterfacesForGameClasses</name></assembly>
+<members>
+<member name="M:GameFramework.ISelfCalculatingPiece`4.PossibleMoves(`0,`1)">
+<summary>
+Source board -&gt; current piece position -&gt; possible moves 
+</summary>
+</member>
+<member name="M:GameFramework.ISelfCalculatingPiece`4.ApplyMove(`0,`1,`2)">
+<summary>
+Source board -&gt; current piece position -&gt; move to apply -&gt; resulting board * new piece position * board events to trigger
+</summary>
+</member>
+</members>
+</doc>

@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\BaseTwoDBoardGUI\BaseTwoDBoardGUI.csproj" />
+    <ProjectReference Include="..\..\..\Boards\TwoDBoardInterfacesForGUI\TwoDBoardInterfacesForGUI.csproj" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+</Project>

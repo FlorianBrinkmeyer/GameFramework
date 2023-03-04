@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="TwoDChessCalculationFunctions.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\Geometries\Euclid2D\Enumerable2DArray\Enumerable2DArray.fsproj" />
+    <ProjectReference Include="..\..\..\..\PieceInterfaces\PieceBase\PieceBase.csproj" />
+    <ProjectReference Include="..\..\StandardChessPieces\StandardChessPieces.fsproj" />
+  </ItemGroup>
+
+</Project>

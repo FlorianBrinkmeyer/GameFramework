@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="GtkSharp" Version="3.24.24.38" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\GameInterfaces\GameInterfacesForGUI\GameInterfacesForGUI.csproj" />
+    <ProjectReference Include="..\..\..\..\..\Geometries\Euclid2D\Enumerable2DArray\Enumerable2DArray.fsproj" />
+    <ProjectReference Include="..\..\..\..\..\PieceInterfaces\PieceBase\PieceBase.csproj" />
+    <ProjectReference Include="..\..\..\..\..\AI_Interfaces\AI_InterfacesForGUI\AI_Informer\AI_Informer.fsproj" />
+  </ItemGroup>
+
+</Project>

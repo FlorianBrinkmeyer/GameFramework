@@ -1,0 +1,13 @@
+/home/flo/Copy/Dokumente/Informatik/Masterarbeit/GameFramework/src/AI_Interfaces/AI_InterfacesForGUI/AI_Informer/bin/Debug/net7.0/AI_Informer.deps.json
+/home/flo/Copy/Dokumente/Informatik/Masterarbeit/GameFramework/src/AI_Interfaces/AI_InterfacesForGUI/AI_Informer/bin/Debug/net7.0/AI_Informer.dll
+/home/flo/Copy/Dokumente/Informatik/Masterarbeit/GameFramework/src/AI_Interfaces/AI_InterfacesForGUI/AI_Informer/bin/Debug/net7.0/AI_Informer.pdb
+/home/flo/Copy/Dokumente/Informatik/Masterarbeit/GameFramework/src/AI_Interfaces/AI_InterfacesForGUI/AI_Informer/bin/Debug/net7.0/AI_Informer.xml
+/home/flo/Copy/Dokumente/Informatik/Masterarbeit/GameFramework/src/AI_Interfaces/AI_InterfacesForGUI/AI_Informer/obj/Debug/net7.0/AI_Informer.fsproj.AssemblyReference.cache
+/home/flo/Copy/Dokumente/Informatik/Masterarbeit/GameFramework/src/AI_Interfaces/AI_InterfacesForGUI/AI_Informer/obj/Debug/net7.0/AI_Informer.AssemblyInfoInputs.cache
+/home/flo/Copy/Dokumente/Informatik/Masterarbeit/GameFramework/src/AI_Interfaces/AI_InterfacesForGUI/AI_Informer/obj/Debug/net7.0/AI_Informer.AssemblyInfo.fs
+/home/flo/Copy/Dokumente/Informatik/Masterarbeit/GameFramework/src/AI_Interfaces/AI_InterfacesForGUI/AI_Informer/obj/Debug/net7.0/AI_Informer.fsproj.CoreCompileInputs.cache
+/home/flo/Copy/Dokumente/Informatik/Masterarbeit/GameFramework/src/AI_Interfaces/AI_InterfacesForGUI/AI_Informer/obj/Debug/net7.0/AI_Informer.dll
+/home/flo/Copy/Dokumente/Informatik/Masterarbeit/GameFramework/src/AI_Interfaces/AI_InterfacesForGUI/AI_Informer/obj/Debug/net7.0/refint/AI_Informer.dll
+/home/flo/Copy/Dokumente/Informatik/Masterarbeit/GameFramework/src/AI_Interfaces/AI_InterfacesForGUI/AI_Informer/obj/Debug/net7.0/AI_Informer.xml
+/home/flo/Copy/Dokumente/Informatik/Masterarbeit/GameFramework/src/AI_Interfaces/AI_InterfacesForGUI/AI_Informer/obj/Debug/net7.0/AI_Informer.pdb
+/home/flo/Copy/Dokumente/Informatik/Masterarbeit/GameFramework/src/AI_Interfaces/AI_InterfacesForGUI/AI_Informer/obj/Debug/net7.0/ref/AI_Informer.dll

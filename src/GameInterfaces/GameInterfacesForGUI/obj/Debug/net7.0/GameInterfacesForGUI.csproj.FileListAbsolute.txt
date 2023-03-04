@@ -1,0 +1,12 @@
+/home/flo/Copy/Dokumente/Informatik/Masterarbeit/GameFramework/src/GameInterfaces/GameInterfacesForGUI/bin/Debug/net7.0/GameInterfacesForGUI.deps.json
+/home/flo/Copy/Dokumente/Informatik/Masterarbeit/GameFramework/src/GameInterfaces/GameInterfacesForGUI/bin/Debug/net7.0/GameInterfacesForGUI.dll
+/home/flo/Copy/Dokumente/Informatik/Masterarbeit/GameFramework/src/GameInterfaces/GameInterfacesForGUI/bin/Debug/net7.0/GameInterfacesForGUI.pdb
+/home/flo/Copy/Dokumente/Informatik/Masterarbeit/GameFramework/src/GameInterfaces/GameInterfacesForGUI/obj/Debug/net7.0/GameInterfacesForGUI.csproj.AssemblyReference.cache
+/home/flo/Copy/Dokumente/Informatik/Masterarbeit/GameFramework/src/GameInterfaces/GameInterfacesForGUI/obj/Debug/net7.0/GameInterfacesForGUI.GeneratedMSBuildEditorConfig.editorconfig
+/home/flo/Copy/Dokumente/Informatik/Masterarbeit/GameFramework/src/GameInterfaces/GameInterfacesForGUI/obj/Debug/net7.0/GameInterfacesForGUI.AssemblyInfoInputs.cache
+/home/flo/Copy/Dokumente/Informatik/Masterarbeit/GameFramework/src/GameInterfaces/GameInterfacesForGUI/obj/Debug/net7.0/GameInterfacesForGUI.AssemblyInfo.cs
+/home/flo/Copy/Dokumente/Informatik/Masterarbeit/GameFramework/src/GameInterfaces/GameInterfacesForGUI/obj/Debug/net7.0/GameInterfacesForGUI.csproj.CoreCompileInputs.cache
+/home/flo/Copy/Dokumente/Informatik/Masterarbeit/GameFramework/src/GameInterfaces/GameInterfacesForGUI/obj/Debug/net7.0/GameInterfacesForGUI.dll
+/home/flo/Copy/Dokumente/Informatik/Masterarbeit/GameFramework/src/GameInterfaces/GameInterfacesForGUI/obj/Debug/net7.0/refint/GameInterfacesForGUI.dll
+/home/flo/Copy/Dokumente/Informatik/Masterarbeit/GameFramework/src/GameInterfaces/GameInterfacesForGUI/obj/Debug/net7.0/GameInterfacesForGUI.pdb
+/home/flo/Copy/Dokumente/Informatik/Masterarbeit/GameFramework/src/GameInterfaces/GameInterfacesForGUI/obj/Debug/net7.0/ref/GameInterfacesForGUI.dll

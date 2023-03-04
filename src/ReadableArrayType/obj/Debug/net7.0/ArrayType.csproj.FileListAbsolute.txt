@@ -1,0 +1,12 @@
+/home/flo/Copy/Dokumente/Informatik/Masterarbeit/GameFramework/src/ArrayType/bin/Debug/net7.0/ArrayType.deps.json
+/home/flo/Copy/Dokumente/Informatik/Masterarbeit/GameFramework/src/ArrayType/bin/Debug/net7.0/ArrayType.dll
+/home/flo/Copy/Dokumente/Informatik/Masterarbeit/GameFramework/src/ArrayType/bin/Debug/net7.0/ArrayType.pdb
+/home/flo/Copy/Dokumente/Informatik/Masterarbeit/GameFramework/src/ArrayType/obj/Debug/net7.0/ArrayType.csproj.AssemblyReference.cache
+/home/flo/Copy/Dokumente/Informatik/Masterarbeit/GameFramework/src/ArrayType/obj/Debug/net7.0/ArrayType.GeneratedMSBuildEditorConfig.editorconfig
+/home/flo/Copy/Dokumente/Informatik/Masterarbeit/GameFramework/src/ArrayType/obj/Debug/net7.0/ArrayType.AssemblyInfoInputs.cache
+/home/flo/Copy/Dokumente/Informatik/Masterarbeit/GameFramework/src/ArrayType/obj/Debug/net7.0/ArrayType.AssemblyInfo.cs
+/home/flo/Copy/Dokumente/Informatik/Masterarbeit/GameFramework/src/ArrayType/obj/Debug/net7.0/ArrayType.csproj.CoreCompileInputs.cache
+/home/flo/Copy/Dokumente/Informatik/Masterarbeit/GameFramework/src/ArrayType/obj/Debug/net7.0/ArrayType.dll
+/home/flo/Copy/Dokumente/Informatik/Masterarbeit/GameFramework/src/ArrayType/obj/Debug/net7.0/refint/ArrayType.dll
+/home/flo/Copy/Dokumente/Informatik/Masterarbeit/GameFramework/src/ArrayType/obj/Debug/net7.0/ArrayType.pdb
+/home/flo/Copy/Dokumente/Informatik/Masterarbeit/GameFramework/src/ArrayType/obj/Debug/net7.0/ref/ArrayType.dll

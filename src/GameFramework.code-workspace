@@ -1,0 +1,11 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"FSharp.inlayHints.enabled": false,
+		"editor.inlayHints.enabled": "offUnlessPressed"
+	}
+}

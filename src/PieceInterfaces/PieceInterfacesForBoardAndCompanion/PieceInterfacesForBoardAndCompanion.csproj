@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\PieceBase\PieceBase.csproj" />
+    <ProjectReference Include="..\..\GameInterfaces\GameInterfacesForSelfCalculatingPieces\GameInterfacesForSelfCalculatingPieces.fsproj" />
+    <ProjectReference Include="..\..\GameInterfaces\GameMoveMaker\GameMoveMaker.csproj" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+</Project>

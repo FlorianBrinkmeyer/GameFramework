@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\GameInterfaces\GameMoveMaker\GameMoveMaker.csproj" />
+    <ProjectReference Include="..\..\..\GameInterfaces\GameInterfacesForAIsAndCompanion\GameInterfacesForAIsAndCompanion.fsproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="AIBaseInterface.fs" />
+  </ItemGroup>
+
+</Project>

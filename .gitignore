@@ -1,0 +1,17 @@
+
+*
+
+!*.fs
+!*.cs
+!*.fsproj
+!*.csproj
+!*.xml
+!*.txt
+!*.png
+!*.csv
+!.gitignore
+!launch.json
+!*.code-workspace
+
+!*/
+

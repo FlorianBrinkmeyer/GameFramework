@@ -1,0 +1,17 @@
+/home/flo/Copy/Dokumente/Informatik/Masterarbeit/GameFramework/src/ZeroSumHelperTypes/bin/Debug/net7.0/ZeroSumHelperTypes.deps.json
+/home/flo/Copy/Dokumente/Informatik/Masterarbeit/GameFramework/src/ZeroSumHelperTypes/bin/Debug/net7.0/ZeroSumHelperTypes.dll
+/home/flo/Copy/Dokumente/Informatik/Masterarbeit/GameFramework/src/ZeroSumHelperTypes/bin/Debug/net7.0/ZeroSumHelperTypes.pdb
+/home/flo/Copy/Dokumente/Informatik/Masterarbeit/GameFramework/src/ZeroSumHelperTypes/bin/Debug/net7.0/ZeroSumHelperTypes.xml
+/home/flo/Copy/Dokumente/Informatik/Masterarbeit/GameFramework/src/ZeroSumHelperTypes/bin/Debug/net7.0/GameInterfacesForSelfCalculatingPieces.dll
+/home/flo/Copy/Dokumente/Informatik/Masterarbeit/GameFramework/src/ZeroSumHelperTypes/bin/Debug/net7.0/GameInterfacesForSelfCalculatingPieces.pdb
+/home/flo/Copy/Dokumente/Informatik/Masterarbeit/GameFramework/src/ZeroSumHelperTypes/bin/Debug/net7.0/GameInterfacesForSelfCalculatingPieces.xml
+/home/flo/Copy/Dokumente/Informatik/Masterarbeit/GameFramework/src/ZeroSumHelperTypes/obj/Debug/net7.0/ZeroSumHelperTypes.fsproj.AssemblyReference.cache
+/home/flo/Copy/Dokumente/Informatik/Masterarbeit/GameFramework/src/ZeroSumHelperTypes/obj/Debug/net7.0/ZeroSumHelperTypes.AssemblyInfoInputs.cache
+/home/flo/Copy/Dokumente/Informatik/Masterarbeit/GameFramework/src/ZeroSumHelperTypes/obj/Debug/net7.0/ZeroSumHelperTypes.AssemblyInfo.fs
+/home/flo/Copy/Dokumente/Informatik/Masterarbeit/GameFramework/src/ZeroSumHelperTypes/obj/Debug/net7.0/ZeroSumHelperTypes.fsproj.CoreCompileInputs.cache
+/home/flo/Copy/Dokumente/Informatik/Masterarbeit/GameFramework/src/ZeroSumHelperTypes/obj/Debug/net7.0/ZeroSumHelperTypes.fsproj.CopyComplete
+/home/flo/Copy/Dokumente/Informatik/Masterarbeit/GameFramework/src/ZeroSumHelperTypes/obj/Debug/net7.0/ZeroSumHelperTypes.dll
+/home/flo/Copy/Dokumente/Informatik/Masterarbeit/GameFramework/src/ZeroSumHelperTypes/obj/Debug/net7.0/refint/ZeroSumHelperTypes.dll
+/home/flo/Copy/Dokumente/Informatik/Masterarbeit/GameFramework/src/ZeroSumHelperTypes/obj/Debug/net7.0/ZeroSumHelperTypes.xml
+/home/flo/Copy/Dokumente/Informatik/Masterarbeit/GameFramework/src/ZeroSumHelperTypes/obj/Debug/net7.0/ZeroSumHelperTypes.pdb
+/home/flo/Copy/Dokumente/Informatik/Masterarbeit/GameFramework/src/ZeroSumHelperTypes/obj/Debug/net7.0/ref/ZeroSumHelperTypes.dll

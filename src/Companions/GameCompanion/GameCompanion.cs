@@ -1,0 +1,94 @@
+﻿/*
+Copyright (C) 2023  Florian Brinkmeyer
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+*/
+
+namespace GameFramework;
+
+using System;
+using System.Collections.Generic;
+using Microsoft.FSharp.Core;
+
+public class GameCompanion<GameResult>: IGameMoveMaker, IReversibleGame<GameResult>
+{
+    protected ImmutableGame state;
+    protected Func<ImmutableGame, GameResult> resultMapper;
+    Dictionary<int,AI_Agent>? playerToAIAgent = new Dictionary<int, AI_Agent> ();
+    public GameCompanion (ImmutableGame startState, IEnumerable<AI_Agent> agents, Func<ImmutableGame, GameResult> _resultMapper)
+    {
+        state = startState;
+        resultMapper = _resultMapper;
+        foreach (AI_Agent agent in agents)
+            playerToAIAgent[agent.Player] = agent;
+    }
+    public bool Running => state.Running;
+    public int ActivePlayer => state.ActivePlayer;
+    protected virtual void TriggerTriggerBoardEvents () {}
+    public virtual void MakeMove (int index)
+    {
+        state = state.NthMove (index);
+        TriggerMoveMade (index);
+        TriggerTriggerBoardEvents ();
+        if (state.Running)
+        {
+            AI_Agent? agent;
+            if ((playerToAIAgent != null) && (playerToAIAgent.TryGetValue (ActivePlayer, out agent)))
+            {
+                TriggerNextPlayer (ActivePlayer);
+                agent.MakeMove (this, state);
+            } else {
+                TriggerNextPlayer (ActivePlayer);
+            }    
+        }     
+        else
+        {
+            TriggerGameOver (resultMapper (state));
+        }
+    }
+    public bool Undoable => FSharpOption<ImmutableGame>.get_IsSome (state.Previous);
+    public void Undo ()
+    {
+        if (FSharpOption<ImmutableGame>.get_IsSome (state.Previous))
+        {
+            state = state.Previous.Value;
+            Undone?.Invoke (this, new EventArgs ());
+        }
+        else
+        {
+            throw new Exception ("Undo impossible: No previous state.");
+        }
+    }
+    public event MoveMadeEvent? MoveMade;
+    public void TriggerMoveMade (int moveIndex) => MoveMade?.Invoke (moveIndex);
+    public event NextPlayerEvent? NextPlayer;
+    public void TriggerNextPlayer (int id) => NextPlayer?.Invoke (id);
+    public event GameOverEvent<GameResult>? GameOver;
+    public void TriggerGameOver (GameResult result) => GameOver?.Invoke (result);
+    public event EventHandler? Undone;
+}
+
+public interface IBoardGameCompanion<out Board>
+{
+    IBoardGameForCompanion<Board> Game {get;}
+    public event EventHandler? TriggerBoardEvents;    
+}
+
+public class BoardGameCompanion<GameResult, Board> : GameCompanion<GameResult>, IBoardGameCompanion<Board>
+{
+    public BoardGameCompanion (ImmutableGame startState, IEnumerable<AI_Agent> agents, Func<ImmutableGame, GameResult> _resultMapper) : base (startState, agents, _resultMapper) {}
+    public IBoardGameForCompanion<Board> Game => (IBoardGameForCompanion<Board>) state;
+    public event EventHandler? TriggerBoardEvents;
+    protected override void TriggerTriggerBoardEvents () => TriggerBoardEvents?.Invoke (this, new EventArgs ());
+}

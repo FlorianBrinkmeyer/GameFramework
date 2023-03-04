@@ -1,0 +1,13 @@
+/home/flo/Copy/Dokumente/Informatik/Masterarbeit/GameFramework/src/GameInterfaces/GameInterfacesForAIsAndCompanion/bin/Debug/net7.0/GameInterfacesForAIsAndCompanion.deps.json
+/home/flo/Copy/Dokumente/Informatik/Masterarbeit/GameFramework/src/GameInterfaces/GameInterfacesForAIsAndCompanion/bin/Debug/net7.0/GameInterfacesForAIsAndCompanion.dll
+/home/flo/Copy/Dokumente/Informatik/Masterarbeit/GameFramework/src/GameInterfaces/GameInterfacesForAIsAndCompanion/bin/Debug/net7.0/GameInterfacesForAIsAndCompanion.pdb
+/home/flo/Copy/Dokumente/Informatik/Masterarbeit/GameFramework/src/GameInterfaces/GameInterfacesForAIsAndCompanion/bin/Debug/net7.0/GameInterfacesForAIsAndCompanion.xml
+/home/flo/Copy/Dokumente/Informatik/Masterarbeit/GameFramework/src/GameInterfaces/GameInterfacesForAIsAndCompanion/obj/Debug/net7.0/GameInterfacesForAIsAndCompanion.fsproj.AssemblyReference.cache
+/home/flo/Copy/Dokumente/Informatik/Masterarbeit/GameFramework/src/GameInterfaces/GameInterfacesForAIsAndCompanion/obj/Debug/net7.0/GameInterfacesForAIsAndCompanion.AssemblyInfoInputs.cache
+/home/flo/Copy/Dokumente/Informatik/Masterarbeit/GameFramework/src/GameInterfaces/GameInterfacesForAIsAndCompanion/obj/Debug/net7.0/GameInterfacesForAIsAndCompanion.AssemblyInfo.fs
+/home/flo/Copy/Dokumente/Informatik/Masterarbeit/GameFramework/src/GameInterfaces/GameInterfacesForAIsAndCompanion/obj/Debug/net7.0/GameInterfacesForAIsAndCompanion.fsproj.CoreCompileInputs.cache
+/home/flo/Copy/Dokumente/Informatik/Masterarbeit/GameFramework/src/GameInterfaces/GameInterfacesForAIsAndCompanion/obj/Debug/net7.0/GameInterfacesForAIsAndCompanion.dll
+/home/flo/Copy/Dokumente/Informatik/Masterarbeit/GameFramework/src/GameInterfaces/GameInterfacesForAIsAndCompanion/obj/Debug/net7.0/refint/GameInterfacesForAIsAndCompanion.dll
+/home/flo/Copy/Dokumente/Informatik/Masterarbeit/GameFramework/src/GameInterfaces/GameInterfacesForAIsAndCompanion/obj/Debug/net7.0/GameInterfacesForAIsAndCompanion.xml
+/home/flo/Copy/Dokumente/Informatik/Masterarbeit/GameFramework/src/GameInterfaces/GameInterfacesForAIsAndCompanion/obj/Debug/net7.0/GameInterfacesForAIsAndCompanion.pdb
+/home/flo/Copy/Dokumente/Informatik/Masterarbeit/GameFramework/src/GameInterfaces/GameInterfacesForAIsAndCompanion/obj/Debug/net7.0/ref/GameInterfacesForAIsAndCompanion.dll

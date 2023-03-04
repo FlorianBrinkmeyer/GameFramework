@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="SelfCalculatingPieces.fs" />
+    <Compile Include="SelfEvaluatingPieces.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\PieceBase\PieceBase.csproj" />
+  </ItemGroup>
+
+</Project>

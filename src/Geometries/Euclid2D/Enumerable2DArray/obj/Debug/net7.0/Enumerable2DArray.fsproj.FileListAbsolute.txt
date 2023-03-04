@@ -1,0 +1,17 @@
+/home/flo/Copy/Dokumente/Informatik/Masterarbeit/GameFramework/src/Geometries/Euclid2D/Enumerable2DArray/bin/Debug/net7.0/Enumerable2DArray.deps.json
+/home/flo/Copy/Dokumente/Informatik/Masterarbeit/GameFramework/src/Geometries/Euclid2D/Enumerable2DArray/bin/Debug/net7.0/Enumerable2DArray.dll
+/home/flo/Copy/Dokumente/Informatik/Masterarbeit/GameFramework/src/Geometries/Euclid2D/Enumerable2DArray/bin/Debug/net7.0/Enumerable2DArray.pdb
+/home/flo/Copy/Dokumente/Informatik/Masterarbeit/GameFramework/src/Geometries/Euclid2D/Enumerable2DArray/bin/Debug/net7.0/Euclid2DCoords.dll
+/home/flo/Copy/Dokumente/Informatik/Masterarbeit/GameFramework/src/Geometries/Euclid2D/Enumerable2DArray/bin/Debug/net7.0/Euclid2DCoords.pdb
+/home/flo/Copy/Dokumente/Informatik/Masterarbeit/GameFramework/src/Geometries/Euclid2D/Enumerable2DArray/obj/Debug/net7.0/Enumerable2DArray.fsproj.AssemblyReference.cache
+/home/flo/Copy/Dokumente/Informatik/Masterarbeit/GameFramework/src/Geometries/Euclid2D/Enumerable2DArray/obj/Debug/net7.0/Enumerable2DArray.AssemblyInfoInputs.cache
+/home/flo/Copy/Dokumente/Informatik/Masterarbeit/GameFramework/src/Geometries/Euclid2D/Enumerable2DArray/obj/Debug/net7.0/Enumerable2DArray.AssemblyInfo.fs
+/home/flo/Copy/Dokumente/Informatik/Masterarbeit/GameFramework/src/Geometries/Euclid2D/Enumerable2DArray/obj/Debug/net7.0/Enumerable2DArray.fsproj.CoreCompileInputs.cache
+/home/flo/Copy/Dokumente/Informatik/Masterarbeit/GameFramework/src/Geometries/Euclid2D/Enumerable2DArray/obj/Debug/net7.0/Enumerable2DArray.fsproj.CopyComplete
+/home/flo/Copy/Dokumente/Informatik/Masterarbeit/GameFramework/src/Geometries/Euclid2D/Enumerable2DArray/obj/Debug/net7.0/Enumerable2DArray.dll
+/home/flo/Copy/Dokumente/Informatik/Masterarbeit/GameFramework/src/Geometries/Euclid2D/Enumerable2DArray/obj/Debug/net7.0/refint/Enumerable2DArray.dll
+/home/flo/Copy/Dokumente/Informatik/Masterarbeit/GameFramework/src/Geometries/Euclid2D/Enumerable2DArray/obj/Debug/net7.0/Enumerable2DArray.pdb
+/home/flo/Copy/Dokumente/Informatik/Masterarbeit/GameFramework/src/Geometries/Euclid2D/Enumerable2DArray/obj/Debug/net7.0/ref/Enumerable2DArray.dll
+/home/flo/Copy/Dokumente/Informatik/Masterarbeit/GameFramework/src/Geometries/Euclid2D/Enumerable2DArray/bin/Debug/net7.0/ReadableArrayType.dll
+/home/flo/Copy/Dokumente/Informatik/Masterarbeit/GameFramework/src/Geometries/Euclid2D/Enumerable2DArray/bin/Debug/net7.0/ReadableArrayType.pdb
+/home/flo/Copy/Dokumente/Informatik/Masterarbeit/GameFramework/src/Geometries/Euclid2D/Enumerable2DArray/bin/Debug/net7.0/Euclid2DCoords.xml

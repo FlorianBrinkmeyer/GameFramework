@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="ChessMoveCalculation.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\ZeroSumHelperTypes\ZeroSumHelperTypes.fsproj" />
+    <ProjectReference Include="..\..\..\ImmutableArray\ImmutableArray.fsproj" />
+    <ProjectReference Include="..\ChessPieceInterfaces\ChessPieceInterfaces.fsproj" />
+    <ProjectReference Include="..\ChessBoardEvents\ChessBoardEvents.fsproj" />
+  </ItemGroup>
+
+</Project>
