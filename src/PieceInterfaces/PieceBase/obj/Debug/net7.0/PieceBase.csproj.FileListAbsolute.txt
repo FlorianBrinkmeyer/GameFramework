@@ -10,3 +10,15 @@
 /home/flo/Copy/Dokumente/Informatik/Masterarbeit/GameFramework/src/PieceInterfaces/PieceBase/obj/Debug/net7.0/refint/PieceBase.dll
 /home/flo/Copy/Dokumente/Informatik/Masterarbeit/GameFramework/src/PieceInterfaces/PieceBase/obj/Debug/net7.0/PieceBase.pdb
 /home/flo/Copy/Dokumente/Informatik/Masterarbeit/GameFramework/src/PieceInterfaces/PieceBase/obj/Debug/net7.0/ref/PieceBase.dll
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/PieceInterfaces/PieceBase/bin/Debug/net7.0/PieceBase.deps.json
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/PieceInterfaces/PieceBase/bin/Debug/net7.0/PieceBase.dll
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/PieceInterfaces/PieceBase/bin/Debug/net7.0/PieceBase.pdb
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/PieceInterfaces/PieceBase/obj/Debug/net7.0/PieceBase.csproj.AssemblyReference.cache
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/PieceInterfaces/PieceBase/obj/Debug/net7.0/PieceBase.GeneratedMSBuildEditorConfig.editorconfig
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/PieceInterfaces/PieceBase/obj/Debug/net7.0/PieceBase.AssemblyInfoInputs.cache
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/PieceInterfaces/PieceBase/obj/Debug/net7.0/PieceBase.AssemblyInfo.cs
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/PieceInterfaces/PieceBase/obj/Debug/net7.0/PieceBase.csproj.CoreCompileInputs.cache
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/PieceInterfaces/PieceBase/obj/Debug/net7.0/PieceBase.dll
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/PieceInterfaces/PieceBase/obj/Debug/net7.0/refint/PieceBase.dll
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/PieceInterfaces/PieceBase/obj/Debug/net7.0/PieceBase.pdb
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/PieceInterfaces/PieceBase/obj/Debug/net7.0/ref/PieceBase.dll

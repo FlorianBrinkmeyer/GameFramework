@@ -79,16 +79,16 @@ public class GameCompanion<GameResult>: IGameMoveMaker, IReversibleGame<GameResu
     public event EventHandler? Undone;
 }
 
-public interface IBoardGameCompanion<out Board>
+public interface IBoardGameCompanion<out Board, Evnt>
 {
-    IBoardGameForCompanion<Board> Game {get;}
+    IBoardGameForCompanion<Board, Evnt> Game {get;}
     public event EventHandler? TriggerBoardEvents;    
 }
 
-public class BoardGameCompanion<GameResult, Board> : GameCompanion<GameResult>, IBoardGameCompanion<Board>
+public class BoardGameCompanion<GameResult, Board, Evnt> : GameCompanion<GameResult>, IBoardGameCompanion<Board, Evnt>
 {
     public BoardGameCompanion (ImmutableGame startState, IEnumerable<AI_Agent> agents, Func<ImmutableGame, GameResult> _resultMapper) : base (startState, agents, _resultMapper) {}
-    public IBoardGameForCompanion<Board> Game => (IBoardGameForCompanion<Board>) state;
+    public IBoardGameForCompanion<Board, Evnt> Game => (IBoardGameForCompanion<Board, Evnt>) state;
     public event EventHandler? TriggerBoardEvents;
     protected override void TriggerTriggerBoardEvents () => TriggerBoardEvents?.Invoke (this, new EventArgs ());
 }

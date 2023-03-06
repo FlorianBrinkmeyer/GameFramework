@@ -37,9 +37,9 @@ type ImmutableZeroSumBoardGameSelfCalculatingPieces<'Board, 'Coords, 'Piece, 'Mo
             let castedOther = other :?> ImmutableZeroSumBoardGameSelfCalculatingPieces<'Board, 'Coords, 'Piece, 'MoveCommand, 'BoardEvnt>
             activePlayer = castedOther.ActivePlayer && board = castedOther.Board
         override x.GetHashCode () = HashCode.Combine (activePlayer, board)                
-        interface IBoardGameWithMovablePiecesForCompanion<'Board, 'BoardEvnt> with
+        interface IBoardGameForCompanion<'Board, 'BoardEvnt> with
             member x.get_GameBoard () = board
-            member x.Events = 
+            member x.BoardEvents = 
                 match events with
                 | Some evnts ->
                     evnts

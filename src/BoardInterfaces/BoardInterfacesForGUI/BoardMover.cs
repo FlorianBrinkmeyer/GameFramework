@@ -21,42 +21,37 @@ namespace GameFramework;
 using System;
 using System.Collections.Generic;
 
-public interface IBoardInformerEvent {}
+public interface IBoardMoveEvent {}
 
-public interface IBoardInformer<Coords>
-{
-    event EventHandler<IBoardInformerEvent>? BoardInformerEvent;
-}
-
-public class BoardInformerMovingEvent<Coords> : IBoardInformerEvent
+public class BoardMovingEvent<Coords> : IBoardMoveEvent
 {
     public Coords Start {get;}
     public Coords Dest {get;}
-    public BoardInformerMovingEvent (Coords start, Coords dest)
+    public BoardMovingEvent (Coords start, Coords dest)
     {
         Start = start;
         Dest = dest;
     }
 }
 
-public class BoardInformerDestroyedEvent<Coords> : IBoardInformerEvent
+public class BoardDestroyedEvent<Coords> : IBoardMoveEvent
 {
     public Coords Field {get;}
-    public BoardInformerDestroyedEvent (Coords field) => Field = field;
+    public BoardDestroyedEvent (Coords field) => Field = field;
 }
 
-public class BoardInformerTransformedEvent<Coords> : IBoardInformerEvent
+public class BoardTransformedEvent<Coords> : IBoardMoveEvent
 {
     public Coords Field {get;}
     public IPiece TransformedTo {get;}
-    public BoardInformerTransformedEvent (Coords field, IPiece transformedTo)
+    public BoardTransformedEvent (Coords field, IPiece transformedTo)
     {
         Field = field;
         TransformedTo = transformedTo;
     }
 } 
 
-public interface IBoardMover<Coords> : IBoardInformer<Coords>
+public interface IBoardMover<Coords> : IBoardInformer<Coords, IBoardMoveEvent>
 {
     IEnumerable<Coords> PossibleMoves (Coords field);
     void MakeMove (Coords start, Coords dest);

@@ -10,3 +10,15 @@
 /home/flo/Copy/Dokumente/Informatik/Masterarbeit/GameFramework/src/GameInterfaces/GameMoveMaker/obj/Debug/net7.0/refint/GameMoveMaker.dll
 /home/flo/Copy/Dokumente/Informatik/Masterarbeit/GameFramework/src/GameInterfaces/GameMoveMaker/obj/Debug/net7.0/GameMoveMaker.pdb
 /home/flo/Copy/Dokumente/Informatik/Masterarbeit/GameFramework/src/GameInterfaces/GameMoveMaker/obj/Debug/net7.0/ref/GameMoveMaker.dll
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/GameInterfaces/GameMoveMaker/bin/Debug/net7.0/GameMoveMaker.deps.json
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/GameInterfaces/GameMoveMaker/bin/Debug/net7.0/GameMoveMaker.dll
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/GameInterfaces/GameMoveMaker/bin/Debug/net7.0/GameMoveMaker.pdb
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/GameInterfaces/GameMoveMaker/obj/Debug/net7.0/GameMoveMaker.csproj.AssemblyReference.cache
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/GameInterfaces/GameMoveMaker/obj/Debug/net7.0/GameMoveMaker.GeneratedMSBuildEditorConfig.editorconfig
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/GameInterfaces/GameMoveMaker/obj/Debug/net7.0/GameMoveMaker.AssemblyInfoInputs.cache
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/GameInterfaces/GameMoveMaker/obj/Debug/net7.0/GameMoveMaker.AssemblyInfo.cs
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/GameInterfaces/GameMoveMaker/obj/Debug/net7.0/GameMoveMaker.csproj.CoreCompileInputs.cache
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/GameInterfaces/GameMoveMaker/obj/Debug/net7.0/GameMoveMaker.dll
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/GameInterfaces/GameMoveMaker/obj/Debug/net7.0/refint/GameMoveMaker.dll
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/GameInterfaces/GameMoveMaker/obj/Debug/net7.0/GameMoveMaker.pdb
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/GameInterfaces/GameMoveMaker/obj/Debug/net7.0/ref/GameMoveMaker.dll

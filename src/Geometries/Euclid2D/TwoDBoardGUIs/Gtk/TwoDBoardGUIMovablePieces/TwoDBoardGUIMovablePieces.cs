@@ -61,26 +61,26 @@ where Piece : IPiece
             }
         }        
     }
-    protected virtual void OnBoardInformerEvent (object? sender, IBoardInformerEvent evnt)
+    protected virtual void OnBoardInformerEvent (object? sender, IBoardMoveEvent evnt)
     {
-        if (evnt is BoardInformerMovingEvent<Tuple<int,int>>)
+        if (evnt is BoardMovingEvent<Tuple<int,int>>)
         {
-            var movingEvent = evnt as BoardInformerMovingEvent<Tuple<int,int>>;
+            var movingEvent = evnt as BoardMovingEvent<Tuple<int,int>>;
             var start = new Euclid2DCoords (movingEvent!.Start);
             var dest = new Euclid2DCoords (movingEvent!.Dest);
             var destPiece = board![dest];
             fields![start.X,start.Y].Image = null;
             setFieldToPieceImage (dest, destPiece); 
         }
-        if (evnt is BoardInformerDestroyedEvent<Tuple<int,int>>)
+        if (evnt is BoardDestroyedEvent<Tuple<int,int>>)
         {
-            var destroyedEvent = evnt as BoardInformerDestroyedEvent<Tuple<int,int>>;
+            var destroyedEvent = evnt as BoardDestroyedEvent<Tuple<int,int>>;
             var coords = new Euclid2DCoords (destroyedEvent!.Field);
             fields![coords.X,coords.Y].Image = null;
         }
-        if (evnt is BoardInformerTransformedEvent<Tuple<int,int>>)
+        if (evnt is BoardTransformedEvent<Tuple<int,int>>)
         {
-            var transformedEvent = evnt as BoardInformerTransformedEvent<Tuple<int,int>>;
+            var transformedEvent = evnt as BoardTransformedEvent<Tuple<int,int>>;
             var coords = new Euclid2DCoords (transformedEvent!.Field);
             var transformedTo = transformedEvent.TransformedTo;
             setFieldToPieceImage (coords, transformedTo);

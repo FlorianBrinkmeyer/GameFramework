@@ -17,21 +17,19 @@ Copyright (C) 2023  Florian Brinkmeyer
 
 namespace GameFramework;
 
-abstract public class BoardCompanionMovablePieces<Board, Coords> : IBoardMover<Coords>
+abstract public class BoardCompanion<Board, Coords, Evnt> : IBoardInformer<Coords, Evnt>
 {
-    protected IBoardGameCompanion<Board> gameCompanion;
-    protected IBoardGameWithMovablePiecesForCompanion<Board, IBoardInformerEvent> game => (IBoardGameWithMovablePiecesForCompanion<Board, IBoardInformerEvent>) gameCompanion.Game;
+    protected IBoardGameCompanion<Board, Evnt> gameCompanion;
+    protected IBoardGameForCompanion<Board, Evnt> game => gameCompanion.Game;
     protected Board board => game.GameBoard;    
-    public BoardCompanionMovablePieces (IBoardGameCompanion<Board> companion)
+    public BoardCompanion (IBoardGameCompanion<Board, Evnt> companion)
     {
         gameCompanion = companion;
         gameCompanion.TriggerBoardEvents += (Object? sender, EventArgs args) => 
         {
-            foreach (IBoardInformerEvent? boardEvent in game.Events)
+            foreach (Evnt? boardEvent in game.BoardEvents)
                 BoardInformerEvent?.Invoke (this, boardEvent);
         };
     }
-    public event EventHandler<IBoardInformerEvent>? BoardInformerEvent;
-    abstract public IEnumerable<Coords> PossibleMoves (Coords field);
-    abstract public void MakeMove (Coords start, Coords dest);
+    public event EventHandler<Evnt>? BoardInformerEvent;
 }

@@ -19,12 +19,8 @@ namespace GameFramework;
 
 using System.Collections.Generic;
 
-public interface IBoardGameForCompanion<out Board>
+public interface IBoardGameForCompanion<out Board, Evnt>
 {
     Board GameBoard {get;}
-}
-
-public interface IBoardGameWithMovablePiecesForCompanion<out Board, Evnt> : IBoardGameForCompanion<Board>
-{
-    IEnumerable<Evnt> Events {get;}
+    IEnumerable<Evnt> BoardEvents {get;}
 }

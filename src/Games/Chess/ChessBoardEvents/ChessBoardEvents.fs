@@ -20,4 +20,4 @@ open GameFramework
 
 type BoardInformerKingCheckedEvent<'Coords> = 
     {CheckedPlayer : int; KingPos : 'Coords; CheckedBy : seq<'Coords>}
-    interface IBoardInformerEvent
+    interface IBoardMoveEvent

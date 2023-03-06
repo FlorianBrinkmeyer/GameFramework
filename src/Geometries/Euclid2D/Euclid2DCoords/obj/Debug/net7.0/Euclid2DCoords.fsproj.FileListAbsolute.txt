@@ -11,3 +11,16 @@
 /home/flo/Copy/Dokumente/Informatik/Masterarbeit/GameFramework/src/Geometries/Euclid2D/Euclid2DCoords/obj/Debug/net7.0/Euclid2DCoords.xml
 /home/flo/Copy/Dokumente/Informatik/Masterarbeit/GameFramework/src/Geometries/Euclid2D/Euclid2DCoords/obj/Debug/net7.0/Euclid2DCoords.pdb
 /home/flo/Copy/Dokumente/Informatik/Masterarbeit/GameFramework/src/Geometries/Euclid2D/Euclid2DCoords/obj/Debug/net7.0/ref/Euclid2DCoords.dll
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Geometries/Euclid2D/Euclid2DCoords/bin/Debug/net7.0/Euclid2DCoords.deps.json
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Geometries/Euclid2D/Euclid2DCoords/bin/Debug/net7.0/Euclid2DCoords.dll
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Geometries/Euclid2D/Euclid2DCoords/bin/Debug/net7.0/Euclid2DCoords.pdb
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Geometries/Euclid2D/Euclid2DCoords/bin/Debug/net7.0/Euclid2DCoords.xml
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Geometries/Euclid2D/Euclid2DCoords/obj/Debug/net7.0/Euclid2DCoords.fsproj.AssemblyReference.cache
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Geometries/Euclid2D/Euclid2DCoords/obj/Debug/net7.0/Euclid2DCoords.AssemblyInfoInputs.cache
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Geometries/Euclid2D/Euclid2DCoords/obj/Debug/net7.0/Euclid2DCoords.AssemblyInfo.fs
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Geometries/Euclid2D/Euclid2DCoords/obj/Debug/net7.0/Euclid2DCoords.fsproj.CoreCompileInputs.cache
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Geometries/Euclid2D/Euclid2DCoords/obj/Debug/net7.0/Euclid2DCoords.dll
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Geometries/Euclid2D/Euclid2DCoords/obj/Debug/net7.0/refint/Euclid2DCoords.dll
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Geometries/Euclid2D/Euclid2DCoords/obj/Debug/net7.0/Euclid2DCoords.xml
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Geometries/Euclid2D/Euclid2DCoords/obj/Debug/net7.0/Euclid2DCoords.pdb
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Geometries/Euclid2D/Euclid2DCoords/obj/Debug/net7.0/ref/Euclid2DCoords.dll

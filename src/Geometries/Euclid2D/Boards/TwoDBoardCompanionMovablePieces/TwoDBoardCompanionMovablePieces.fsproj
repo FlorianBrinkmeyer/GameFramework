@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\Companions\BoardCompanionMovablePieces\BoardCompanionMovablePieces.csproj" />
+    <ProjectReference Include="..\..\..\..\Companions\BoardCompanion\BoardCompanion.csproj" />
     <ProjectReference Include="..\..\Enumerable2DArray\Enumerable2DArray.fsproj" />
     <ProjectReference Include="..\TwoDBoardInterfacesForGUI\TwoDBoardInterfacesForGUI.csproj" />
     <ProjectReference Include="..\..\..\..\PieceInterfaces\PieceInterfacesForBoardAndCompanion\PieceInterfacesForBoardAndCompanion.csproj" />

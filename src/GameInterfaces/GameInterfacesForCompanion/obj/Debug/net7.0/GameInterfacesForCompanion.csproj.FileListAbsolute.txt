@@ -10,3 +10,15 @@
 /home/flo/Copy/Dokumente/Informatik/Masterarbeit/GameFramework/src/GameInterfaces/GameInterfacesForCompanion/obj/Debug/net7.0/refint/GameInterfacesForCompanion.dll
 /home/flo/Copy/Dokumente/Informatik/Masterarbeit/GameFramework/src/GameInterfaces/GameInterfacesForCompanion/obj/Debug/net7.0/GameInterfacesForCompanion.pdb
 /home/flo/Copy/Dokumente/Informatik/Masterarbeit/GameFramework/src/GameInterfaces/GameInterfacesForCompanion/obj/Debug/net7.0/ref/GameInterfacesForCompanion.dll
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/GameInterfaces/GameInterfacesForCompanion/bin/Debug/net7.0/GameInterfacesForCompanion.deps.json
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/GameInterfaces/GameInterfacesForCompanion/bin/Debug/net7.0/GameInterfacesForCompanion.dll
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/GameInterfaces/GameInterfacesForCompanion/bin/Debug/net7.0/GameInterfacesForCompanion.pdb
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/GameInterfaces/GameInterfacesForCompanion/obj/Debug/net7.0/GameInterfacesForCompanion.csproj.AssemblyReference.cache
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/GameInterfaces/GameInterfacesForCompanion/obj/Debug/net7.0/GameInterfacesForCompanion.GeneratedMSBuildEditorConfig.editorconfig
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/GameInterfaces/GameInterfacesForCompanion/obj/Debug/net7.0/GameInterfacesForCompanion.AssemblyInfoInputs.cache
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/GameInterfaces/GameInterfacesForCompanion/obj/Debug/net7.0/GameInterfacesForCompanion.AssemblyInfo.cs
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/GameInterfaces/GameInterfacesForCompanion/obj/Debug/net7.0/GameInterfacesForCompanion.csproj.CoreCompileInputs.cache
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/GameInterfaces/GameInterfacesForCompanion/obj/Debug/net7.0/GameInterfacesForCompanion.dll
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/GameInterfaces/GameInterfacesForCompanion/obj/Debug/net7.0/refint/GameInterfacesForCompanion.dll
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/GameInterfaces/GameInterfacesForCompanion/obj/Debug/net7.0/GameInterfacesForCompanion.pdb
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/GameInterfaces/GameInterfacesForCompanion/obj/Debug/net7.0/ref/GameInterfacesForCompanion.dll

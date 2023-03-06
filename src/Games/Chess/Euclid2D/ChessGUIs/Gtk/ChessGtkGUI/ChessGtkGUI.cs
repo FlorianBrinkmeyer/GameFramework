@@ -33,7 +33,7 @@ where Piece : IPiece
         builder.Autoconnect (this);
         initialize (windowsWidth, windowHeight, pictureFolder, _board, _game, thisGUIusers, AIs);
     }
-    override protected void OnBoardInformerEvent (object? sender, IBoardInformerEvent evnt)
+    override protected void OnBoardInformerEvent (object? sender, IBoardMoveEvent evnt)
     {
         base.OnBoardInformerEvent (sender, evnt);
         if (evnt is BoardInformerKingCheckedEvent<Tuple<int,int>>)

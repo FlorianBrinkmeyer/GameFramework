@@ -21,26 +21,29 @@ open System;
 open Euclid2D;
 open GameFramework
 
-type TwoDBoardCompanionMovablePieces<'Piece when 'Piece :> IMovablePiece<int*int>> (companion) = 
-    inherit BoardCompanionMovablePieces<Enumerable2DArray.IEnumerable2DArray<'Piece>, int*int> (companion)
-    override this.PossibleMoves coords =
-        let (x,y) = coords
-        let maybePiece = this.board[x,y]
-        match maybePiece with
-        | Some piece ->
-            let game = this.game :?> IBoardGameForPieces<int*int, IMoveCommand<int*int>>
-            piece.PossibleMoves (game, coords)
-        | None ->
-            Seq.empty    
-    override this.MakeMove ((startX, startY), dest) =
-        let maybePiece = this.board[startX, startY]
-        match maybePiece with
-        | Some piece ->
-            let game = this.game :?> IBoardGameForPieces<int*int, IMoveCommand<int*int>>
-            let mutableGame = this.gameCompanion :?> IGameMoveMaker
-            piece.MakeMove (mutableGame, game, (startX, startY), dest)
-        | None ->
-            raise (Exception "Field is empty: Impossible to make a move from here.")    
+type TwoDBoardCompanion<'Piece when 'Piece :> IMovablePiece<int*int>> (companion) = 
+    inherit BoardCompanion<Enumerable2DArray.IEnumerable2DArray<'Piece>, int*int, IBoardMoveEvent> (companion)
+    interface IBoardMover<int*int> with
+        member this.PossibleMoves coords =
+            let (x,y) = coords
+            let maybePiece = this.board[x,y]
+            match maybePiece with
+            | Some piece ->
+                let game = this.game :?> IBoardGameForPieces<int*int, IMoveCommand<int*int>>
+                piece.PossibleMoves (game, coords)
+            | None ->
+                Seq.empty    
+        member this.MakeMove ((startX, startY), dest) =
+            let maybePiece = this.board[startX, startY]
+            match maybePiece with
+            | Some piece ->
+                let game = this.game :?> IBoardGameForPieces<int*int, IMoveCommand<int*int>>
+                let mutableGame = this.gameCompanion :?> IGameMoveMaker
+                piece.MakeMove (mutableGame, game, (startX, startY), dest)
+            | None ->
+                raise (Exception "Field is empty: Impossible to make a move from here.")
+        member this.add_BoardInformerEvent value = this.BoardInformerEvent.AddHandler value            
+        member this.remove_BoardInformerEvent value = this.BoardInformerEvent.RemoveHandler value            
     interface ITwoDBoardMovablePieces<'Piece> with
         member this.ToSeqInDir (xPos, yPos) (xDir, yDir) = this.board.ToSeqInDir (xPos, yPos) (xDir, yDir)
         member this.ToSeqInDirWithCoords (xPos, yPos) (xDir, yDir) = this.board.ToSeqInDirWithCoords (xPos, yPos) (xDir, yDir)
