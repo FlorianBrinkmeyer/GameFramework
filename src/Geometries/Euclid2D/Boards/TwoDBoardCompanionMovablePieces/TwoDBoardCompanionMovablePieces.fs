@@ -21,8 +21,8 @@ open System;
 open Euclid2D;
 open GameFramework
 
-type TwoDBoardCompanion<'Piece when 'Piece :> IMovablePiece<int*int>> (companion) = 
-    inherit BoardCompanion<Enumerable2DArray.IEnumerable2DArray<'Piece>, int*int, IBoardMoveEvent> (companion)
+type TwoDBoardCompanionMovablePieces<'Piece when 'Piece :> IMovablePiece<int*int>> (companion) = 
+    inherit BoardCompanion<Enumerable2DArray.IEnumerable2DArray<'Piece>, IBoardMoveEvent> (companion)
     interface IBoardMover<int*int> with
         member this.PossibleMoves coords =
             let (x,y) = coords
