@@ -17,7 +17,7 @@ Copyright (C) 2023  Florian Brinkmeyer
 
 namespace GameFramework;
 
-abstract public class BoardCompanion<Board, Coords, Evnt> : IBoardInformer<Coords, Evnt>
+abstract public class BoardCompanion<Board, Coords, Evnt> : IBoardInformer<Evnt>
 {
     protected IBoardGameCompanion<Board, Evnt> gameCompanion;
     protected IBoardGameForCompanion<Board, Evnt> game => gameCompanion.Game;

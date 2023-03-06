@@ -18,6 +18,6 @@ Copyright (C) 2023  Florian Brinkmeyer
 namespace Chess
 open GameFramework
 
-type BoardInformerKingCheckedEvent<'Coords> = 
+type BoardKingCheckedEvent<'Coords> = 
     {CheckedPlayer : int; KingPos : 'Coords; CheckedBy : seq<'Coords>}
     interface IBoardMoveEvent

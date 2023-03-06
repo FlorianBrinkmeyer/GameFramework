@@ -20,7 +20,7 @@ namespace GameFramework;
 
 using System;
 
-public interface IBoardInformer<Coords, Evnt>
+public interface IBoardInformer<Evnt>
 {
     event EventHandler<Evnt>? BoardInformerEvent;
 }

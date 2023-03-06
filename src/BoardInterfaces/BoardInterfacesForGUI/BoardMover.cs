@@ -51,7 +51,7 @@ public class BoardTransformedEvent<Coords> : IBoardMoveEvent
     }
 } 
 
-public interface IBoardMover<Coords> : IBoardInformer<Coords, IBoardMoveEvent>
+public interface IBoardMover<Coords> : IBoardInformer<IBoardMoveEvent>
 {
     IEnumerable<Coords> PossibleMoves (Coords field);
     void MakeMove (Coords start, Coords dest);

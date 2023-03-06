@@ -36,9 +36,9 @@ where Piece : IPiece
     override protected void OnBoardInformerEvent (object? sender, IBoardMoveEvent evnt)
     {
         base.OnBoardInformerEvent (sender, evnt);
-        if (evnt is BoardInformerKingCheckedEvent<Tuple<int,int>>)
+        if (evnt is BoardKingCheckedEvent<Tuple<int,int>>)
         {
-            var kingCheckedEvent = evnt as BoardInformerKingCheckedEvent<Tuple<int,int>>;
+            var kingCheckedEvent = evnt as BoardKingCheckedEvent<Tuple<int,int>>;
             var player = kingCheckedEvent!.CheckedPlayer;
             var label = (Gtk.Label) builder.GetObject ("AdditionalGameInformLabel");
             if (player == 1)
