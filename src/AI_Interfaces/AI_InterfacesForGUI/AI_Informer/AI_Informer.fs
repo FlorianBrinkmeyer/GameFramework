@@ -22,5 +22,3 @@ open System
 type AI_Informer =
     [<CLIEvent>]
     abstract SendMessage : IEvent<String>
-    [<CLIEvent>]
-    abstract MoveDecisionMade : IEvent<int>

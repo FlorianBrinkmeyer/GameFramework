@@ -16,17 +16,14 @@ Copyright (C) 2023  Florian Brinkmeyer
 *)
 
 namespace GameFramework
-open System.Threading
 open System
 
-type NegaMaxTimeLimited (player : int, searchTime : int, maxDepth : int, applyMoveYourSelf) =
+type NegaMaxTimeLimited (player : int, searchTime : int, maxDepth : int) =
     let sendMessage = Event<String> ()
-    let moveDecisionMade = Event<int> ()
+    let mutable reachedMaxDepth = 0
     interface AI_Informer with
         [<CLIEvent>]
         member x.SendMessage = sendMessage.Publish
-        [<CLIEvent>]
-        member x.MoveDecisionMade = moveDecisionMade.Publish
     interface AI_Agent with
         member x.Player = player
         member x.MakeMove mutableGame game =
@@ -37,15 +34,13 @@ type NegaMaxTimeLimited (player : int, searchTime : int, maxDepth : int, applyMo
             timer.AutoReset <- false
             timer.Elapsed.AddHandler (fun _ _ -> 
                 timeLeft <- false
-                if applyMoveYourSelf then
-                    mutableGame.MakeMove chosenMove
-                moveDecisionMade.Trigger chosenMove    
+                mutableGame.MakeMove chosenMove
             )
             timer.Start ()
             let timeLimitedSearch =
                 async {
                     let mutable searchDepth = 1
-                    while searchDepth < maxDepth && timeLeft do
+                    while searchDepth <= maxDepth && timeLeft do
                         let rec helper step (state : ImmutableGame) =
                             let numberOfPossibleMoves = state.NumberOfPossibleMoves
                             if (step = 0) || (numberOfPossibleMoves = 0)  then
@@ -55,12 +50,11 @@ type NegaMaxTimeLimited (player : int, searchTime : int, maxDepth : int, applyMo
                         let chosen = [0..(state.NumberOfPossibleMoves-1)] |> List.maxBy (fun move -> -(helper (searchDepth-1) (state.NthMove move)))
                         if timeLeft then
                             chosenMove <- chosen
+                            if searchDepth > reachedMaxDepth then
+                                reachedMaxDepth <- searchDepth
+                            sendMessage.Trigger (sprintf "Reached search depth: %A, Maximally reached depth: %A" searchDepth reachedMaxDepth)
                             searchDepth <- searchDepth + 1
-                            sendMessage.Trigger (sprintf "Reached search depth: %A" searchDepth)
                     if searchDepth >= maxDepth && timeLeft then
-                        timer.Stop ()       
-                        if applyMoveYourSelf then
-                            mutableGame.MakeMove chosenMove
-                        moveDecisionMade.Trigger chosenMove    
+                        timer.Interval <- 1
                 }
             timeLimitedSearch |> Async.Start            

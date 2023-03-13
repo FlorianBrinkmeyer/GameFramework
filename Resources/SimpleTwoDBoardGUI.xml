@@ -31,7 +31,7 @@
             <property name="visible">True</property>
             <property name="can-focus">False</property>
             <attributes>
-              <attribute name="scale" value="2"/>
+              <attribute name="weight" value="bold"/>
             </attributes>
           </object>
           <packing>
@@ -45,27 +45,13 @@
             <property name="visible">True</property>
             <property name="can-focus">False</property>
             <attributes>
-              <attribute name="scale" value="2"/>
+              <attribute name="weight" value="bold"/>
             </attributes>
           </object>
           <packing>
             <property name="expand">False</property>
             <property name="fill">True</property>
             <property name="position">2</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkButton">
-            <property name="label" translatable="yes">Undo</property>
-            <property name="visible">True</property>
-            <property name="can-focus">True</property>
-            <property name="receives-default">True</property>
-            <signal name="clicked" handler="OnUndoClicked" swapped="no"/>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">3</property>
           </packing>
         </child>
         <child>
@@ -107,7 +93,7 @@
           <packing>
             <property name="expand">True</property>
             <property name="fill">True</property>
-            <property name="position">4</property>
+            <property name="position">3</property>
           </packing>
         </child>
       </object>

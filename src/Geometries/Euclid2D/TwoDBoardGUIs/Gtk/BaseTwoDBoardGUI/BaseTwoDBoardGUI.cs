@@ -46,14 +46,18 @@ where Board : Enumerable2DArray.IEnumerable2DArray<Piece>
      protected void setFieldToPieceImage (Euclid2DCoords coords, Piece piece)
      {
           var imageName = getImageFileName (piece);
-          var image = new Gtk.Image (imageNamesToFilenames[imageName]);
-          var field = fields![coords.X,coords.Y];
-          field.Image = image;
+          Gtk.Application.Invoke ((sender, args) => {
+               var image = new Gtk.Image (imageNamesToFilenames[imageName]);
+               var field = fields![coords.X,coords.Y];
+               field.Image = image;
+          });        
      }     
      protected void SetLabel (int index, String text)
      {
-          var label = (Gtk.Label) builder.GetObject ("GameInformLabel" + index.ToString ());
-          label.Text = text;
+          Gtk.Application.Invoke ((sender, args) => {
+               var label = (Gtk.Label) builder.GetObject ("GameInformLabel" + index.ToString ());
+               label.Text = text;
+          });     
      }
      protected virtual String PlayerToString (int id) => "Player " + id.ToString ();
      protected virtual void OnGameOver (string result) => SetLabel (1, result);
@@ -107,20 +111,6 @@ where Board : Enumerable2DArray.IEnumerable2DArray<Piece>
           };
           foreach (AI_Informer ai in AIs)
                ai.SendMessage += OnAIMessage;
-     }
-     int finishedMoves = 0;
-     protected void moveFinished () => finishedMoves ++;
-     void OnUndoClicked (Object sender, EventArgs args)
-     {
-          var reversibleGame = (IReversibleGame<String>?) game;
-          if (finishedMoves > 0)
-          {
-               reversibleGame!.Undo ();
-               while (!(ThisGUIusers!.Any (player => player == game!.ActivePlayer)))
-                    reversibleGame!.Undo ();
-               finishedMoves --;
-               OnOwnPlayersTurn (game!.ActivePlayer);
-          }
      }
      void OnQuit (Object sender, EventArgs args)
      {

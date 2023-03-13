@@ -19,9 +19,7 @@ namespace GameFramework
 
 open System
 
-type NegaMax (player : int, searchDepth : int, applyMoveYourSelf) =
-    let sendMessage = Event<String> ()
-    let moveDecisionMade = Event<int> ()
+type NegaMax (player : int, searchDepth : int) =
     interface AI_Agent with
         member x.Player = player
         member x.MakeMove mutableGame game =
@@ -35,13 +33,6 @@ type NegaMax (player : int, searchDepth : int, applyMoveYourSelf) =
                         else 
                             [0..(numberOfPossibleMoves-1)] |> List.map (fun move -> -(helper (step-1) (state.NthMove move))) |> List.max
                     let chosenMove = [0..(state.NumberOfPossibleMoves-1)] |> List.maxBy (fun move -> -(helper (searchDepth-1) (state.NthMove move)))
-                    if applyMoveYourSelf then
-                        mutableGame.MakeMove chosenMove
-                    moveDecisionMade.Trigger chosenMove    
+                    mutableGame.MakeMove chosenMove
                 }
             makeMove |> Async.Start
-    interface AI_Informer with
-        [<CLIEvent>]
-        member x.SendMessage = sendMessage.Publish
-        [<CLIEvent>]
-        member x.MoveDecisionMade = moveDecisionMade.Publish
