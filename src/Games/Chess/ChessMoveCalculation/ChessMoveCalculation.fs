@@ -23,7 +23,7 @@ open GameFramework
 
 let calculatePossibleMoves<'Board, 'Coords, 'Piece 
     when 'Coords :> IComparable and 'Coords : comparison and 'Board :> ImmutableArray<'Coords, 'Piece> and 'Piece :> IPiece and
-    'Piece :> ISelfCalculatingPiece<'Board, 'Coords, IMoveCommand<'Coords>, IBoardInformerEvent>>
+    'Piece :> ISelfCalculatingPiece<'Board, 'Coords, IMoveCommand<'Coords>, IBoardMoveEvent>>
     (board : 'Board) activePlayer (positionOfLastMovedPiece : 'Coords) =              
         let ownKingPos, ownKing = 
             let pos, piece = board.KeyValuePairs |> Seq.find (fun (_, piece) -> piece.Player = activePlayer && piece :> Object :? IKing<'Board, 'Coords>)
@@ -91,7 +91,7 @@ let calculatePossibleMoves<'Board, 'Coords, 'Piece
                         piece.PossibleMoves boardWithWhiteListPiecesAndBlackListKing pos |> Seq.map (fun moveCom -> pos, moveCom)
                     )
                 commands |> Seq.mapi (fun index (pos, com) -> {Index = index; StartField = pos; Cmd = com}) |> Seq.toArray
-            let additionalEvent = {CheckedPlayer = activePlayer; KingPos = ownKingPos; CheckedBy = kingThreatCoords} :> IBoardInformerEvent
+            let additionalEvent = {CheckedPlayer = activePlayer; KingPos = ownKingPos; CheckedBy = kingThreatCoords} :> IBoardMoveEvent
             let moveCalcResult =
                 if possibleMoves.Length = 0 then
                     GameOverZSValue (Double.PositiveInfinity * (float) activePlayer * (float) (-1))

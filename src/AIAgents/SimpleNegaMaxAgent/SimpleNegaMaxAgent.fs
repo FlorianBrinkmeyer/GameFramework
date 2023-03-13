@@ -17,16 +17,31 @@ Copyright (C) 2023  Florian Brinkmeyer
 
 namespace GameFramework
 
-type NegaMax (player : int, searchDepth : int) =
+open System
+
+type NegaMax (player : int, searchDepth : int, applyMoveYourSelf) =
+    let sendMessage = Event<String> ()
+    let moveDecisionMade = Event<int> ()
     interface AI_Agent with
         member x.Player = player
         member x.MakeMove mutableGame game =
-            let state = game :?> ImmutableGame
-            let rec helper step (state : ImmutableGame) =
-                let numberOfPossibleMoves = state.NumberOfPossibleMoves
-                if (step = 0) || (numberOfPossibleMoves = 0)  then
-                    state.ZSValue * (state.ActivePlayer |> float)  
-                else 
-                    [0..(numberOfPossibleMoves-1)] |> List.map (fun move -> -(helper (step-1) (state.NthMove move))) |> List.max
-            let chosenMove = [0..(state.NumberOfPossibleMoves-1)] |> List.maxBy (fun move -> -(helper (searchDepth-1) (state.NthMove move)))
-            mutableGame.MakeMove chosenMove
+            let makeMove =
+                async {
+                    let state = game :?> ImmutableGame
+                    let rec helper step (state : ImmutableGame) =
+                        let numberOfPossibleMoves = state.NumberOfPossibleMoves
+                        if (step = 0) || (numberOfPossibleMoves = 0)  then
+                            state.ZSValue
+                        else 
+                            [0..(numberOfPossibleMoves-1)] |> List.map (fun move -> -(helper (step-1) (state.NthMove move))) |> List.max
+                    let chosenMove = [0..(state.NumberOfPossibleMoves-1)] |> List.maxBy (fun move -> -(helper (searchDepth-1) (state.NthMove move)))
+                    if applyMoveYourSelf then
+                        mutableGame.MakeMove chosenMove
+                    moveDecisionMade.Trigger chosenMove    
+                }
+            makeMove |> Async.Start
+    interface AI_Informer with
+        [<CLIEvent>]
+        member x.SendMessage = sendMessage.Publish
+        [<CLIEvent>]
+        member x.MoveDecisionMade = moveDecisionMade.Publish

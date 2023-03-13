@@ -1,0 +1,17 @@
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/HelperTypes/BoardGameMovingPiecesHelper/obj/Debug/net7.0/BoardGameMovingPiecesHelper.fsproj.AssemblyReference.cache
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/HelperTypes/BoardGameMovingPiecesHelper/obj/Debug/net7.0/BoardGameMovingPiecesHelper.AssemblyInfoInputs.cache
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/HelperTypes/BoardGameMovingPiecesHelper/obj/Debug/net7.0/BoardGameMovingPiecesHelper.AssemblyInfo.fs
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/HelperTypes/BoardGameMovingPiecesHelper/obj/Debug/net7.0/BoardGameMovingPiecesHelper.fsproj.CoreCompileInputs.cache
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/HelperTypes/BoardGameMovingPiecesHelper/bin/Debug/net7.0/BoardGameMovingPiecesHelper.deps.json
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/HelperTypes/BoardGameMovingPiecesHelper/bin/Debug/net7.0/BoardGameMovingPiecesHelper.dll
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/HelperTypes/BoardGameMovingPiecesHelper/bin/Debug/net7.0/BoardGameMovingPiecesHelper.pdb
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/HelperTypes/BoardGameMovingPiecesHelper/bin/Debug/net7.0/BoardGameMovingPiecesHelper.xml
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/HelperTypes/BoardGameMovingPiecesHelper/bin/Debug/net7.0/GameInterfacesForSelfCalculatingPieces.dll
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/HelperTypes/BoardGameMovingPiecesHelper/bin/Debug/net7.0/GameInterfacesForSelfCalculatingPieces.pdb
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/HelperTypes/BoardGameMovingPiecesHelper/bin/Debug/net7.0/GameInterfacesForSelfCalculatingPieces.xml
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/HelperTypes/BoardGameMovingPiecesHelper/obj/Debug/net7.0/BoardGameMovingPiecesHelper.fsproj.CopyComplete
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/HelperTypes/BoardGameMovingPiecesHelper/obj/Debug/net7.0/BoardGameMovingPiecesHelper.dll
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/HelperTypes/BoardGameMovingPiecesHelper/obj/Debug/net7.0/refint/BoardGameMovingPiecesHelper.dll
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/HelperTypes/BoardGameMovingPiecesHelper/obj/Debug/net7.0/BoardGameMovingPiecesHelper.xml
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/HelperTypes/BoardGameMovingPiecesHelper/obj/Debug/net7.0/BoardGameMovingPiecesHelper.pdb
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/HelperTypes/BoardGameMovingPiecesHelper/obj/Debug/net7.0/ref/BoardGameMovingPiecesHelper.dll

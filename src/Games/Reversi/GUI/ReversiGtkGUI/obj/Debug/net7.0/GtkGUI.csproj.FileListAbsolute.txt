@@ -1,0 +1,5 @@
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Games/Reversi/GUI/GtkGUI/obj/Debug/net7.0/GtkGUI.csproj.AssemblyReference.cache
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Games/Reversi/GUI/GtkGUI/obj/Debug/net7.0/GtkGUI.GeneratedMSBuildEditorConfig.editorconfig
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Games/Reversi/GUI/GtkGUI/obj/Debug/net7.0/GtkGUI.AssemblyInfoInputs.cache
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Games/Reversi/GUI/GtkGUI/obj/Debug/net7.0/GtkGUI.AssemblyInfo.cs
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Games/Reversi/GUI/GtkGUI/obj/Debug/net7.0/GtkGUI.csproj.CoreCompileInputs.cache

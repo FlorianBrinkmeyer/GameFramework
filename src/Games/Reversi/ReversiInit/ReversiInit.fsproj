@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="ReversiInit.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\GameClasses\ImmutableBoardSetTwoPlayerGame\ImmutableBoardSetTwoPlayerGame.fsproj" />
+    <ProjectReference Include="..\..\..\Geometries\Euclid2D\ImmutableEnumerable2DArray\ImmutableEnumerable2DArray.fsproj" />
+    <ProjectReference Include="..\..\..\Companions\GameCompanion\GameCompanion.csproj" />
+    <ProjectReference Include="..\..\..\Geometries\Euclid2D\Boards\TwoDBoardCompanions\TwoDBoardCompanions.fsproj" />
+    <ProjectReference Include="..\..\..\AI_Interfaces\AI_InterfacesForGames\AIBaseInterface\AIBaseInterface.fsproj" />
+  </ItemGroup>
+
+</Project>

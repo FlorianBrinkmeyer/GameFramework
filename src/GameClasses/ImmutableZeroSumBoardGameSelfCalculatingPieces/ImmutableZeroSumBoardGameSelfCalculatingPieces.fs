@@ -23,8 +23,8 @@ open GameFramework
 ///Current board * active player * new position of last moved piece -> possible moves / game result * board events
 type MoveCalcDelegate<'Board, 'Coords, 'MoveCommand, 'BoardEvnt> = Func<'Board, int, 'Coords, MoveCalcResult<'MoveCommand, 'Coords> * seq<'BoardEvnt>> 
 
-///Current board * active player -> zero-sum value
-type ZSValueCalcDelegate<'Board> = Func<'Board, int, float>
+///Current board -> zero-sum value
+type ZSValueCalcDelegate<'Board> = Func<'Board, float>
 
 type ImmutableZeroSumBoardGameSelfCalculatingPieces<'Board, 'Coords, 'Piece, 'MoveCommand, 'BoardEvnt
     when 'Coords :> IComparable and 'Coords : comparison and 'Board :> ImmutableArray<'Coords, 'Piece> and 'Board : equality
@@ -69,13 +69,13 @@ type ImmutableZeroSumBoardGameSelfCalculatingPieces<'Board, 'Coords, 'Piece, 'Mo
             member x.ZSValue = 
                 match moveCalcResult with
                 | GameOverZSValue value ->
-                    value
+                    value * (float) activePlayer
                 | _ ->    
                     match maybeZsValueCalc with
                     | Some zsValueCalc ->
-                        zsValueCalc.Invoke (board, activePlayer)
+                        (zsValueCalc.Invoke board) * (float) activePlayer
                     | None -> raise (Exception "Intermediate evaluation of game state impossible: No evaluation function assigned.")    
-            member x.Value player = (x :> ImmutableGame).ZSValue * (float) player
+            member x.Value player = (x :> ImmutableGame).ZSValue * (float) activePlayer * (float) player
             member x.ActivePlayer = activePlayer
             member x.NumberOfPossibleMoves = 
                 match moveCalcResult with

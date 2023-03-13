@@ -20,8 +20,6 @@ namespace System
 type ImmutableArray<'Index, 'T when 'Index :> IComparable and 'Index : comparison> =
     abstract Item : 'Index -> Option<'T>
     abstract GetNext : 'Index -> Option<'T> -> ImmutableArray<'Index, 'T>
-    abstract Previous : Option<ImmutableArray<'Index, 'T>>
-    abstract InternalMap : Map<'Index, 'T>
     abstract Keys : seq<'Index>
     abstract Values : seq<'T>
     abstract KeyValuePairs : seq<'Index * 'T>

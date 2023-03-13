@@ -9,7 +9,7 @@ Current board * active player -&gt; zero-sum value
 </member>
 <member name="T:GameFramework.MoveCalcDelegate`4">
 <summary>
-Current board * active player * new position of last moved piece -&gt; possible moves / game result
+Current board * active player * new position of last moved piece -&gt; possible moves / game result * board events
 </summary>
 </member>
 </members>

@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="ImmutableBoardSetTwoPlayerGame.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\GameInterfaces\GameInterfacesForAIsAndCompanion\GameInterfacesForAIsAndCompanion.fsproj" />
+    <ProjectReference Include="..\..\GameInterfaces\GameInterfacesForCompanion\GameInterfacesForCompanion.csproj" />
+    <ProjectReference Include="..\..\HelperTypes\BoardSetGameHelper\BoardSetGameHelper.fsproj" />
+    <ProjectReference Include="..\..\GameInterfaces\GameInterfacesForBoardsAndCompanions\GameInterfacesForBoardsAndCompanions.csproj" />
+  </ItemGroup>
+
+</Project>

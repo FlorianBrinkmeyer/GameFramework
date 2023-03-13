@@ -11,6 +11,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\AI_Interfaces\AI_InterfacesForGames\AIBaseInterface\AIBaseInterface.fsproj" />
+    <ProjectReference Include="..\..\AI_Interfaces\AI_InterfacesForGUI\AI_Informer\AI_Informer.fsproj" />
   </ItemGroup>
 
 </Project>

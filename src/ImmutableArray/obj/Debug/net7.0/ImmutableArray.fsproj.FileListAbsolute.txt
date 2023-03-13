@@ -11,3 +11,16 @@
 /home/flo/Copy/Dokumente/Informatik/Masterarbeit/GameFramework/src/ImmutableArray/obj/Debug/net7.0/ImmutableArray.xml
 /home/flo/Copy/Dokumente/Informatik/Masterarbeit/GameFramework/src/ImmutableArray/obj/Debug/net7.0/ImmutableArray.pdb
 /home/flo/Copy/Dokumente/Informatik/Masterarbeit/GameFramework/src/ImmutableArray/obj/Debug/net7.0/ref/ImmutableArray.dll
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/ImmutableArray/bin/Debug/net7.0/ImmutableArray.deps.json
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/ImmutableArray/bin/Debug/net7.0/ImmutableArray.dll
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/ImmutableArray/bin/Debug/net7.0/ImmutableArray.pdb
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/ImmutableArray/bin/Debug/net7.0/ImmutableArray.xml
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/ImmutableArray/obj/Debug/net7.0/ImmutableArray.fsproj.AssemblyReference.cache
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/ImmutableArray/obj/Debug/net7.0/ImmutableArray.AssemblyInfoInputs.cache
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/ImmutableArray/obj/Debug/net7.0/ImmutableArray.AssemblyInfo.fs
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/ImmutableArray/obj/Debug/net7.0/ImmutableArray.fsproj.CoreCompileInputs.cache
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/ImmutableArray/obj/Debug/net7.0/ImmutableArray.dll
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/ImmutableArray/obj/Debug/net7.0/refint/ImmutableArray.dll
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/ImmutableArray/obj/Debug/net7.0/ImmutableArray.xml
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/ImmutableArray/obj/Debug/net7.0/ImmutableArray.pdb
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/ImmutableArray/obj/Debug/net7.0/ref/ImmutableArray.dll

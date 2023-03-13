@@ -1,0 +1,17 @@
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Games/Reversi/ReversiResultMapper/obj/Debug/net7.0/ReversiResultMapper.fsproj.AssemblyReference.cache
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Games/Reversi/ReversiResultMapper/obj/Debug/net7.0/ReversiResultMapper.AssemblyInfoInputs.cache
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Games/Reversi/ReversiResultMapper/obj/Debug/net7.0/ReversiResultMapper.AssemblyInfo.fs
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Games/Reversi/ReversiResultMapper/obj/Debug/net7.0/ReversiResultMapper.fsproj.CoreCompileInputs.cache
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Games/Reversi/ReversiResultMapper/bin/Debug/net7.0/ReversiResultMapper.deps.json
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Games/Reversi/ReversiResultMapper/bin/Debug/net7.0/ReversiResultMapper.dll
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Games/Reversi/ReversiResultMapper/bin/Debug/net7.0/ReversiResultMapper.pdb
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Games/Reversi/ReversiResultMapper/bin/Debug/net7.0/ReversiResultMapper.xml
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Games/Reversi/ReversiResultMapper/bin/Debug/net7.0/GameInterfacesForAIsAndCompanion.dll
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Games/Reversi/ReversiResultMapper/bin/Debug/net7.0/GameInterfacesForAIsAndCompanion.pdb
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Games/Reversi/ReversiResultMapper/bin/Debug/net7.0/GameInterfacesForAIsAndCompanion.xml
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Games/Reversi/ReversiResultMapper/obj/Debug/net7.0/ReversiResultMapper.fsproj.CopyComplete
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Games/Reversi/ReversiResultMapper/obj/Debug/net7.0/ReversiResultMapper.dll
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Games/Reversi/ReversiResultMapper/obj/Debug/net7.0/refint/ReversiResultMapper.dll
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Games/Reversi/ReversiResultMapper/obj/Debug/net7.0/ReversiResultMapper.xml
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Games/Reversi/ReversiResultMapper/obj/Debug/net7.0/ReversiResultMapper.pdb
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Games/Reversi/ReversiResultMapper/obj/Debug/net7.0/ref/ReversiResultMapper.dll

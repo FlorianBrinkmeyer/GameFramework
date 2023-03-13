@@ -32,14 +32,30 @@ let seqOfSeqToMap (seqSeq : seq<seq<'t>>) =
     let dict = Collections.Generic.Dictionary<int*int, 't> ()
     seqSeq |> Seq.iteri (fun y line ->
         line |> Seq.iteri (fun x value ->
-            dict[(x,y)] <- value
+            if value <> null then
+                dict[(x,y)] <- value
         )
     )
     Seq.zip dict.Keys dict.Values |> Map.ofSeq
 
-type ImmutableEnumerable2DArray<'t when 't : comparison> (xdim, ydim, map : Map<int*int, 't>, ?previous : ImmutableEnumerable2DArray<'t>) =
+let twoDArrayOptToMap (array : Option<'t> [,]) =
+    let dict = Collections.Generic.Dictionary<int*int, 't> ()
+    array |> Array2D.iteri (fun x y value -> value |> Option.iter (fun v -> dict[(x,y)] <-v))
+    Seq.zip dict.Keys dict.Values |> Map.ofSeq
+
+let seqOfSeqOptToMap (seqSeq : seq<seq<Option<'t>>>) =
+    let dict = Collections.Generic.Dictionary<int*int, 't> ()
+    seqSeq |> Seq.iteri (fun y line ->
+        line |> Seq.iteri (fun x value ->
+            value |> Option.iter (fun v -> dict[(x,y)] <-v)
+        )
+    )
+    Seq.zip dict.Keys dict.Values |> Map.ofSeq
+
+type ImmutableEnumerable2DArray<'t when 't : comparison> (xdim, ydim, map : Map<int*int, 't>) =
+    member x.InternalMap = map
     override this.Equals other =
-        let castedOther = other :?> ImmutableArray<(int*int),'t>
+        let castedOther = other :?> ImmutableEnumerable2DArray<'t>
         map = castedOther.InternalMap
     override this.GetHashCode () = (map :> Object).GetHashCode ()    
     interface ImmutableArray<int*int, 't> with
@@ -51,16 +67,20 @@ type ImmutableEnumerable2DArray<'t when 't : comparison> (xdim, ydim, map : Map<
                     map |> Map.add index value
                 | None ->
                     map |> Map.remove index
-            ImmutableEnumerable2DArray<'t> (xdim, ydim, nextMap, x) 
-        member x.Previous = 
-            previous |> Option.map (fun t -> t :> ImmutableArray<int*int,'t>)
-        member x.InternalMap = map
+            ImmutableEnumerable2DArray<'t> (xdim, ydim, nextMap) 
         member x.Keys = map.Keys
         member x.Values = map.Values
         member x.KeyValuePairs = Seq.zip map.Keys map.Values
     interface ArrayType<Euclid2DCoords,'t> with
         member this.get_Item coords =
             match map.TryFind coords.AsTuple with
+            | Some value ->
+                value
+            | None ->
+                Unchecked.defaultof<'t>    
+    interface ArrayType<int*int, 't> with
+        member this.get_Item coords =
+            match map.TryFind coords with
             | Some value ->
                 value
             | None ->
@@ -93,7 +113,13 @@ type ImmutableEnumerable2DArray<'t when 't : comparison> (xdim, ydim, map : Map<
             else
                 None        
         member this.To2DArray =
-            Array2D.init xdim ydim (fun x y -> map.TryFind (x,y))
+            Array2D.init xdim ydim (fun x y -> 
+                match map.TryFind (x,y) with
+                | Some value ->
+                    value
+                | None ->
+                    Unchecked.defaultof<'t>    
+            )
         member this.AllEmptyCoords = (this :> IEnumerable2DArray<'t>).AllCoords |> Seq.filter (fun (x,y) -> (map.TryFind (x,y)).IsNone)
         member x.AllUsedCoords = map.Keys
         member x.AllEntries = map.Values

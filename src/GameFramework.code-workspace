@@ -7,5 +7,9 @@
 	"settings": {
 		"FSharp.inlayHints.enabled": false,
 		"editor.inlayHints.enabled": "offUnlessPressed"
+	},
+	"launch": {
+		"version": "0.2.0",
+		"configurations": []
 	}
 }

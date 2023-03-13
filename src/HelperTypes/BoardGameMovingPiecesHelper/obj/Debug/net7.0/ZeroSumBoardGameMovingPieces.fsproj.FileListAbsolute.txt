@@ -1,0 +1,17 @@
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/EvaluationHelperTypes/ZeroSumBoardGameMovingPieces/bin/Debug/net7.0/ZeroSumBoardGameMovingPieces.deps.json
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/EvaluationHelperTypes/ZeroSumBoardGameMovingPieces/bin/Debug/net7.0/ZeroSumBoardGameMovingPieces.dll
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/EvaluationHelperTypes/ZeroSumBoardGameMovingPieces/bin/Debug/net7.0/ZeroSumBoardGameMovingPieces.pdb
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/EvaluationHelperTypes/ZeroSumBoardGameMovingPieces/bin/Debug/net7.0/ZeroSumBoardGameMovingPieces.xml
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/EvaluationHelperTypes/ZeroSumBoardGameMovingPieces/bin/Debug/net7.0/GameInterfacesForSelfCalculatingPieces.dll
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/EvaluationHelperTypes/ZeroSumBoardGameMovingPieces/bin/Debug/net7.0/GameInterfacesForSelfCalculatingPieces.pdb
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/EvaluationHelperTypes/ZeroSumBoardGameMovingPieces/bin/Debug/net7.0/GameInterfacesForSelfCalculatingPieces.xml
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/EvaluationHelperTypes/ZeroSumBoardGameMovingPieces/obj/Debug/net7.0/ZeroSumBoardGameMovingPieces.fsproj.AssemblyReference.cache
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/EvaluationHelperTypes/ZeroSumBoardGameMovingPieces/obj/Debug/net7.0/ZeroSumBoardGameMovingPieces.AssemblyInfoInputs.cache
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/EvaluationHelperTypes/ZeroSumBoardGameMovingPieces/obj/Debug/net7.0/ZeroSumBoardGameMovingPieces.AssemblyInfo.fs
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/EvaluationHelperTypes/ZeroSumBoardGameMovingPieces/obj/Debug/net7.0/ZeroSumBoardGameMovingPieces.fsproj.CoreCompileInputs.cache
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/EvaluationHelperTypes/ZeroSumBoardGameMovingPieces/obj/Debug/net7.0/ZeroSumBoardGameMovingPieces.fsproj.CopyComplete
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/EvaluationHelperTypes/ZeroSumBoardGameMovingPieces/obj/Debug/net7.0/ZeroSumBoardGameMovingPieces.dll
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/EvaluationHelperTypes/ZeroSumBoardGameMovingPieces/obj/Debug/net7.0/refint/ZeroSumBoardGameMovingPieces.dll
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/EvaluationHelperTypes/ZeroSumBoardGameMovingPieces/obj/Debug/net7.0/ZeroSumBoardGameMovingPieces.xml
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/EvaluationHelperTypes/ZeroSumBoardGameMovingPieces/obj/Debug/net7.0/ZeroSumBoardGameMovingPieces.pdb
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/EvaluationHelperTypes/ZeroSumBoardGameMovingPieces/obj/Debug/net7.0/ref/ZeroSumBoardGameMovingPieces.dll

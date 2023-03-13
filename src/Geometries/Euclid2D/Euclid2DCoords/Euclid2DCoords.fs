@@ -19,15 +19,12 @@ namespace Euclid2D
 
 open System
 
-type Euclid2DCoords (tuple : int * int) =
-    new (x, y) = Euclid2DCoords (x, y)
-    member this.X = 
-        match tuple with
-        | x,y -> x
-    member this.Y = 
-        match tuple with
-        | x,y -> y
+type Euclid2DCoords (x,y) =
+    let tuple = x,y
+    member this.X = x
+    member this.Y = y
     member this.AsTuple = tuple
+    static member FromTuple tup = Euclid2DCoords tup
     override this.Equals other =
         if other = null then
             false

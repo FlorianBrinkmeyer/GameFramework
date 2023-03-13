@@ -57,6 +57,17 @@ public class GameCompanion<GameResult>: IGameMoveMaker, IReversibleGame<GameResu
             TriggerGameOver (resultMapper (state));
         }
     }
+    public void Run ()
+    {
+        AI_Agent? agent;
+        if ((playerToAIAgent != null) && (playerToAIAgent.TryGetValue (ActivePlayer, out agent)))
+        {
+            TriggerNextPlayer (ActivePlayer);
+            agent.MakeMove (this, state);
+        } else {
+            TriggerNextPlayer (ActivePlayer);
+        }    
+    }
     public bool Undoable => FSharpOption<ImmutableGame>.get_IsSome (state.Previous);
     public void Undo ()
     {

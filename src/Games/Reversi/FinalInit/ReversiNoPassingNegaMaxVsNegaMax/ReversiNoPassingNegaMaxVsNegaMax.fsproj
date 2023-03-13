@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net7.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="Program.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\ReversiInit\ReversiInit.fsproj" />
+    <ProjectReference Include="..\..\GUI\ReversiGtkGUI\ReversiGtkGUI.csproj" />
+    <ProjectReference Include="..\..\..\..\AIAgents\NegaMaxTimeLimited\NegaMaxTimeLimited.fsproj" />
+    <ProjectReference Include="..\..\..\..\AIAgents\SimpleNegaMaxAgent\SimpleNegaMaxAgent.fsproj" />
+    <ProjectReference Include="..\..\ReversiResultMapper\ReversiResultMapper.fsproj" />
+    <ProjectReference Include="..\..\..\..\AIAgents\NegaMaxTimeLimitedCaching\NegaMaxTimeLimitedCaching.fsproj" />
+  </ItemGroup>
+
+</Project>

@@ -33,15 +33,19 @@ public class DecoratedButton : Gtk.Button
 
 public abstract class TwoDBoardGUI<Board, Piece>
 where Board : Enumerable2DArray.IEnumerable2DArray<Piece> 
-where Piece : IPiece 
 {
      abstract protected Gtk.Builder builder {get;}     
      abstract protected void OnClick (Object? sender, EventArgs args);
      private Dictionary<String, String> imageNamesToFilenames = new Dictionary<String, String> ();
      protected DecoratedButton [,]? fields;
-     protected void setFieldToPieceImage (Euclid2DCoords coords, IPiece piece)
+     protected virtual String getImageFileName (Piece piece)
      {
-          var imageName = piece.Kind + piece.Player.ToString ();
+          var ipiece = (IPiece?) piece;
+          return ipiece!.Kind + ipiece.Player.ToString ();
+     } 
+     protected void setFieldToPieceImage (Euclid2DCoords coords, Piece piece)
+     {
+          var imageName = getImageFileName (piece);
           var image = new Gtk.Image (imageNamesToFilenames[imageName]);
           var field = fields![coords.X,coords.Y];
           field.Image = image;
@@ -51,8 +55,9 @@ where Piece : IPiece
           var label = (Gtk.Label) builder.GetObject ("GameInformLabel" + index.ToString ());
           label.Text = text;
      }
+     protected virtual String PlayerToString (int id) => "Player " + id.ToString ();
      protected virtual void OnGameOver (string result) => SetLabel (1, result);
-     protected virtual void OnOwnPlayersTurn (int activePlayer) => SetLabel (1, $"Player {activePlayer}: It's your turn. Please make a move.");     
+     protected virtual void OnOwnPlayersTurn (int activePlayer) => SetLabel (1, PlayerToString (activePlayer) + ": It's your turn. Please make a move.");     
      protected virtual void OnAIMessage (Object sender, String message) => SetLabel (2, message);
      protected IEnumerable<int>? ThisGUIusers;
      protected Board? board;
@@ -89,7 +94,7 @@ where Piece : IPiece
           }
           foreach (Tuple<Piece,Tuple<int,int>> entry in board.AllEntriesWithCoords)
           {
-               var pos = new Euclid2DCoords (entry.Item2);
+               var pos = Euclid2DCoords.FromTuple (entry.Item2);
                var piece = entry.Item1;
                setFieldToPieceImage (pos, piece);
           }
@@ -98,7 +103,7 @@ where Piece : IPiece
                if (ThisGUIusers!.Any (player => player == activePlayer))
                     OnOwnPlayersTurn (activePlayer);
                else 
-                    SetLabel (1, $"Player {activePlayer} is planning the next move.");
+                    SetLabel (1, PlayerToString (activePlayer) + " is planning the next move.");
           };
           foreach (AI_Informer ai in AIs)
                ai.SendMessage += OnAIMessage;

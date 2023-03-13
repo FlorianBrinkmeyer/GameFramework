@@ -83,7 +83,7 @@ where Piece : IPiece
             var transformedEvent = evnt as BoardTransformedEvent<Tuple<int,int>>;
             var coords = new Euclid2DCoords (transformedEvent!.Field);
             var transformedTo = transformedEvent.TransformedTo;
-            setFieldToPieceImage (coords, transformedTo);
+            setFieldToPieceImage (coords, (Piece) transformedTo);
         }
     }
     override protected void initialize (int windowsWidth, int windowHeight, String pictureFolder, Board _board, 

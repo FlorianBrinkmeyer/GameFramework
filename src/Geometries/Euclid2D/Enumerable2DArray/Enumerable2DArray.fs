@@ -32,6 +32,7 @@ let mainDia = ((0,0),(1,1))
 
 type IEnumerable2DArray<'t> =
     inherit ArrayType<Euclid2DCoords,'t>
+    inherit ArrayType<int*int,'t>
     inherit TwoDArrayType<'t>
     abstract Item: int*int -> Option<'t>
     abstract Item: Euclid2DCoords -> Option<'t>
@@ -47,7 +48,7 @@ type IEnumerable2DArray<'t> =
     abstract AllEmptyCoords : seq<int*int>
     abstract AllEntriesWithCoords : seq<'t * (int*int)>
     abstract AllEntries : seq<'t>
-    abstract To2DArray: Option<'t> [,]
+    abstract To2DArray: 't [,]
 
 type ToSeqEnumerator<'t> (array : IEnumerable2DArray<'t>, Start: int * int, Direction: int * int) =
     let mutable x = (Start |> fst) - (Direction |> fst) 
