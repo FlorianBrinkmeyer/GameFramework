@@ -37,28 +37,28 @@ type MonteCarloTreeSearch (player : int, searchTime : int) =
             //Performs one additional simulation in "tree" and returns a tuple consisting of the resulting tree and the final score of the simulation
             //for the AI player. The score is only needed for the recursive calls to propagate the value back. 
             let rec getNextTree (tree : MCTree) =
-                //Check, if final state.
+                //Check if final state.
                 if tree.State.NumberOfPossibleMoves = 0 then
                     let finalScore = tree.State.Value player
                     let resTree = {tree with NumberOfSimulations = tree.NumberOfSimulations + 1; TotalScore = tree.TotalScore + finalScore}
                     resTree, finalScore
                 else
-                    //Check, if already completely expanded
+                    //Check if already completely expanded.
                     if tree.UntriedMoves.Count = 0 then
-                        //select child according to UCB1-formula, which reflects a compromise between exploitation and exploration
+                        //Select child according to UCB1-formula, which reflects a compromise between exploitation and exploration.
                         let selectedChildIndex = 
                             let UCB1formula (child : MCTree) = 
                                 let nodeSimCount = tree.NumberOfSimulations |> float
                                 let childSimCount = child.NumberOfSimulations |> float
                                 child.TotalScore / childSimCount + sqrt (2.0 * (log nodeSimCount) / childSimCount) 
                             [0..(tree.State.NumberOfPossibleMoves-1)] |> List.maxBy (fun i -> UCB1formula tree.Children[i]) 
-                        //perform one additional simulation in child-tree and update score
+                        //Perform one additional simulation in child-tree and update score.
                         let updatedChild, additionalScore = getNextTree tree.Children[selectedChildIndex]
                         tree.Children[selectedChildIndex] <- updatedChild
                         let updatedTree = {tree with NumberOfSimulations = tree.NumberOfSimulations + 1; TotalScore = tree.TotalScore + additionalScore}
                         updatedTree, additionalScore
                     else
-                        //expand next child   
+                        //Expand next child.   
                         let index = rnd.Next tree.UntriedMoves.Count
                         let untriedMove = (tree.UntriedMoves |> Seq.toArray).[index]
                         let reducedUntriedMoves = tree.UntriedMoves |> Set.remove untriedMove
@@ -81,7 +81,7 @@ type MonteCarloTreeSearch (player : int, searchTime : int) =
                         let updatedTree = 
                             {tree with NumberOfSimulations = tree.NumberOfSimulations + 1; TotalScore = tree.TotalScore + finalScore;
                                        UntriedMoves = reducedUntriedMoves}      
-                        (updatedTree, finalScore)  
+                        updatedTree, finalScore  
             //Initialize timer.
             let mutable timeLeft = true
             let timer = new Timers.Timer (searchTime)
@@ -89,16 +89,19 @@ type MonteCarloTreeSearch (player : int, searchTime : int) =
             timer.AutoReset <- false
             timer.Start ()
             //Initialize algorithm and then perform as many simulations as possible.
-            let state = game :?> ImmutableGame
-            let root = 
-                {State = state; NumberOfSimulations = 0; TotalScore = 0; Children = Collections.Generic.Dictionary<int,MCTree> ();
-                UntriedMoves = [0..state.NumberOfPossibleMoves-1] |> Set.ofList}       
-            let mutable tree = root
-            let mutable simCount = 0
-            while timeLeft do
-                tree <- getNextTree tree |> fst 
-                sendMessage.Trigger (sprintf "Number of simulations: %A" simCount)    
-                simCount <- simCount + 1    
-            //Apply move most simulations have been performed with.
-            let chosenMove = Seq.zip tree.Children.Keys tree.Children.Values |> Seq.maxBy (fun (_, child) -> child.NumberOfSimulations) |> fst
-            mutableGame.MakeMove chosenMove     
+            let mainRoutine = async {
+                let state = game :?> ImmutableGame
+                let root = 
+                    {State = state; NumberOfSimulations = 0; TotalScore = 0; Children = Collections.Generic.Dictionary<int,MCTree> ();
+                    UntriedMoves = [0..state.NumberOfPossibleMoves-1] |> Set.ofList}       
+                let mutable tree = root
+                let mutable simCount = 0
+                while timeLeft do
+                    tree <- getNextTree tree |> fst 
+                    sendMessage.Trigger (sprintf "Number of simulations: %A" simCount)    
+                    simCount <- simCount + 1    
+                //Apply move most simulations have been performed with.
+                let chosenMove = Seq.zip tree.Children.Keys tree.Children.Values |> Seq.maxBy (fun (_, child) -> child.NumberOfSimulations) |> fst
+                mutableGame.MakeMove chosenMove
+            }
+            mainRoutine |> Async.Start      
