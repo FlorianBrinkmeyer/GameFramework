@@ -35,7 +35,7 @@ type MonteCarloTreeSearch (player : int, searchTime : int) =
         member x.MakeMove mutableGame game =
             let rnd = Random ()
             //Performs one additional simulation in "tree" and returns a tuple consisting of the resulting tree and the final score of the simulation
-            //for the AIPlayer. The score is only needed for the recursive calls to propagate the value back. 
+            //for the AI player. The score is only needed for the recursive calls to propagate the value back. 
             let rec getNextTree (tree : MCTree) =
                 //Check, if final state.
                 if tree.State.NumberOfPossibleMoves = 0 then
@@ -72,12 +72,12 @@ type MonteCarloTreeSearch (player : int, searchTime : int) =
                                 else    
                                     let randomMove = rnd.Next state.NumberOfPossibleMoves
                                     state.NthMove randomMove |> helper
-                            nextState        
+                            nextState |> helper       
                         let finalScore = randomFinalState.Value player
                         let newChild = 
                             {State = nextState; NumberOfSimulations = 1; TotalScore = finalScore; UntriedMoves = childUntriedMoves;
                             Children = Collections.Generic.Dictionary<int,MCTree> ()} 
-                        tree.Children[index] <- newChild
+                        tree.Children[untriedMove] <- newChild
                         let updatedTree = 
                             {tree with NumberOfSimulations = tree.NumberOfSimulations + 1; TotalScore = tree.TotalScore + finalScore;
                                        UntriedMoves = reducedUntriedMoves}      
@@ -86,6 +86,7 @@ type MonteCarloTreeSearch (player : int, searchTime : int) =
             let mutable timeLeft = true
             let timer = new Timers.Timer (searchTime)
             timer.Elapsed.AddHandler (fun _ _ -> timeLeft <- false)
+            timer.AutoReset <- false
             timer.Start ()
             //Initialize algorithm and then perform as many simulations as possible.
             let state = game :?> ImmutableGame
@@ -96,8 +97,8 @@ type MonteCarloTreeSearch (player : int, searchTime : int) =
             let mutable simCount = 0
             while timeLeft do
                 tree <- getNextTree tree |> fst 
+                sendMessage.Trigger (sprintf "Number of simulations: %A" simCount)    
                 simCount <- simCount + 1    
-            sendMessage.Trigger (sprintf "Number of simulations: %A" simCount)    
             //Apply move most simulations have been performed with.
             let chosenMove = Seq.zip tree.Children.Keys tree.Children.Values |> Seq.maxBy (fun (_, child) -> child.NumberOfSimulations) |> fst
-            mutableGame.MakeMove chosenMove        
+            mutableGame.MakeMove chosenMove     

@@ -51,45 +51,45 @@ type NegaMaxTimeLimitedCaching (player : int, searchTime : int, maxDepth : int, 
                     while searchDepth <= maxDepth && timeLeft do
                         let rec helper step (state : ImmutableGame) =
                             let numberOfPossibleMoves = state.NumberOfPossibleMoves
+                            let nextStep (cached : ConcurrentDictionary<'t,GameStateAttr>) (queue : ConcurrentQueue<'t>) (st : 't) =
+                                match cached.TryGetValue st with
+                                | true, attr when attr.RemainingSteps >= step ->
+                                    usedCacheCount <- usedCacheCount + 1
+                                    queue.Enqueue st
+                                    attr.UsedCount <- attr.UsedCount + 1
+                                    attr.Value
+                                | _ ->
+                                    let usedCount =
+                                        match cached.TryGetValue st with
+                                        | true, attr ->
+                                            attr.UsedCount
+                                        | _ -> 0    
+                                    let value = 
+                                        [0..(numberOfPossibleMoves-1)] |> List.map (fun move -> -(helper (step-1) (state.NthMove move))) |> List.max
+                                    cached[st] <- {Value = value; RemainingSteps = step; UsedCount = usedCount + 1}
+                                    queue.Enqueue st
+                                    match cacheMaxSize with
+                                    | Some maxSize ->
+                                        while cached.Count > maxSize && queue.Count > 0 && timeLeft do
+                                            match queue.TryDequeue () with
+                                            | true, potToDelete ->
+                                                match cached.TryGetValue potToDelete with
+                                                | true, attr ->
+                                                    attr.UsedCount <- attr.UsedCount - 1
+                                                    if attr.UsedCount <= 0 then
+                                                        cached.TryRemove potToDelete |> ignore
+                                                | _ -> ()
+                                            | _ -> ()        
+                                    | None -> ()
+                                    value
                             if (step = 0) || (numberOfPossibleMoves = 0)  then
                                 state.ZSValue 
                             else 
-                                let help (cached : ConcurrentDictionary<'t,GameStateAttr>) (queue : ConcurrentQueue<'t>) (st : 't) =
-                                    match cached.TryGetValue st with
-                                    | true, attr when attr.RemainingSteps >= step ->
-                                        usedCacheCount <- usedCacheCount + 1
-                                        queue.Enqueue st
-                                        attr.UsedCount <- attr.UsedCount + 1
-                                        attr.Value
-                                    | _ ->
-                                        let usedCount =
-                                            match cached.TryGetValue st with
-                                            | true, attr ->
-                                                attr.UsedCount
-                                            | _ -> 0    
-                                        let value = 
-                                            [0..(numberOfPossibleMoves-1)] |> List.map (fun move -> -(helper (step-1) (state.NthMove move))) |> List.max
-                                        cached[st] <- {Value = value; RemainingSteps = step; UsedCount = usedCount + 1}
-                                        queue.Enqueue st
-                                        match cacheMaxSize with
-                                        | Some maxSize ->
-                                            while cached.Count > maxSize && queue.Count > 0 && timeLeft do
-                                                match queue.TryDequeue () with
-                                                | true, potToDelete ->
-                                                    match cached.TryGetValue potToDelete with
-                                                    | true, attr ->
-                                                        attr.UsedCount <- attr.UsedCount - 1
-                                                        if attr.UsedCount <= 0 then
-                                                            cached.TryRemove potToDelete |> ignore
-                                                    | _ -> ()
-                                                | _ -> ()        
-                                        | None -> ()
-                                        value
                                 if justStoreHashes then
                                     let hash = state.GetHashCode ()
-                                    help cachedStateHashes cachedHashesQueue hash
+                                    nextStep cachedStateHashes cachedHashesQueue hash
                                 else
-                                    help cachedStates cachedStatesQueue state    
+                                    nextStep cachedStates cachedStatesQueue state    
                         let chosen = [0..(immutableGame.NumberOfPossibleMoves-1)] |> List.maxBy (fun move -> -(helper (searchDepth-1) (immutableGame.NthMove move)))
                         if timeLeft then
                             chosenMove <- chosen
