@@ -22,11 +22,20 @@ type MCTree =
     {State : ImmutableGame;
     NumberOfSimulations : int;
     TotalScore : float;
-    Children : Collections.Generic.Dictionary<int, MCTree>;
+    Children : MCTree [];
     UntriedMoves : Set<int>}
 
-type MonteCarloTreeSearch (player : int, searchTime : int) =
+type MonteCarloTreeSearch (playerID : int, searchTime : int) =
     let sendMessage = Event<String> ()
+    let mutable player = playerID
+    let mutable considerationTime = searchTime
+    interface AI_WithConsiderationTime with
+        member x.Player
+            with get () = player
+            and set (value) = player <- value
+        member x.ConsiderationTime
+            with get () = considerationTime
+            and set (value) = considerationTime <- value
     interface AI_Informer with
         [<CLIEvent>]
         member x.SendMessage = sendMessage.Publish 
@@ -76,7 +85,7 @@ type MonteCarloTreeSearch (player : int, searchTime : int) =
                         let finalScore = randomFinalState.Value player
                         let newChild = 
                             {State = nextState; NumberOfSimulations = 1; TotalScore = finalScore; UntriedMoves = childUntriedMoves;
-                            Children = Collections.Generic.Dictionary<int,MCTree> ()} 
+                            Children = Array.zeroCreate nextState.NumberOfPossibleMoves} 
                         tree.Children[untriedMove] <- newChild
                         let updatedTree = 
                             {tree with NumberOfSimulations = tree.NumberOfSimulations + 1; TotalScore = tree.TotalScore + finalScore;
@@ -84,7 +93,7 @@ type MonteCarloTreeSearch (player : int, searchTime : int) =
                         updatedTree, finalScore  
             //Initialize timer.
             let mutable timeLeft = true
-            let timer = new Timers.Timer (searchTime)
+            let timer = new Timers.Timer (considerationTime)
             timer.Elapsed.AddHandler (fun _ _ -> timeLeft <- false)
             timer.AutoReset <- false
             timer.Start ()
@@ -92,16 +101,16 @@ type MonteCarloTreeSearch (player : int, searchTime : int) =
             let mainRoutine = async {
                 let state = game :?> ImmutableGame
                 let root = 
-                    {State = state; NumberOfSimulations = 0; TotalScore = 0; Children = Collections.Generic.Dictionary<int,MCTree> ();
+                    {State = state; NumberOfSimulations = 0; TotalScore = 0; Children = Array.zeroCreate state.NumberOfPossibleMoves;
                     UntriedMoves = [0..state.NumberOfPossibleMoves-1] |> Set.ofList}       
                 let mutable tree = root
                 let mutable simCount = 0
                 while timeLeft do
                     tree <- getNextTree tree |> fst 
-                    sendMessage.Trigger (sprintf "Number of simulations: %A" simCount)    
                     simCount <- simCount + 1    
+                    sendMessage.Trigger (sprintf "Number of simulations: %A" simCount)    
                 //Apply move most simulations have been performed with.
-                let chosenMove = Seq.zip tree.Children.Keys tree.Children.Values |> Seq.maxBy (fun (_, child) -> child.NumberOfSimulations) |> fst
+                let chosenMove = tree.Children |> Array.mapi (fun index ch -> index, ch)  |> Seq.maxBy (fun (_, child) -> child.NumberOfSimulations) |> fst
                 mutableGame.MakeMove chosenMove
             }
             mainRoutine |> Async.Start      

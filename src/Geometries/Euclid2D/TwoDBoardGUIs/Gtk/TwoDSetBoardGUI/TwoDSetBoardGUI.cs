@@ -27,13 +27,11 @@ where Board : ITwoDSetBoard<Piece>
     override protected void OnOwnPlayersTurn (int activePlayer)
     {
         base.OnOwnPlayersTurn (activePlayer);
-        Gtk.Application.Invoke ((sender, args) => {
-            foreach (Tuple<int,int> coords in board!.PossibleMoves)
-            {
-                var position = Euclid2DCoords.FromTuple (coords);
-                fields![position.X, position.Y].Sensitive = true;
-            }
-        });
+        foreach (Tuple<int,int> coords in board!.PossibleMoves)
+        {
+            var position = Euclid2DCoords.FromTuple (coords);
+            fields![position.X, position.Y].Sensitive = true;
+        }
     }
     override protected void OnClick (Object? sender, EventArgs args)
     {

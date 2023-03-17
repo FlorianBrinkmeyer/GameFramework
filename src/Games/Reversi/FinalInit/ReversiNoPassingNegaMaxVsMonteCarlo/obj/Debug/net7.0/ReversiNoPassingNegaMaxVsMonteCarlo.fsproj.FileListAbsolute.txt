@@ -115,3 +115,6 @@
 /home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Games/Reversi/FinalInit/ReversiNoPassingNegaMaxVsMonteCarlo/obj/Debug/net7.0/ReversiNoPassingNegaMaxVsMonteCarlo.pdb
 /home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Games/Reversi/FinalInit/ReversiNoPassingNegaMaxVsMonteCarlo/obj/Debug/net7.0/ReversiNoPassingNegaMaxVsMonteCarlo.genruntimeconfig.cache
 /home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Games/Reversi/FinalInit/ReversiNoPassingNegaMaxVsMonteCarlo/obj/Debug/net7.0/ref/ReversiNoPassingNegaMaxVsMonteCarlo.dll
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Games/Reversi/FinalInit/ReversiNoPassingNegaMaxVsMonteCarlo/bin/Debug/net7.0/AI_WithConsiderationTime.dll
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Games/Reversi/FinalInit/ReversiNoPassingNegaMaxVsMonteCarlo/bin/Debug/net7.0/AI_WithConsiderationTime.pdb
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Games/Reversi/FinalInit/ReversiNoPassingNegaMaxVsMonteCarlo/bin/Debug/net7.0/AI_WithConsiderationTime.xml

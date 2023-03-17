@@ -12,7 +12,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\Geometries\Euclid2D\Enumerable2DArray\Enumerable2DArray.fsproj" />
     <ProjectReference Include="..\..\..\..\PieceInterfaces\PieceBase\PieceBase.csproj" />
-    <ProjectReference Include="..\..\StandardChessPieces\StandardChessPieces.fsproj" />
+    <ProjectReference Include="..\..\ChessHelperTypes\ChessHelperTypes.fsproj" />
   </ItemGroup>
 
 </Project>

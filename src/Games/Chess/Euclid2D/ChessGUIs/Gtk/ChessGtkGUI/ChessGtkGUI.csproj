@@ -2,7 +2,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\..\..\Geometries\Euclid2D\TwoDBoardGUIs\Gtk\TwoDBoardGUIMovablePieces\TwoDBoardGUIMovablePieces.csproj" />
-    <ProjectReference Include="..\..\..\..\ChessBoardEvents\ChessBoardEvents.fsproj" />
+    <ProjectReference Include="..\..\..\..\ChessHelperTypes\ChessHelperTypes.fsproj" />
   </ItemGroup>
 
   <PropertyGroup>

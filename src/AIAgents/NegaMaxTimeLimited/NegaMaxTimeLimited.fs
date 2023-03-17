@@ -18,9 +18,19 @@ Copyright (C) 2023  Florian Brinkmeyer
 namespace GameFramework
 open System
 
-type NegaMaxTimeLimited (player : int, searchTime : int, maxDepth : int) =
+type NegaMaxTimeLimited (playerID : int, searchTime : int, maxDepth : int) =
     let sendMessage = Event<String> ()
+    let mutable player = playerID
+    let mutable considerationTime = searchTime
     let mutable reachedMaxDepth = 0
+    member val MaximalSearchDepth = maxDepth with get, set
+    interface AI_WithConsiderationTime with
+        member x.Player
+            with get () = player
+            and set (value) = player <- value
+        member x.ConsiderationTime
+            with get () = considerationTime
+            and set (value) = considerationTime <- value
     interface AI_Informer with
         [<CLIEvent>]
         member x.SendMessage = sendMessage.Publish
@@ -30,7 +40,7 @@ type NegaMaxTimeLimited (player : int, searchTime : int, maxDepth : int) =
             let state = game :?> ImmutableGame
             let mutable chosenMove = 0
             let mutable timeLeft = true
-            let timer = new Timers.Timer (searchTime)
+            let timer = new Timers.Timer (considerationTime)
             timer.AutoReset <- false
             timer.Elapsed.AddHandler (fun _ _ -> 
                 timeLeft <- false
@@ -40,7 +50,7 @@ type NegaMaxTimeLimited (player : int, searchTime : int, maxDepth : int) =
             let timeLimitedSearch =
                 async {
                     let mutable searchDepth = 1
-                    while searchDepth <= maxDepth && timeLeft do
+                    while searchDepth <= x.MaximalSearchDepth && timeLeft do
                         let rec helper step (state : ImmutableGame) =
                             let numberOfPossibleMoves = state.NumberOfPossibleMoves
                             if (step = 0) || (numberOfPossibleMoves = 0)  then

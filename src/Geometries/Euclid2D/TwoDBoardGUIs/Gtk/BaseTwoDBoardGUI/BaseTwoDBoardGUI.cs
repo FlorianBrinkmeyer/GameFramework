@@ -52,6 +52,12 @@ where Board : Enumerable2DArray.IEnumerable2DArray<Piece>
                field.Image = image;
           });        
      }     
+     protected void fieldClearImage (Euclid2DCoords coords)
+     {
+          Gtk.Application.Invoke ((sender, args) => {
+               fields![coords.X,coords.Y].Image = null;          
+          });
+     }
      protected void SetLabel (int index, String text)
      {
           Gtk.Application.Invoke ((sender, args) => {
@@ -105,7 +111,9 @@ where Board : Enumerable2DArray.IEnumerable2DArray<Piece>
           game.NextPlayer += activePlayer =>
           {
                if (ThisGUIusers!.Any (player => player == activePlayer))
-                    OnOwnPlayersTurn (activePlayer);
+                    Gtk.Application.Invoke ((sender, args) => {
+                         OnOwnPlayersTurn (activePlayer);
+                    });     
                else 
                     SetLabel (1, PlayerToString (activePlayer) + " is planning the next move.");
           };

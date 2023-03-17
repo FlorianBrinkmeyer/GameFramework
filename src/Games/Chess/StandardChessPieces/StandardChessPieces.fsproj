@@ -10,9 +10,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\PieceInterfaces\PieceInterfacesForBoardAndCompanion\PieceInterfacesForBoardAndCompanion.csproj" />
     <ProjectReference Include="..\..\..\ImmutableArray\ImmutableArray.fsproj" />
     <ProjectReference Include="..\ChessPieceInterfaces\ChessPieceInterfaces.fsproj" />
+    <ProjectReference Include="..\ChessHelperTypes\ChessHelperTypes.fsproj" />
   </ItemGroup>
 
 </Project>

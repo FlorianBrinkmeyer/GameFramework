@@ -61,7 +61,6 @@
 /home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Games/Chess/Euclid2D/ChessGUIs/Gtk/ChessGtkGUI/bin/Debug/net7.0/AI_Informer.dll
 /home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Games/Chess/Euclid2D/ChessGUIs/Gtk/ChessGtkGUI/bin/Debug/net7.0/BaseTwoDBoardGUI.dll
 /home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Games/Chess/Euclid2D/ChessGUIs/Gtk/ChessGtkGUI/bin/Debug/net7.0/BoardInterfacesForGUI.dll
-/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Games/Chess/Euclid2D/ChessGUIs/Gtk/ChessGtkGUI/bin/Debug/net7.0/ChessBoardEvents.dll
 /home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Games/Chess/Euclid2D/ChessGUIs/Gtk/ChessGtkGUI/bin/Debug/net7.0/Enumerable2DArray.dll
 /home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Games/Chess/Euclid2D/ChessGUIs/Gtk/ChessGtkGUI/bin/Debug/net7.0/Euclid2DCoords.dll
 /home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Games/Chess/Euclid2D/ChessGUIs/Gtk/ChessGtkGUI/bin/Debug/net7.0/GameInterfacesForGUI.dll
@@ -70,8 +69,6 @@
 /home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Games/Chess/Euclid2D/ChessGUIs/Gtk/ChessGtkGUI/bin/Debug/net7.0/TwoDBoardGUIMovablePieces.dll
 /home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Games/Chess/Euclid2D/ChessGUIs/Gtk/ChessGtkGUI/bin/Debug/net7.0/TwoDBoardInterfacesForGUI.dll
 /home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Games/Chess/Euclid2D/ChessGUIs/Gtk/ChessGtkGUI/bin/Debug/net7.0/TwoDBoardGUIMovablePieces.pdb
-/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Games/Chess/Euclid2D/ChessGUIs/Gtk/ChessGtkGUI/bin/Debug/net7.0/ChessBoardEvents.pdb
-/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Games/Chess/Euclid2D/ChessGUIs/Gtk/ChessGtkGUI/bin/Debug/net7.0/ChessBoardEvents.xml
 /home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Games/Chess/Euclid2D/ChessGUIs/Gtk/ChessGtkGUI/bin/Debug/net7.0/AI_Informer.pdb
 /home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Games/Chess/Euclid2D/ChessGUIs/Gtk/ChessGtkGUI/bin/Debug/net7.0/AI_Informer.xml
 /home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Games/Chess/Euclid2D/ChessGUIs/Gtk/ChessGtkGUI/bin/Debug/net7.0/BaseTwoDBoardGUI.pdb
@@ -93,3 +90,13 @@
 /home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Games/Chess/Euclid2D/ChessGUIs/Gtk/ChessGtkGUI/obj/Debug/net7.0/refint/ChessGtkGUI.dll
 /home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Games/Chess/Euclid2D/ChessGUIs/Gtk/ChessGtkGUI/obj/Debug/net7.0/ChessGtkGUI.pdb
 /home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Games/Chess/Euclid2D/ChessGUIs/Gtk/ChessGtkGUI/obj/Debug/net7.0/ref/ChessGtkGUI.dll
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Games/Chess/Euclid2D/ChessGUIs/Gtk/ChessGtkGUI/bin/Debug/net7.0/ChessHelperTypes.dll
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Games/Chess/Euclid2D/ChessGUIs/Gtk/ChessGtkGUI/bin/Debug/net7.0/GameInterfacesForSelfCalculatingPieces.dll
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Games/Chess/Euclid2D/ChessGUIs/Gtk/ChessGtkGUI/bin/Debug/net7.0/GameMoveMaker.dll
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Games/Chess/Euclid2D/ChessGUIs/Gtk/ChessGtkGUI/bin/Debug/net7.0/PieceInterfacesForBoardAndCompanion.dll
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Games/Chess/Euclid2D/ChessGUIs/Gtk/ChessGtkGUI/bin/Debug/net7.0/ChessHelperTypes.pdb
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Games/Chess/Euclid2D/ChessGUIs/Gtk/ChessGtkGUI/bin/Debug/net7.0/ChessHelperTypes.xml
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Games/Chess/Euclid2D/ChessGUIs/Gtk/ChessGtkGUI/bin/Debug/net7.0/GameInterfacesForSelfCalculatingPieces.pdb
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Games/Chess/Euclid2D/ChessGUIs/Gtk/ChessGtkGUI/bin/Debug/net7.0/GameInterfacesForSelfCalculatingPieces.xml
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Games/Chess/Euclid2D/ChessGUIs/Gtk/ChessGtkGUI/bin/Debug/net7.0/GameMoveMaker.pdb
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Games/Chess/Euclid2D/ChessGUIs/Gtk/ChessGtkGUI/bin/Debug/net7.0/PieceInterfacesForBoardAndCompanion.pdb

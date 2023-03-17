@@ -27,5 +27,10 @@ Current board -&gt; piece position -&gt; white list -&gt; resulting board
 Current board -&gt; piece position -&gt; black list -&gt; resulting board
 </summary>
 </member>
+<member name="M:Chess.IKing`2.AugmentByBlackList(`0,`1,System.Collections.Generic.IEnumerable{`1})">
+<summary>
+Currend board -&gt; piece position -&gt; black list -&gt; resulting board
+</summary>
+</member>
 </members>
 </doc>

@@ -25,13 +25,12 @@ where Board : ITwoDBoardMovablePieces<Piece>
 where Piece : IPiece 
 {
     override protected Gtk.Builder builder {get;} = new Gtk.Builder ();
-    public ChessGtkGUI (int windowsWidth, int windowHeight, String pictureFolder, String guiFilename, Board _board, 
-    IGameInformer<String> _game, int [] thisGUIusers, IEnumerable<AI_Informer> AIs)
+    protected override string PlayerToString(int id)
     {
-        Gtk.Application.Init ();
-        builder.AddFromFile (guiFilename);
-        builder.Autoconnect (this);
-        initialize (windowsWidth, windowHeight, pictureFolder, _board, _game, thisGUIusers, AIs);
+        if (id == 1) 
+            return "White";
+        else
+            return "Black";    
     }
     override protected void OnBoardInformerEvent (object? sender, IBoardMoveEvent evnt)
     {
@@ -40,11 +39,28 @@ where Piece : IPiece
         {
             var kingCheckedEvent = evnt as BoardKingCheckedEvent<Tuple<int,int>>;
             var player = kingCheckedEvent!.CheckedPlayer;
-            var label = (Gtk.Label) builder.GetObject ("AdditionalGameInformLabel");
+            String labelText;
             if (player == 1)
-                label.Text = "White king checked.";
+                labelText = "White king checked.";
             else
-                label.Text = "Black king checked.";            
+                labelText = "Black king checked.";            
+            SetLabel (2, labelText);
         }
+        if (evnt is BoardCastlingEvent<Tuple<int,int>>)
+        {
+            var castlingEvent = evnt as BoardCastlingEvent<Tuple<int,int>>;
+            var moveEvent1 = new BoardMovingEvent<Tuple<int,int>> (castlingEvent!.KingStartPos, castlingEvent.KingDestPos);
+            var moveEvent2 = new BoardMovingEvent<Tuple<int,int>> (castlingEvent.RookStartPos, castlingEvent.KingDestPos);
+            OnBoardInformerEvent (sender, moveEvent1);
+            OnBoardInformerEvent (sender, moveEvent2);
+        }
+    }
+    public ChessGtkGUI (int windowsWidth, int windowHeight, String pictureFolder, String guiFilename, Board _board, 
+    IGameInformer<String> _game, int [] thisGUIusers, IEnumerable<AI_Informer> AIs)
+    {
+        Gtk.Application.Init ();
+        builder.AddFromFile (guiFilename);
+        builder.Autoconnect (this);
+        initialize (windowsWidth, windowHeight, pictureFolder, _board, _game, thisGUIusers, AIs);
     }
 }

@@ -32,7 +32,7 @@ where Piece : IPiece
         base.OnOwnPlayersTurn (activePlayer);
         foreach (Tuple<int,int> entry in board!.AllUsedCoords)
         {
-            var coords = new Euclid2DCoords (entry);
+            var coords = Euclid2DCoords.FromTuple (entry);
             var possibleMoves = board.PossibleMoves (entry);
             if (possibleMoves.Any ())
                 fields![coords.X, coords.Y].Sensitive = true;
@@ -48,7 +48,6 @@ where Piece : IPiece
             var destField = position;
             foreach (Tuple<int,int> entry in board!.AllCoords)
                 fields![entry.Item1,entry.Item2].Sensitive = false;
-            moveFinished ();    
             board!.MakeMove (startField!.AsTuple, destField.AsTuple);
         } else {
             startField = position;
@@ -66,22 +65,22 @@ where Piece : IPiece
         if (evnt is BoardMovingEvent<Tuple<int,int>>)
         {
             var movingEvent = evnt as BoardMovingEvent<Tuple<int,int>>;
-            var start = new Euclid2DCoords (movingEvent!.Start);
-            var dest = new Euclid2DCoords (movingEvent!.Dest);
+            var start = Euclid2DCoords.FromTuple (movingEvent!.Start);
+            var dest = Euclid2DCoords.FromTuple (movingEvent!.Dest);
             var destPiece = board![dest];
-            fields![start.X,start.Y].Image = null;
+            fieldClearImage (start);
             setFieldToPieceImage (dest, destPiece); 
         }
         if (evnt is BoardDestroyedEvent<Tuple<int,int>>)
         {
             var destroyedEvent = evnt as BoardDestroyedEvent<Tuple<int,int>>;
-            var coords = new Euclid2DCoords (destroyedEvent!.Field);
-            fields![coords.X,coords.Y].Image = null;
+            var coords = Euclid2DCoords.FromTuple (destroyedEvent!.Field);
+            fieldClearImage (coords);
         }
         if (evnt is BoardTransformedEvent<Tuple<int,int>>)
         {
             var transformedEvent = evnt as BoardTransformedEvent<Tuple<int,int>>;
-            var coords = new Euclid2DCoords (transformedEvent!.Field);
+            var coords = Euclid2DCoords.FromTuple (transformedEvent!.Field);
             var transformedTo = transformedEvent.TransformedTo;
             setFieldToPieceImage (coords, (Piece) transformedTo);
         }

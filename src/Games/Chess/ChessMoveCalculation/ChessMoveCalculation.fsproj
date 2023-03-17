@@ -13,7 +13,7 @@
     <ProjectReference Include="..\..\..\HelperTypes\BoardGameMovingPiecesHelper\BoardGameMovingPiecesHelper.fsproj" />
     <ProjectReference Include="..\..\..\ImmutableArray\ImmutableArray.fsproj" />
     <ProjectReference Include="..\ChessPieceInterfaces\ChessPieceInterfaces.fsproj" />
-    <ProjectReference Include="..\ChessBoardEvents\ChessBoardEvents.fsproj" />
+    <ProjectReference Include="..\ChessHelperTypes\ChessHelperTypes.fsproj" />
   </ItemGroup>
 
 </Project>

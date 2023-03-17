@@ -21,12 +21,13 @@ open GameFramework
 
 type IKing<'Board, 'Coords> =
     inherit IPiece
-    inherit ISelfCalculatingPiece<'Board, 'Coords, IMoveCommand<'Coords>, IBoardInformerEvent>
+    inherit ISelfCalculatingPiece<'Board, 'Coords, IMoveCommand<'Coords>, IBoardMoveEvent>
+    ///Currend board -> piece position -> black list -> resulting board
     abstract AugmentByBlackList : 'Board (*current board*) -> 'Coords (*piece position*) -> seq<'Coords> (*black list*) -> 'Board (*resulting board*)
 
 type INonKingChessPiece<'Board, 'Coords> =
     inherit IPiece
-    inherit ISelfCalculatingPiece<'Board, 'Coords, IMoveCommand<'Coords>, IBoardInformerEvent>
+    inherit ISelfCalculatingPiece<'Board, 'Coords, IMoveCommand<'Coords>, IBoardMoveEvent>
     ///Current board -> piece position -> black list for king
     abstract BlackListForKing : 'Board (*current board*) -> 'Coords (*piece position*) -> seq<'Coords>
     ///Current board -> piece position -> field to check -> threatening ? Some (threat neutralizing moves) : None 
@@ -43,5 +44,5 @@ type IBlockableChessPiece<'Board, 'Coords> =
         'Board (*resulting board*)
 
 type IBaseChessPiece<'Board, 'Coords> =
-    inherit ISelfCalculatingPiece<'Board, 'Coords, IMoveCommand<'Coords>, IBoardInformerEvent>
+    inherit ISelfCalculatingPiece<'Board, 'Coords, IMoveCommand<'Coords>, IBoardMoveEvent>
     inherit IMovablePiece<'Coords>           

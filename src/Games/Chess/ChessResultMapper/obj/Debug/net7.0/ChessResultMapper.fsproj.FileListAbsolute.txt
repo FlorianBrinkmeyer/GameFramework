@@ -1,0 +1,17 @@
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Games/Chess/ChessResultMapper/obj/Debug/net7.0/ChessResultMapper.fsproj.AssemblyReference.cache
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Games/Chess/ChessResultMapper/obj/Debug/net7.0/ChessResultMapper.AssemblyInfoInputs.cache
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Games/Chess/ChessResultMapper/obj/Debug/net7.0/ChessResultMapper.AssemblyInfo.fs
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Games/Chess/ChessResultMapper/obj/Debug/net7.0/ChessResultMapper.fsproj.CoreCompileInputs.cache
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Games/Chess/ChessResultMapper/bin/Debug/net7.0/ChessResultMapper.deps.json
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Games/Chess/ChessResultMapper/bin/Debug/net7.0/ChessResultMapper.dll
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Games/Chess/ChessResultMapper/bin/Debug/net7.0/ChessResultMapper.pdb
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Games/Chess/ChessResultMapper/bin/Debug/net7.0/ChessResultMapper.xml
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Games/Chess/ChessResultMapper/bin/Debug/net7.0/GameInterfacesForAIsAndCompanion.dll
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Games/Chess/ChessResultMapper/bin/Debug/net7.0/GameInterfacesForAIsAndCompanion.pdb
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Games/Chess/ChessResultMapper/bin/Debug/net7.0/GameInterfacesForAIsAndCompanion.xml
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Games/Chess/ChessResultMapper/obj/Debug/net7.0/ChessResultMapper.fsproj.CopyComplete
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Games/Chess/ChessResultMapper/obj/Debug/net7.0/ChessResultMapper.dll
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Games/Chess/ChessResultMapper/obj/Debug/net7.0/refint/ChessResultMapper.dll
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Games/Chess/ChessResultMapper/obj/Debug/net7.0/ChessResultMapper.xml
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Games/Chess/ChessResultMapper/obj/Debug/net7.0/ChessResultMapper.pdb
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Games/Chess/ChessResultMapper/obj/Debug/net7.0/ref/ChessResultMapper.dll

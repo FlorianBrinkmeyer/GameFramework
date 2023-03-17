@@ -48,3 +48,6 @@
 /home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/AIAgents/NegaMaxTimeLimited/obj/Debug/net7.0/NegaMaxTimeLimited.xml
 /home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/AIAgents/NegaMaxTimeLimited/obj/Debug/net7.0/NegaMaxTimeLimited.pdb
 /home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/AIAgents/NegaMaxTimeLimited/obj/Debug/net7.0/ref/NegaMaxTimeLimited.dll
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/AIAgents/NegaMaxTimeLimited/bin/Debug/net7.0/AI_WithConsiderationTime.dll
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/AIAgents/NegaMaxTimeLimited/bin/Debug/net7.0/AI_WithConsiderationTime.pdb
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/AIAgents/NegaMaxTimeLimited/bin/Debug/net7.0/AI_WithConsiderationTime.xml
