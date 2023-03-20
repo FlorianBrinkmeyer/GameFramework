@@ -18,11 +18,10 @@ Copyright (C) 2023  Florian Brinkmeyer
 namespace Euclid2DGame
 
 open System;
-open Euclid2D;
 open GameFramework
 
-type TwoDBoardCompanionMovablePieces<'Piece when 'Piece :> IMovablePiece<int*int>> (companion) = 
-    inherit TwoDBoardCompanion<'Piece, IBoardMoveEvent> (companion)    
+type TwoDBoardCompanionMovablePieces (companion) = 
+    inherit TwoDBoardCompanion<IPiece, IBoardMoveEvent> (companion)    
     interface IBoardMover<int*int> with
         member this.PossibleMoves coords =
             let (x,y) = coords
@@ -30,7 +29,7 @@ type TwoDBoardCompanionMovablePieces<'Piece when 'Piece :> IMovablePiece<int*int
             match maybePiece with
             | Some piece ->
                 let game = this.game :?> IBoardGameForPieces<int*int, IMoveCommand<int*int>>
-                piece.PossibleMoves (game, coords)
+                (piece :?> IMovablePiece<int*int>).PossibleMoves (game, coords)
             | None ->
                 Seq.empty    
         member this.MakeMove ((startX, startY), dest) =
@@ -39,7 +38,7 @@ type TwoDBoardCompanionMovablePieces<'Piece when 'Piece :> IMovablePiece<int*int
             | Some piece ->
                 let game = this.game :?> IBoardGameForPieces<int*int, IMoveCommand<int*int>>
                 let mutableGame = this.gameCompanion :?> IGameMoveMaker
-                piece.MakeMove (mutableGame, game, (startX, startY), dest)
+                (piece :?> IMovablePiece<int*int>).MakeMove (mutableGame, game, (startX, startY), dest)
             | None ->
                 raise (Exception "Field is empty: Impossible to make a move from here.")
-    interface ITwoDBoardMovablePieces<'Piece>
+    interface ITwoDBoardMovablePieces<IPiece>

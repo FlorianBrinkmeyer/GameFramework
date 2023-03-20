@@ -21,20 +21,19 @@ open System
 open GameFramework
 
 ///Current board * active player * new position of last moved piece -> possible moves / game result * board events
-type MoveCalcDelegate<'Board, 'Coords, 'MoveCommand, 'BoardEvnt> = Func<'Board, int, 'Coords, MoveCalcResult<'MoveCommand, 'Coords> * seq<'BoardEvnt>> 
+type MoveCalcDelegate<'Board, 'Coords, 'MoveCommand, 'BoardEvnt> = Func<'Board, int, Option<'Coords>, MoveCalcResult<'MoveCommand, 'Coords> * seq<'BoardEvnt>> 
 
 ///Current board -> zero-sum value
 type ZSValueCalcDelegate<'Board> = Func<'Board, float>
 
-type ImmutableZeroSumBoardGameSelfCalculatingPieces<'Board, 'Coords, 'Piece, 'MoveCommand, 'BoardEvnt
-    when 'Coords :> IComparable and 'Coords : comparison and 'Board :> ImmutableArray<'Coords, 'Piece> and 'Board : equality
-    and 'Piece :> ISelfCalculatingPiece<'Board, 'Coords, 'MoveCommand, 'BoardEvnt>>
+type ImmutableZeroSumBoardGameSelfCalculatingPieces<'Board, 'Coords, 'MoveCommand, 'BoardEvnt
+    when 'Coords :> IComparable and 'Coords : comparison and 'Board :> ImmutableArray<'Coords, IPiece> and 'Board : equality>
     (board: 'Board, activePlayer, moveCalcResult: MoveCalcResult<'MoveCommand, 'Coords>,
     moveCalc : MoveCalcDelegate<'Board, 'Coords, 'MoveCommand, 'BoardEvnt>, maybeZsValueCalc : Option<ZSValueCalcDelegate<'Board>>, ?previous, ?events) =
         member x.ActivePlayer = activePlayer
         member x.Board = board
         override x.Equals other =
-            let castedOther = other :?> ImmutableZeroSumBoardGameSelfCalculatingPieces<'Board, 'Coords, 'Piece, 'MoveCommand, 'BoardEvnt>
+            let castedOther = other :?> ImmutableZeroSumBoardGameSelfCalculatingPieces<'Board, 'Coords, 'MoveCommand, 'BoardEvnt>
             activePlayer = castedOther.ActivePlayer && board = castedOther.Board
         override x.GetHashCode () = HashCode.Combine (activePlayer, board)                
         interface IBoardGameForCompanion<'Board, 'BoardEvnt> with
@@ -56,12 +55,12 @@ type ImmutableZeroSumBoardGameSelfCalculatingPieces<'Board, 'Coords, 'Piece, 'Mo
                 match moveCalcResult with
                 | PossibleMoves possibleMoves ->
                     let move = possibleMoves[moveIndex]
-                    let piece = (board.Item move.StartField).Value
+                    let piece = (board.Item move.StartField).Value :?> ISelfCalculatingPiece<'Board, 'Coords, 'MoveCommand, 'BoardEvnt>
                     let nextBoard, movedPieceNewPosition, nextBoardEvents = piece.ApplyMove board move.StartField move.Cmd
                     let nextPlayer = activePlayer * (-1)
-                    let nextMoveCalcResult, additionalNewBoardEvents = moveCalc.Invoke (nextBoard, nextPlayer, movedPieceNewPosition)
-                    let allNewBoadEvents = Seq.concat [nextBoardEvents; additionalNewBoardEvents]
-                    ImmutableZeroSumBoardGameSelfCalculatingPieces<'Board, 'Coords, 'Piece, 'MoveCommand, 'BoardEvnt> (nextBoard, nextPlayer,
+                    let nextMoveCalcResult, additionalNextBoardEvents = moveCalc.Invoke (nextBoard, nextPlayer, Some movedPieceNewPosition)
+                    let allNewBoadEvents = Seq.append nextBoardEvents additionalNextBoardEvents
+                    ImmutableZeroSumBoardGameSelfCalculatingPieces<'Board, 'Coords, 'MoveCommand, 'BoardEvnt> (nextBoard, nextPlayer,
                     nextMoveCalcResult, moveCalc, maybeZsValueCalc, this, allNewBoadEvents)
                 | _ ->
                     raise (Exception "Game has already terminated.")    
@@ -75,7 +74,7 @@ type ImmutableZeroSumBoardGameSelfCalculatingPieces<'Board, 'Coords, 'Piece, 'Mo
                     | Some zsValueCalc ->
                         (zsValueCalc.Invoke board) * (float) activePlayer
                     | None -> raise (Exception "Intermediate evaluation of game state impossible: No evaluation function assigned.")    
-            member x.Value player = (x :> ImmutableGame).ZSValue * (float) activePlayer * (float) player
+            member x.Value player = (x :> ImmutableGame).ZSValue * (float) (activePlayer * player)
             member x.ActivePlayer = activePlayer
             member x.NumberOfPossibleMoves = 
                 match moveCalcResult with

@@ -3,7 +3,7 @@ open Reversi.Init
 open Reversi
 open Reversi.ResultMapper
 
-let negamax1 = NegaMaxTimeLimitedCaching (-1, 5000, 100, false)
+let negamax1 = NegaMaxTimeLimitedCaching (-1, 5000, 100)
 let negamax2 = MonteCarloTreeSearch (1, 5000)
 let gameCompanion, boardCompanion = initZSGame 8 8 (-1) false resultMapper [negamax1; negamax2]
 let gui = 

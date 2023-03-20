@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\TwoDChessCalculationFunctions\TwoDChessCalculationFunctions.fsproj" />
+    <ProjectReference Include="..\..\StandardChessPieces\StandardChessPieces.fsproj" />
+    <ProjectReference Include="..\..\..\..\Geometries\Euclid2D\ImmutableEnumerable2DArray\ImmutableEnumerable2DArray.fsproj" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+</Project>

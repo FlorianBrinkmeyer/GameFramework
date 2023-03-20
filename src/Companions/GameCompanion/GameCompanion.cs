@@ -19,7 +19,6 @@ namespace GameFramework;
 
 using System;
 using System.Collections.Generic;
-using Microsoft.FSharp.Core;
 
 public class GameCompanion<GameResult>: IGameMoveMaker, IReversibleGame<GameResult>
 {
@@ -68,10 +67,10 @@ public class GameCompanion<GameResult>: IGameMoveMaker, IReversibleGame<GameResu
             TriggerNextPlayer (ActivePlayer);
         }    
     }
-    public bool Undoable => FSharpOption<ImmutableGame>.get_IsSome (state.Previous);
+    public bool Undoable => state.Previous != null;
     public void Undo ()
     {
-        if (FSharpOption<ImmutableGame>.get_IsSome (state.Previous))
+        if (state.Previous != null)
         {
             state = state.Previous.Value;
             Undone?.Invoke (this, new EventArgs ());

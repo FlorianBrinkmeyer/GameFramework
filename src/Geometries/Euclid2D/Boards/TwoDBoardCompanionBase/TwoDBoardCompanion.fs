@@ -24,7 +24,7 @@ open GameFramework
 
 [<AbstractClass>]
 type TwoDBoardCompanion<'Piece, 'Evnt> (companion) = 
-    inherit BoardCompanion<Enumerable2DArray.IEnumerable2DArray<'Piece>, 'Evnt> (companion)
+    inherit BoardCompanion<IEnumerable2DArray<'Piece>, 'Evnt> (companion)
     interface IBoardInformer<'Evnt>
     interface IEnumerable2DArray<'Piece> with
         member this.ToSeqInDir (xPos, yPos) (xDir, yDir) = this.board.ToSeqInDir (xPos, yPos) (xDir, yDir)

@@ -21,9 +21,7 @@ using System;
 using Euclid2D;
 using GameFramework;
 
-public abstract class TwoDBoardGUIMovablePieces<Board, Piece> : TwoDBoardGUI<Board, Piece>
-where Board : ITwoDBoardMovablePieces<Piece> 
-where Piece : IPiece 
+public abstract class TwoDBoardGUIMovablePieces : TwoDBoardGUI<ITwoDBoardMovablePieces<IPiece> , IPiece>
 {
     bool startFieldAlreadyChosen = false;
     Euclid2DCoords? startField;
@@ -82,10 +80,10 @@ where Piece : IPiece
             var transformedEvent = evnt as BoardTransformedEvent<Tuple<int,int>>;
             var coords = Euclid2DCoords.FromTuple (transformedEvent!.Field);
             var transformedTo = transformedEvent.TransformedTo;
-            setFieldToPieceImage (coords, (Piece) transformedTo);
+            setFieldToPieceImage (coords, transformedTo);
         }
     }
-    override protected void initialize (int windowsWidth, int windowHeight, String pictureFolder, Board _board, 
+    override protected void initialize (int windowsWidth, int windowHeight, String pictureFolder, ITwoDBoardMovablePieces<IPiece> _board, 
     IGameInformer<String> game, IEnumerable<int> thisGUIusers, IEnumerable<AI_Informer> AIs)
     {
         base.initialize (windowsWidth, windowHeight, pictureFolder, _board, game, thisGUIusers, AIs);

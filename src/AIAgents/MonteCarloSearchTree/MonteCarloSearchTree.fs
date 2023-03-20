@@ -110,7 +110,9 @@ type MonteCarloTreeSearch (playerID : int, searchTime : int) =
                     simCount <- simCount + 1    
                     sendMessage.Trigger (sprintf "Number of simulations: %A" simCount)    
                 //Apply move most simulations have been performed with.
-                let chosenMove = tree.Children |> Array.mapi (fun index ch -> index, ch)  |> Seq.maxBy (fun (_, child) -> child.NumberOfSimulations) |> fst
+                let chosenMove = 
+                    tree.Children |> Array.mapi (fun index ch -> index, ch)  |> Seq.maxBy (fun (_, child) -> 
+                        if child :> Object <> null then child.NumberOfSimulations else 0) |> fst
                 mutableGame.MakeMove chosenMove
             }
-            mainRoutine |> Async.Start      
+            mainRoutine |> Async.Start

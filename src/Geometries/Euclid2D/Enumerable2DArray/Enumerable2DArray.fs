@@ -58,9 +58,9 @@ type ToSeqEnumerator<'t> (array : IEnumerable2DArray<'t>, Start: int * int, Dire
             x <- (Start |> fst) - (Direction |> fst)    
             y <- (Start |> snd) - (Direction |> snd)
         member this.Current
-            with get () = array.[x,y]
+            with get () = array[x,y]
         member this.Current 
-            with get () = array.[x,y] :> Object    
+            with get () = array[x,y] :> Object    
         member this.MoveNext () =
             match Direction with
             | (dx, dy) ->    
@@ -84,9 +84,9 @@ type ToSeqEnumeratorTuple<'t> (array : IEnumerable2DArray<'t>, start: int * int,
             x <- (start |> fst) - (direction |> fst)    
             y <- (start |> snd) - (direction |> snd)
         member this.Current
-            with get () = (array.[x,y], (x,y))
+            with get () = (array[x,y], (x,y))
         member this.Current 
-            with get () = (array.[x,y], (x,y)) :> Object    
+            with get () = (array[x,y], (x,y)) :> Object    
         member this.MoveNext () =
             match direction with
             | (dx, dy) ->    
@@ -110,9 +110,9 @@ type WholeToSeqEnumerator<'t> (array : IEnumerable2DArray<'t>) =
             x <- -1    
             y <- 0
         member this.Current
-            with get () = array.[x,y]
+            with get () = array[x,y]
         member this.Current 
-            with get () = array.[x,y] :> Object    
+            with get () = array[x,y] :> Object    
         member this.MoveNext () =
             x <- x+1
             if x > array.xDim - 1 then

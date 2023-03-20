@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="TwoDChessInit.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\GameClasses\ImmutableZeroSumBoardGameSelfCalculatingPieces\ImmutableZeroSumBoardGameSelfCalculatingPieces.fsproj" />
+    <ProjectReference Include="..\..\ChessMoveCalculation\ChessMoveCalculation.fsproj" />
+    <ProjectReference Include="..\..\..\..\Geometries\Euclid2D\ImmutableEnumerable2DArray\ImmutableEnumerable2DArray.fsproj" />
+    <ProjectReference Include="..\..\..\..\AI_Interfaces\AI_InterfacesForGames\AIBaseInterface\AIBaseInterface.fsproj" />
+    <ProjectReference Include="..\..\..\..\PieceInterfaces\PieceInterfacesForGameClasses\PieceInterfacesForGameClasses.fsproj" />
+    <ProjectReference Include="..\..\..\..\Geometries\Euclid2D\Boards\TwoDBoardCompanions\TwoDBoardCompanions.fsproj" />
+  </ItemGroup>
+
+</Project>

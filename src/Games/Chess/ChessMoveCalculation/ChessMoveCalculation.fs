@@ -21,24 +21,26 @@ open System
 open Chess
 open GameFramework
 
-let calculatePossibleMoves<'Board, 'Coords, 'Piece 
-    when 'Coords :> IComparable and 'Coords : comparison and 'Board :> ImmutableArray<'Coords, 'Piece> and 'Piece :> IPiece and
-    'Piece :> ISelfCalculatingPiece<'Board, 'Coords, IMoveCommand<'Coords>, IBoardMoveEvent>>
-    (board : 'Board) activePlayer (positionOfLastMovedPiece : 'Coords) =              
+let calculatePossibleMoves<'Board, 'Coords when 'Coords :> IComparable and 'Coords : comparison and 'Board :> ImmutableArray<'Coords, IPiece>>
+    (board : 'Board) activePlayer (maybePositionOfLastMovedPiece : Option<'Coords>) =              
         let ownKingPos, ownKing = 
-            let pos, piece = board.KeyValuePairs |> Seq.find (fun (_, piece) -> piece.Player = activePlayer && piece :> Object :? IKing<'Board, 'Coords>)
-            pos, piece :> Object :?> IKing<'Board, 'Coords>          
+            board.KeyValuePairs |> Seq.pick (fun (pos, piece) -> 
+                match piece with
+                | :? IKing<'Board, 'Coords> as king when king.Player = activePlayer ->
+                    Some (pos, king)
+                | _ -> None
+            )
         let ownNonKingPieces =
             board.KeyValuePairs |> Seq.choose (fun (pos, piece) ->
-                match piece.Player = activePlayer, piece :> Object with
-                | true, (:? INonKingChessPiece<'Board, 'Coords> as nonKingPiece) ->
+                match piece with
+                | :? INonKingChessPiece<'Board, 'Coords> as nonKingPiece when piece.Player = activePlayer ->
                     Some (pos, nonKingPiece)
                 | _ -> None
             )    
         let otherNonKingPieces = 
             board.KeyValuePairs |> Seq.choose (fun (pos, piece) -> 
-                match piece.Player <> activePlayer, piece :> Object with
-                | true, (:? INonKingChessPiece<'Board, 'Coords> as nonKingPiece) ->
+                match piece with
+                | :? INonKingChessPiece<'Board, 'Coords> as nonKingPiece when piece.Player <> activePlayer ->
                     Some (pos, nonKingPiece)
                 | _ -> None   
             ) 
@@ -49,32 +51,32 @@ let calculatePossibleMoves<'Board, 'Coords, 'Piece
         let boardWithBlackListKing = ownKing.AugmentByBlackList board ownKingPos kingBlackList       
         let otherBlockablePieces = 
             otherNonKingPieces |> Seq.choose (fun (pos, piece) -> 
-                match piece :> Object with
+                match piece with
                 | :? IBlockableChessPiece<'Board, 'Coords> as blockablePiece ->
                     Some (pos, blockablePiece)
                 | _ -> None    
-            ) |> Seq.toList
-        let lastMovedOtherPiece = (board.Item positionOfLastMovedPiece).Value 
-        let castedOtherBlockablePieces = otherBlockablePieces |> List.map (fun (pos, piece) -> pos, piece :> INonKingChessPiece<'Board, 'Coords>)
+            ) 
+        let castedOtherBlockablePieces = otherBlockablePieces |> Seq.map (fun (pos, piece) -> pos, piece :> INonKingChessPiece<'Board, 'Coords>)
+        let maybeLastMovedOtherPiece = 
+            maybePositionOfLastMovedPiece |> Option.map (fun positionOfLastMovedPiece -> (board.Item positionOfLastMovedPiece).Value)                   
         let allPotentiallyKingThreateningPieces =
-            match lastMovedOtherPiece :> Object with
-            | :? IKing<'Board, 'Coords> ->
+            match maybePositionOfLastMovedPiece, maybeLastMovedOtherPiece with
+            | None, None | Some _, Some (:? IKing<'Board, 'Coords>) ->
                 castedOtherBlockablePieces
-            | :? INonKingChessPiece<'Board, 'Coords> as nonKingPiece ->     
-                (positionOfLastMovedPiece, nonKingPiece) :: castedOtherBlockablePieces
+            | Some positionOfLastMovedPiece, Some (:? INonKingChessPiece<'Board, 'Coords> as nonKingPiece) ->     
+                Seq.append castedOtherBlockablePieces [(positionOfLastMovedPiece, nonKingPiece)]
             | _ -> raise (Exception "Non-chess piece on board.")    
         let kingThreats =
-            let threatsAndNeutralizingLists = allPotentiallyKingThreateningPieces |> List.choose (fun (pos, piece) -> 
+            let threatsAndNeutralizing = allPotentiallyKingThreateningPieces |> Seq.choose (fun (pos, piece) -> 
                 match piece.IsThreateningField board pos ownKingPos with
                 | Some fields ->
                     Some (pos, fields)
                 | None -> None  
             )
-            match threatsAndNeutralizingLists with
-            | [] ->
+            if threatsAndNeutralizing |> Seq.isEmpty then
                 None
-            | _ ->     
-                let threats, lists = threatsAndNeutralizingLists |> List.unzip
+            else     
+                let threats, lists = threatsAndNeutralizing |> Seq.toList |> List.unzip
                 let whitelist = lists |> List.map Set.ofSeq |> List.reduce (fun set1 set2 -> Set.intersect set1 set2)
                 Some (threats, whitelist)
         match kingThreats with
@@ -88,7 +90,8 @@ let calculatePossibleMoves<'Board, 'Coords, 'Piece
             let possibleMoves =
                 let commands = 
                     allNewOwnPieces |> Seq.collect (fun (pos, piece) -> 
-                        piece.PossibleMoves boardWithWhiteListPiecesAndBlackListKing pos |> Seq.map (fun moveCom -> pos, moveCom)
+                        let castedPiece = piece :?> ISelfCalculatingPiece<'Board, 'Coords, IMoveCommand<'Coords>, IBoardMoveEvent>
+                        castedPiece.PossibleMoves boardWithWhiteListPiecesAndBlackListKing pos |> Seq.map (fun moveCom -> pos, moveCom)
                     )
                 commands |> Seq.mapi (fun index (pos, com) -> {Index = index; StartField = pos; Cmd = com}) |> Seq.toArray
             let additionalEvent = {CheckedPlayer = activePlayer; KingPos = ownKingPos; CheckedBy = kingThreatCoords} :> IBoardMoveEvent
@@ -107,9 +110,10 @@ let calculatePossibleMoves<'Board, 'Coords, 'Piece
                 boardWithAppliedLists.KeyValuePairs |> Seq.filter (fun (_, piece) -> piece.Player = activePlayer)
             let possibleMoves = 
                 let commands = 
-                    allNewOwnPieces |> Seq.collect (fun (pos, piece) -> piece.PossibleMoves boardWithAppliedLists pos |> Seq.map (fun moveCom -> 
-                        pos, moveCom
-                    ))
+                    allNewOwnPieces |> Seq.collect (fun (pos, piece) -> 
+                        let castedPiece = piece :?> ISelfCalculatingPiece<'Board, 'Coords, IMoveCommand<'Coords>, IBoardMoveEvent>                       
+                        castedPiece.PossibleMoves boardWithAppliedLists pos |> Seq.map (fun moveCom -> pos, moveCom)
+                    )
                 commands |> Seq.mapi (fun index (pos, moveCom) -> {Index = index; StartField = pos; Cmd = moveCom}) |> Seq.toArray
             let moveCalcResult =
                 if possibleMoves.Length = 0 then

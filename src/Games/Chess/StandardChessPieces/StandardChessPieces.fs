@@ -21,20 +21,43 @@ open GameFramework
 open System
 open Chess
 
-type StandardNonBlockablePiece<'Board, 'Coords when 'Coords :> IComparable and 'Coords : comparison and
-    'Board :> ImmutableArray<'Coords, IBaseChessPiece<'Board, 'Coords>>> 
-    (possibleMoves : Func<'Board, 'Coords, seq<'Coords>>, blackListForKing : Func<'Board, 'Coords, seq<'Coords>>,
-    threateningTest : Func<'Coords, 'Coords, bool>, color : int, kind : String, pieceValue : float, whitelist : Option<Set<'Coords>>,
-    blacklist : Option<Set<'Coords>>) =
+type BasicChessPiece<'Coords, 'State when 'Coords :> IComparable and 'Coords : comparison and 'State : equality>
+    (color : int, kind : String, maybeAdditionalState : Option<'State>,  whitelist : Option<Set<'Coords>>, blacklist : Option<Set<'Coords>>) =
     member x.Color = color
     member x.Kind = kind
+    member x.MaybeAdditionalState = maybeAdditionalState
+    member x.ApplyWhiteAndBlackList (moves : seq<'Coords>) =
+        let movesSet = moves |> Set.ofSeq
+        if movesSet.IsEmpty then
+            Set.empty
+        else
+            match whitelist, blacklist with
+            | Some white, Some black ->
+                movesSet |> Set.intersect (white - black)
+            | Some white, None ->
+                movesSet |> Set.intersect white
+            | None, Some black ->
+                movesSet - black
+            | None, None ->
+                movesSet
+    member x.NextWhiteList additionalWhitelist =
+        match whitelist with
+        | Some white ->
+            white |> Set.intersect (additionalWhitelist |> Set.ofSeq) |> Some
+        | None ->
+            additionalWhitelist |> Set.ofSeq |> Some
+    member x.NextBlackList additionalBlacklist =
+        match blacklist with
+        | Some black ->
+            black |> Set.intersect (additionalBlacklist |> Set.ofSeq) |> Some
+        | None ->
+            additionalBlacklist |> Set.ofSeq |> Some
     override x.Equals other =
         match other with
-        | :? StandardNonBlockablePiece<'Board, 'Coords> as anotherPiece ->
-            color = anotherPiece.Color && kind = anotherPiece.Kind
-        | _ -> false 
-    override x.GetHashCode () = HashCode.Combine (color, kind)
-    interface IBaseChessPiece<'Board, 'Coords>
+        | :? BasicChessPiece<'Coords, 'State> as anotherPiece ->
+            color = anotherPiece.Color && kind = anotherPiece.Kind && maybeAdditionalState = anotherPiece.MaybeAdditionalState
+        | _ -> false
+    override x.GetHashCode () = HashCode.Combine (color, maybeAdditionalState, kind)
     interface IPiece with
         member x.get_Kind () = kind
         member x.get_Player () = color
@@ -44,24 +67,23 @@ type StandardNonBlockablePiece<'Board, 'Coords when 'Coords :> IComparable and '
         member x.MakeMove (mutableGame, game, start, dest) =
             let index = game.GetMoves start |> Seq.find (fun indexedMvCm -> indexedMvCm.Cmd.Dest = dest) |> fun ind -> ind.Index
             mutableGame.MakeMove index
+
+type StandardNonBlockablePiece<'Board, 'Coords when 'Coords :> IComparable and 'Coords : comparison and 'Board :> ImmutableArray<'Coords, IPiece>> 
+    (possibleMoves : Func<'Board, 'Coords, seq<'Coords>>, blackListForKing : Func<'Board, 'Coords, seq<'Coords>>,
+    threateningTest : Func<'Coords, 'Coords, bool>, color : int, kind : String, pieceValue : float, whitelist : Option<Set<'Coords>>,
+    blacklist : Option<Set<'Coords>>) =
+    inherit BasicChessPiece<'Coords, unit> (color, kind, None, whitelist, blacklist)
+    interface IPiece with
+        member x.get_Kind () = kind
+        member x.get_Player () = color
     interface ISelfEvaluatingPiece<'Board, 'Coords> with
         member x.Value board coords =
             let mobility = (float) (possibleMoves.Invoke (board, coords) |> Seq.length) * 0.1
             pieceValue + mobility
     interface ISelfCalculatingPiece<'Board, 'Coords, IMoveCommand<'Coords>, IBoardMoveEvent> with
         member x.PossibleMoves board coords =
-            let moves = possibleMoves.Invoke (board, coords) |> Set.ofSeq
-            let set = 
-                match whitelist, blacklist with
-                | Some white, Some black ->
-                    moves |> Set.intersect (white - black)
-                | Some white, None ->
-                    moves |> Set.intersect white
-                | None, Some black ->
-                    moves - black
-                | None, None ->
-                    moves            
-            set |> Seq.map (fun move -> MoveCommand move :> IMoveCommand<'Coords>)
+            let moves = possibleMoves.Invoke (board, coords) |> x.ApplyWhiteAndBlackList
+            moves |> Seq.map (fun move -> MoveCommand move :> IMoveCommand<'Coords>)
         member this.ApplyMove board coords moveCmd =
             let nextBoard = board.GetNext coords None
             let finalBoard = nextBoard.GetNext moveCmd.Dest (Some this) :?> 'Board
@@ -75,78 +97,44 @@ type StandardNonBlockablePiece<'Board, 'Coords when 'Coords :> IComparable and '
                 Some (seq [ownPos])
             else
                 None
-        member x.AugmentByWhiteList board coords newWhitelist =
-            let nextWhitelist =
-                match whitelist with
-                | Some white ->
-                    white |> Set.intersect (newWhitelist |> Set.ofSeq) |> Some
-                | None ->
-                    newWhitelist |> Set.ofSeq |> Some
+        member x.AugmentByWhiteList board coords addWhitelist =
+            let nextWhitelist = x.NextWhiteList addWhitelist
             let nextPiece = 
                 StandardNonBlockablePiece<'Board, 'Coords>(possibleMoves, blackListForKing, threateningTest, color, kind, pieceValue, nextWhitelist,
-                    blacklist) :> IBaseChessPiece<'Board, 'Coords> |> Some
+                    blacklist) :> IPiece |> Some
             board.GetNext coords nextPiece :?> 'Board
-        member x.AugmentByBlackList board coords newBlackList =
-            let nextBlackList =
-                match blacklist with
-                | Some black ->
-                    black |> Set.union (newBlackList |> Set.ofSeq) |> Some
-                | None ->                      
-                    newBlackList |> Set.ofSeq |> Some
+        member x.AugmentByBlackList board coords addBlackList =
+            let nextBlackList = x.NextBlackList addBlackList
             let nextPiece = 
                 StandardNonBlockablePiece<'Board, 'Coords>(possibleMoves, blackListForKing, threateningTest, color, kind, pieceValue, whitelist,
-                    nextBlackList) :> IBaseChessPiece<'Board, 'Coords> |> Some
+                    nextBlackList) :> IPiece |> Some
             board.GetNext coords nextPiece :?> 'Board
 
-type BlockablePiece<'Board, 'Coords when 'Coords :> IComparable and 'Coords : comparison and 'Board :> ImmutableArray<'Coords, IBaseChessPiece<'Board, 'Coords>>> 
+type BlockablePiece<'Board, 'Coords when 'Coords :> IComparable and 'Coords : comparison and 'Board :> ImmutableArray<'Coords, IPiece>> 
     (possibleMoves : Func<'Board, 'Coords, seq<'Coords>>, blackListForKing : Func<'Board, 'Coords, seq<'Coords>>,
     threateningTest : Func<'Board, 'Coords, 'Coords, Option<seq<'Coords>>>, 
-    getWhiteListAndPiece : Func<'Board, 'Coords, 'Coords, Option<seq<'Coords> * (IBaseChessPiece<'Board, 'Coords> * 'Coords)>>, color : int,
-    kind : String, pieceValue : float, notMovedYet, whitelist : Option<Set<'Coords>>, blacklist : Option<Set<'Coords>>) =
-    member x.Color = color
-    member x.Kind = kind
-    member x.NotMovedYet = notMovedYet
-    override x.Equals other =
-        match other with
-        | :? BlockablePiece<'Board, 'Coords> as anotherBlockingPiece ->
-            color = anotherBlockingPiece.Color && kind = anotherBlockingPiece.Kind && notMovedYet = anotherBlockingPiece.NotMovedYet
-        | _ -> false
-    override x.GetHashCode () = HashCode.Combine (color, notMovedYet, kind)
-    interface IBaseChessPiece<'Board, 'Coords>
+    getWhiteListAndPiece : Func<'Board, 'Coords, 'Coords, Option<seq<'Coords> * (IPiece * 'Coords)>>, 
+    color : int, kind : String, pieceValue : float, maybeNotMovedYet, whitelist : Option<Set<'Coords>>, blacklist : Option<Set<'Coords>>) =
+    inherit BasicChessPiece<'Coords, Option<bool>> (color, kind, Some maybeNotMovedYet, whitelist, blacklist)
+    member x.MaybeNotMovedYet = maybeNotMovedYet
     interface IPiece with
         member x.get_Kind () = kind
         member x.get_Player () = color
-    interface IMovablePiece<'Coords> with
-        member x.PossibleMoves (game, startField) =
-            game.GetMoves startField |> Seq.map (fun indexedMvCm -> indexedMvCm.Cmd.Dest)
-        member x.MakeMove (mutableGame, game, start, dest) =
-            let index = game.GetMoves start |> Seq.find (fun indexedMvCm -> indexedMvCm.Cmd.Dest = dest) |> fun ind -> ind.Index
-            mutableGame.MakeMove index
     interface ISelfEvaluatingPiece<'Board, 'Coords> with
         member x.Value board coords =
             let mobility = (float) (possibleMoves.Invoke (board, coords) |> Seq.length) * 0.1
             pieceValue + mobility
     interface ISelfCalculatingPiece<'Board, 'Coords, IMoveCommand<'Coords>, IBoardMoveEvent> with
         member x.PossibleMoves board coords =
-            let moves = possibleMoves.Invoke (board, coords) |> Set.ofSeq
-            let set = 
-                match whitelist, blacklist with
-                | Some white, Some black ->
-                    moves |> Set.intersect (white - black)
-                | Some white, None ->
-                    moves |> Set.intersect white
-                | None, Some black ->
-                    moves - black
-                | None, None ->
-                    moves            
-            set |> Seq.map (fun move -> MoveCommand move :> IMoveCommand<'Coords>)
+            let moves = possibleMoves.Invoke (board, coords) |> x.ApplyWhiteAndBlackList
+            moves |> Seq.map (fun move -> MoveCommand move :> IMoveCommand<'Coords>)
         member this.ApplyMove board coords moveCmd =
             let nextPiece =
-                match notMovedYet with
-                | true ->
+                match maybeNotMovedYet with
+                | Some true ->
                     BlockablePiece<'Board, 'Coords> (possibleMoves, blackListForKing, threateningTest, getWhiteListAndPiece, color, kind, pieceValue,
-                    false, whitelist, blacklist)
-                | false ->
+                    Some false, whitelist, blacklist)
+                | _ ->
                     this    
             let nextBoard = board.GetNext coords None
             let finalBoard = nextBoard.GetNext moveCmd.Dest (Some nextPiece) :?> 'Board
@@ -157,27 +145,17 @@ type BlockablePiece<'Board, 'Coords when 'Coords :> IComparable and 'Coords : co
             blackListForKing.Invoke (board, coords)
         member x.IsThreateningField board ownPos toCheckPos =
             threateningTest.Invoke (board, ownPos, toCheckPos)
-        member x.AugmentByWhiteList board coords newWhitelist =
-            let nextWhitelist =
-                match whitelist with
-                | Some white ->
-                    white |> Set.intersect (newWhitelist |> Set.ofSeq) |> Some
-                | None ->
-                    newWhitelist |> Set.ofSeq |> Some
+        member x.AugmentByWhiteList board coords addWhitelist =
+            let nextWhitelist = x.NextWhiteList addWhitelist
             let nextPiece = 
                 BlockablePiece<'Board, 'Coords>(possibleMoves, blackListForKing, threateningTest, getWhiteListAndPiece, color, kind, pieceValue,
-                notMovedYet, nextWhitelist, blacklist) :> IBaseChessPiece<'Board, 'Coords> |> Some
+                maybeNotMovedYet, nextWhitelist, blacklist) :> IPiece |> Some
             board.GetNext coords nextPiece :?> 'Board
-        member x.AugmentByBlackList board coords newBlackList =
-            let nextBlackList =
-                match blacklist with
-                | Some black ->
-                    black |> Set.union (newBlackList |> Set.ofSeq) |> Some
-                | None ->                      
-                    newBlackList |> Set.ofSeq |> Some
+        member x.AugmentByBlackList board coords addBlackList =
+            let nextBlackList = x.NextBlackList addBlackList
             let nextPiece = 
                 BlockablePiece<'Board, 'Coords>(possibleMoves, blackListForKing, threateningTest, getWhiteListAndPiece, color, kind, pieceValue,
-                notMovedYet, whitelist, nextBlackList) :> IBaseChessPiece<'Board, 'Coords> |> Some
+                maybeNotMovedYet, whitelist, nextBlackList) :> IPiece |> Some
             board.GetNext coords nextPiece :?> 'Board
     interface IBlockableChessPiece<'Board, 'Coords> with
         member x.PotentiallyAugmentBlockingPieceByLists board ownPos toCheckPos =
@@ -186,38 +164,25 @@ type BlockablePiece<'Board, 'Coords when 'Coords :> IComparable and 'Coords : co
                 piece.AugmentByWhiteList board piecePos whitelist
             | _ -> board       
 
-type Pawn<'Board, 'Coords when 'Coords :> IComparable and 'Coords : comparison and 'Board :> ImmutableArray<'Coords, IBaseChessPiece<'Board, 'Coords>>> 
+type Pawn<'Board, 'Coords when 'Coords :> IComparable and 'Coords : comparison and 'Board :> ImmutableArray<'Coords, IPiece>> 
     (standardMove : Func<'Board, 'Coords, Option<'Coords>>, specialStartMove : Func<'Board, 'Coords, Option<'Coords>>,
     hitMoves : Func<'Board, 'Coords, seq<'Coords>>, blackListForKing : Func<'Board, 'Coords, seq<'Coords>>,
-    enPassantCapture : Func<'Board, 'Coords, seq<EnPassantInfo<'Coords>>>, elevationCheck : Func<'Coords, bool>, color : int, notMovedYet,
-    whitelist : Option<Set<'Coords>>, blacklist : Option<Set<'Coords>>, queen : IBaseChessPiece<'Board, 'Coords>) =
-    member x.Color = color
-    member x.NotMovedYet = notMovedYet
-    override x.Equals other =
-        match other with
-        | :? Pawn<'Board, 'Coords> as anotherPawn ->
-            color = anotherPawn.Color && notMovedYet = anotherPawn.NotMovedYet
-        | _ -> false
-    override x.GetHashCode () = HashCode.Combine (color, notMovedYet, "Pawn")
-    interface IBaseChessPiece<'Board, 'Coords>
+    enPassantCapture : Func<'Board, 'Coords, seq<EnPassantInfo<'Coords>>>, elevationCheck : Func<'Coords, bool>, color : int, madeMoves,
+    whitelist : Option<Set<'Coords>>, blacklist : Option<Set<'Coords>>, queen : IPiece) =
+    inherit BasicChessPiece<'Coords, int> (color, "Pawn", Some (if madeMoves >= 2 then 2 else madeMoves), whitelist, blacklist)
+    member x.MadeMoves = madeMoves
     interface IPiece with
         member x.get_Kind () = "Pawn"
         member x.get_Player () = color
-    interface IMovablePiece<'Coords> with
-        member x.PossibleMoves (game, startField) =
-            game.GetMoves startField |> Seq.map (fun indexedMvCm -> indexedMvCm.Cmd.Dest)
-        member x.MakeMove (mutableGame, game, start, dest) =
-            let index = game.GetMoves start |> Seq.find (fun indexedMvCm -> indexedMvCm.Cmd.Dest = dest) |> fun ind -> ind.Index
-            mutableGame.MakeMove index
     interface ISelfEvaluatingPiece<'Board, 'Coords> with
         member x.Value board coords =
             let pieceValue = 1.0
             let mobility = 
-                let standard = standardMove.Invoke (board, coords) |> Option.toArray |> Array.length
+                let standard = standardMove.Invoke (board, coords) |> Option.count
                 let hit = hitMoves.Invoke (board, coords) |> Seq.length
                 let special = 
-                    match notMovedYet, specialStartMove.Invoke (board, coords) with
-                    | true, Some _ ->
+                    match madeMoves, specialStartMove.Invoke (board, coords) with
+                    | 0, Some _ ->
                         1
                     | _ ->
                         0
@@ -225,7 +190,7 @@ type Pawn<'Board, 'Coords when 'Coords :> IComparable and 'Coords : comparison a
                     let moves =
                         enPassantCapture.Invoke (board, coords) |> Seq.filter (fun info ->
                             match board.Item info.PossibleOtherPawnPos with
-                            | Some (:? Pawn<'Board, 'Coords> as pawn) when pawn.NotMovedYet ->
+                            | Some (:? Pawn<'Board, 'Coords> as pawn) when pawn.MadeMoves = 1 ->
                                 true
                             | _ -> false    
                         ) 
@@ -239,33 +204,25 @@ type Pawn<'Board, 'Coords when 'Coords :> IComparable and 'Coords : comparison a
                     let standard = standardMove.Invoke (board, coords) |> Option.toList
                     let hit = hitMoves.Invoke (board, coords)
                     let special = 
-                        match notMovedYet, specialStartMove.Invoke (board, coords) with
-                        | true, Some dest ->
+                        match madeMoves, specialStartMove.Invoke (board, coords) with
+                        | 0, Some dest ->
                             [dest]
                         | _ ->
                             []
-                    Seq.concat [hit; standard; special] |> Set.ofSeq
-                let set = 
-                    match whitelist, blacklist with
-                    | Some white, Some black ->
-                        moves |> Set.intersect (white - black)
-                    | Some white, None ->
-                        moves |> Set.intersect white
-                    | None, Some black ->
-                        moves - black
-                    | None, None ->
-                        moves            
-                set |> Seq.map (fun move -> MoveCommand move :> IMoveCommand<'Coords>)
+                    Seq.concat [hit; standard; special]
+                moves |> x.ApplyWhiteAndBlackList |> Seq.map (fun move -> MoveCommand move :> IMoveCommand<'Coords>)              
             let enPassant =
-                let moves =
+                let infos =
                     enPassantCapture.Invoke (board, coords) |> Seq.filter (fun info ->
                         match board.Item info.PossibleOtherPawnPos with
-                        | Some (:? Pawn<'Board, 'Coords> as pawn) when pawn.NotMovedYet ->
+                        | Some (:? Pawn<'Board, 'Coords> as pawn) when pawn.MadeMoves = 1 ->
                             true
                         | _ -> false
                     )
-                moves |> Seq.map (fun info -> PawnEnPassantCaptureCommand info :> IMoveCommand<'Coords>)
-            Seq.concat [nonEnPassant; enPassant]        
+                let moves = infos |> Seq.map (fun info -> info.PossibleOwnDestPos) |> x.ApplyWhiteAndBlackList
+                infos |> Seq.filter (fun info -> moves |> Set.contains info.PossibleOwnDestPos) 
+                    |> Seq.map (fun info -> PawnEnPassantCaptureCommand info :> IMoveCommand<'Coords>)
+            Seq.append nonEnPassant enPassant        
         member this.ApplyMove board coords moveCmd =
             match moveCmd with
             | :? PawnEnPassantCaptureCommand<'Coords> as enPassant ->
@@ -283,12 +240,11 @@ type Pawn<'Board, 'Coords when 'Coords :> IComparable and 'Coords : comparison a
                         event, queen
                     else
                         let nextPiece =
-                            match notMovedYet with
-                            | true ->
-                                Pawn<'Board, 'Coords> (standardMove, specialStartMove, hitMoves, blackListForKing, enPassantCapture, elevationCheck,
-                                color, false, whitelist, blacklist, queen)
-                            | false ->
+                            if madeMoves >= 2 then
                                 this
+                            else
+                                Pawn<'Board, 'Coords> (standardMove, specialStartMove, hitMoves, blackListForKing, enPassantCapture, elevationCheck,
+                                color, madeMoves + 1, whitelist, blacklist, queen)
                         None, nextPiece        
                 let nextBoard = board.GetNext coords None
                 let finalBoard = nextBoard.GetNext moveCmd.Dest (Some nextPiece) :?> 'Board
@@ -303,74 +259,73 @@ type Pawn<'Board, 'Coords when 'Coords :> IComparable and 'Coords : comparison a
                 Some (seq [ownPos])
             else
                 None    
-        member x.AugmentByWhiteList board coords newWhitelist =
-            let nextWhitelist =
-                match whitelist with
-                | Some white ->
-                    white |> Set.intersect (newWhitelist |> Set.ofSeq) |> Some
-                | None ->
-                    newWhitelist |> Set.ofSeq |> Some
+        member x.AugmentByWhiteList board coords addWhitelist =
+            let nextWhitelist = x.NextWhiteList addWhitelist
             let nextPiece = 
-                Pawn<'Board, 'Coords> (standardMove, specialStartMove, hitMoves, blackListForKing, enPassantCapture, elevationCheck, color, notMovedYet,
-                nextWhitelist, blacklist, queen) :> IBaseChessPiece<'Board, 'Coords> |> Some
+                Pawn<'Board, 'Coords> (standardMove, specialStartMove, hitMoves, blackListForKing, enPassantCapture, elevationCheck, color, madeMoves,
+                nextWhitelist, blacklist, queen) :> IPiece |> Some
             board.GetNext coords nextPiece :?> 'Board
-        member x.AugmentByBlackList board coords newBlackList =
-            let nextBlackList =
-                match blacklist with
-                | Some black ->
-                    black |> Set.union (newBlackList |> Set.ofSeq) |> Some
-                | None ->                      
-                    newBlackList |> Set.ofSeq |> Some
+        member x.AugmentByBlackList board coords addBlackList =
+            let nextBlackList = x.NextBlackList addBlackList
             let nextPiece = 
-                Pawn<'Board, 'Coords> (standardMove, specialStartMove, hitMoves, blackListForKing, enPassantCapture, elevationCheck, color, notMovedYet,
-                whitelist, nextBlackList, queen) :> IBaseChessPiece<'Board, 'Coords> |> Some
+                Pawn<'Board, 'Coords> (standardMove, specialStartMove, hitMoves, blackListForKing, enPassantCapture, elevationCheck, color, madeMoves,
+                whitelist, nextBlackList, queen) :> IPiece |> Some
             board.GetNext coords nextPiece :?> 'Board
 
-type King<'Board, 'Coords when 'Coords :> IComparable and 'Coords : comparison and 'Board :> ImmutableArray<'Coords, IBaseChessPiece<'Board, 'Coords>>> 
-    (standardMoves : Func<'Board, 'Coords, seq<'Coords>>, castlingInfos : seq<CastlingInfo<'Coords>>, color : int, notMovedYet, blacklist : Set<'Coords>,
-    rook : IBaseChessPiece<'Board, 'Coords>) =
-    member x.Color = color
-    member x.NotMovedYet = notMovedYet
-    override x.Equals other =
-        match other with
-        | :?  King<'Board, 'Coords> as anotherKing ->
-            color = anotherKing.Color && notMovedYet = anotherKing.NotMovedYet
-        | _ -> false
-    override x.GetHashCode () = HashCode.Combine (color, notMovedYet, "King")    
-    interface IBaseChessPiece<'Board, 'Coords>
+type King<'Board, 'Coords when 'Coords :> IComparable and 'Coords : comparison and 'Board :> ImmutableArray<'Coords, IPiece>> 
+    (standardMoves : Func<'Board, 'Coords, seq<'Coords>>, castlingInfos : seq<CastlingInfo<'Coords>>, color : int, notMovedYet, 
+    blacklist : Set<'Coords>, rook : BlockablePiece<'Board, 'Coords>) =
+    inherit BasicChessPiece<'Coords, bool> (color, "King", Some notMovedYet, None, Some blacklist)
     interface IPiece with
         member x.get_Kind () = "King"
         member x.get_Player () = color
-    interface IMovablePiece<'Coords> with
-        member x.PossibleMoves (game, startField) =
-            game.GetMoves startField |> Seq.map (fun indexedMvCm -> indexedMvCm.Cmd.Dest)
-        member x.MakeMove (mutableGame, game, start, dest) =
-            let index = game.GetMoves start |> Seq.find (fun indexedMvCm -> indexedMvCm.Cmd.Dest = dest) |> fun ind -> ind.Index
-            mutableGame.MakeMove index
-    interface ISelfCalculatingPiece<'Board, 'Coords, IMoveCommand<'Coords>, IBoardMoveEvent> with
-        member x.PossibleMoves board coords =
+    interface ISelfEvaluatingPiece<'Board, 'Coords> with
+        member x.Value board coords =
             let standard =
-                let moves = standardMoves.Invoke (board, coords)
-                let set = (moves |> Set.ofSeq) - blacklist
-                set |> Seq.map (fun move -> MoveCommand move :> IMoveCommand<'Coords>)
+                standardMoves.Invoke (board, coords) |> Seq.length
             let castling =
                 let infos = castlingInfos |> Seq.filter (fun info -> 
                     let rookNotMovedYet = 
                         match board.Item info.RookStartPos with
                         | Some (:? BlockablePiece<'Board, 'Coords> as posRook) ->
-                            posRook.NotMovedYet
+                            match posRook.MaybeNotMovedYet with
+                            | Some true ->
+                                true
+                            | _ ->
+                                false    
                         | _ -> false    
-                    let couldBeThreatened = Seq.concat [info.FieldsInBetween; [coords]] |> Set.ofSeq
+                    notMovedYet && rookNotMovedYet
+                )
+                infos |> Seq.length
+            let mobility = (float) (standard + castling) * 0.1
+            mobility
+    interface ISelfCalculatingPiece<'Board, 'Coords, IMoveCommand<'Coords>, IBoardMoveEvent> with
+        member x.PossibleMoves board coords =
+            let standard =
+                let moves = standardMoves.Invoke (board, coords)
+                moves |> x.ApplyWhiteAndBlackList |> Seq.map (fun move -> MoveCommand move :> IMoveCommand<'Coords>)
+            let castling =
+                let infos = castlingInfos |> Seq.filter (fun info -> 
+                    let rookNotMovedYet = 
+                        match board.Item info.RookStartPos with
+                        | Some (:? BlockablePiece<'Board, 'Coords> as posRook) ->
+                            match posRook.MaybeNotMovedYet with
+                            | Some true ->
+                                true
+                            | _ ->
+                                false    
+                        | _ -> false    
+                    let couldBeThreatened = Seq.append info.FieldsInBetween [coords] |> Set.ofSeq
                     let noThreats = Set.intersect couldBeThreatened blacklist |> Set.isEmpty
                     notMovedYet && rookNotMovedYet && noThreats
                 )
                 infos |> Seq.map (fun info -> CastlingCommand info :> IMoveCommand<'Coords>)
-            Seq.concat [standard; castling]
+            Seq.append standard castling
         member this.ApplyMove board coords moveCmd =
             let nextKing =
                 match notMovedYet with
                 | true ->
-                    King<'Board, 'Coords> (standardMoves, castlingInfos, color, false, Set.empty, rook)
+                    King<'Board, 'Coords> (standardMoves, castlingInfos, color, false, blacklist, rook)
                 | false ->
                     this    
             match moveCmd with
@@ -385,9 +340,9 @@ type King<'Board, 'Coords when 'Coords :> IComparable and 'Coords : comparison a
                 let nextBoard = board.GetNext coords None
                 let finalBoard = nextBoard.GetNext moveCmd.Dest (Some nextKing) :?> 'Board
                 let movingEvent = BoardMovingEvent (coords, moveCmd.Dest)
-                finalBoard, moveCmd.Dest, seq [movingEvent]
+                finalBoard, moveCmd.Dest, [movingEvent]
     interface IKing<'Board, 'Coords> with
-        member this.AugmentByBlackList board coords newBlacklist =
-            let combinedBlackList = Set.union blacklist (newBlacklist |> Set.ofSeq) 
-            let newKing = King<'Board, 'Coords> (standardMoves, castlingInfos, color, notMovedYet, combinedBlackList, rook)
+        member x.AugmentByBlackList board coords addBlacklist =
+            let newBlackList = Set.union blacklist (addBlacklist |> Set.ofSeq) 
+            let newKing = King<'Board, 'Coords> (standardMoves, castlingInfos, color, notMovedYet, newBlackList, rook)
             board.GetNext coords (Some newKing) :?> 'Board

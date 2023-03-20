@@ -37,15 +37,12 @@ type NegaMaxTimeLimited (playerID : int, searchTime : int, maxDepth : int) =
     interface AI_Agent with
         member x.Player = player
         member x.MakeMove mutableGame game =
-            let state = game :?> ImmutableGame
+            let immutableGame = game :?> ImmutableGame
             let mutable chosenMove = 0
             let mutable timeLeft = true
             let timer = new Timers.Timer (considerationTime)
             timer.AutoReset <- false
-            timer.Elapsed.AddHandler (fun _ _ -> 
-                timeLeft <- false
-                mutableGame.MakeMove chosenMove
-            )
+            timer.Elapsed.AddHandler (fun _ _ -> timeLeft <- false)
             timer.Start ()
             let timeLimitedSearch =
                 async {
@@ -54,17 +51,25 @@ type NegaMaxTimeLimited (playerID : int, searchTime : int, maxDepth : int) =
                         let rec helper step (state : ImmutableGame) =
                             let numberOfPossibleMoves = state.NumberOfPossibleMoves
                             if (step = 0) || (numberOfPossibleMoves = 0)  then
-                                state.ZSValue
+                                state.ZSValue |> Some
                             else 
-                                [0..(numberOfPossibleMoves-1)] |> List.map (fun move -> -(helper (step-1) (state.NthMove move))) |> List.max
-                        let chosen = [0..(state.NumberOfPossibleMoves-1)] |> List.maxBy (fun move -> -(helper (searchDepth-1) (state.NthMove move)))
+                                if timeLeft then
+                                    let results = [0..(numberOfPossibleMoves-1)] |> List.map (fun move -> (helper (step-1) (state.NthMove move)))
+                                    if timeLeft then
+                                        results |> List.map (fun potValue -> -potValue.Value) |> List.max |> Some
+                                    else
+                                        None    
+                                else
+                                    None
+                        let moveAndValue = 
+                            [0..(immutableGame.NumberOfPossibleMoves-1)] |> List.map (fun move -> move, (helper (searchDepth-1) (immutableGame.NthMove move))) 
                         if timeLeft then
-                            chosenMove <- chosen
+                            chosenMove <- moveAndValue |> List.maxBy (fun (_, maybeValue) -> - maybeValue.Value) |> fst
                             if searchDepth > reachedMaxDepth then
                                 reachedMaxDepth <- searchDepth
                             sendMessage.Trigger (sprintf "Reached search depth: %A, Maximally reached depth: %A" searchDepth reachedMaxDepth)
                             searchDepth <- searchDepth + 1
-                    if searchDepth >= maxDepth && timeLeft then
-                        timer.Interval <- 1
+                    timer.Stop ()
+                    mutableGame.MakeMove chosenMove
                 }
             timeLimitedSearch |> Async.Start            

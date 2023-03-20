@@ -41,8 +41,4 @@ type IBlockableChessPiece<'Board, 'Coords> =
     inherit INonKingChessPiece<'Board, 'Coords>
     ///Current board -> piece position -> position of other king -> resulting board
     abstract PotentiallyAugmentBlockingPieceByLists : 'Board (*current board*) -> 'Coords (*piece position*) -> 'Coords (*position of other king*) -> 
-        'Board (*resulting board*)
-
-type IBaseChessPiece<'Board, 'Coords> =
-    inherit ISelfCalculatingPiece<'Board, 'Coords, IMoveCommand<'Coords>, IBoardMoveEvent>
-    inherit IMovablePiece<'Coords>           
+        'Board (*resulting board*)        

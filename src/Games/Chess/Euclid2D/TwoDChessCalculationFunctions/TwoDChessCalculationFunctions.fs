@@ -26,19 +26,19 @@ open Euclid2D.Enumerable2DArray
 let possibleMovesMode = 1
 let blackListMode = -1
 
-let pawnWhiteStandardMove<'Board, 'Piece when 'Board :> IEnumerable2DArray<'Piece> and 'Piece :> IPiece > (board : 'Board) ((x,y) : int*int) =
+let pawnWhiteStandardMove ((board : IEnumerable2DArray<IPiece>), ((x,y) : int*int)) =
     if board[x,y+1].IsNone then
         Some (x,y+1)
     else
         None    
 
-let pawnWhiteSpecialStartMove<'Board, 'Piece when 'Board :> IEnumerable2DArray<'Piece> and 'Piece :> IPiece > (board : 'Board) ((x,y) : int*int) =
+let pawnWhiteSpecialStartMove ((board : IEnumerable2DArray<IPiece>), ((x,y) : int*int)) =
     if board[x,3].IsNone then
         Some (x,3)
     else
-        None    
+        None
 
-let pawnWhiteHitMoves<'Board, 'Piece when 'Board :> IEnumerable2DArray<'Piece> and 'Piece :> IPiece > mode (board : 'Board) ((x,y) : int*int) =
+let pawnWhitePreHitMoves mode (board : IEnumerable2DArray<IPiece>) ((x,y) : int*int) =
     [(x-1,y+1); (x+1,y+1)] |> board.FilterCoordsByBoundaries |> Seq.filter (fun (xp, yp) ->  
         match board[xp, yp] with
         | Some piece ->
@@ -47,7 +47,10 @@ let pawnWhiteHitMoves<'Board, 'Piece when 'Board :> IEnumerable2DArray<'Piece> a
             false        
     )   
 
-let pawnWhiteEnPassant<'Board, 'Piece when 'Board :> IEnumerable2DArray<'Piece> and 'Piece :> IPiece > (board : 'Board) ((x,y) : int*int) =
+let pawnWhiteHitMoves = Func<IEnumerable2DArray<IPiece>, int*int, seq<int*int>> (pawnWhitePreHitMoves possibleMovesMode)
+let pawnWhiteKingBlackList = Func<IEnumerable2DArray<IPiece>, int*int, seq<int*int>> (pawnWhitePreHitMoves blackListMode)
+
+let pawnWhiteEnPassant ((board : IEnumerable2DArray<IPiece>), ((x,y) : int*int)) =
     if y = 4 then
         let enPassant1 =
             if x > 0 then
@@ -69,22 +72,21 @@ let pawnWhiteEnPassant<'Board, 'Piece when 'Board :> IEnumerable2DArray<'Piece> 
     else
         Seq.empty    
 
-let pawnWhiteElevationCheck (x,y) = 
-    y = 7                
+let pawnWhiteElevationCheck = Func<int*int, bool> (fun (_,y) -> y = 7)                
 
-let pawnBlackStandardMove<'Board, 'Piece when 'Board :> IEnumerable2DArray<'Piece> and 'Piece :> IPiece > (board : 'Board) ((x,y) : int*int) =
+let pawnBlackStandardMove ((board : IEnumerable2DArray<IPiece>), ((x,y) : int*int)) =
     if board[x,y-1].IsNone then
         Some (x,y-1)
     else
         None    
 
-let pawnBlackSpecialStartMove<'Board, 'Piece when 'Board :> IEnumerable2DArray<'Piece> and 'Piece :> IPiece > (board : 'Board) ((x,y) : int*int) =
+let pawnBlackSpecialStartMove ((board : IEnumerable2DArray<IPiece>), ((x,y) : int*int)) =
     if board[x,4].IsNone then
         Some (x,4)
     else
         None    
 
-let pawnBlackHitMoves<'Board, 'Piece when 'Board :> IEnumerable2DArray<'Piece> and 'Piece :> IPiece > mode (board : 'Board) ((x,y) : int*int) =
+let pawnBlackPreHitMoves mode (board : IEnumerable2DArray<IPiece>) ((x,y) : int*int) =
     [(x-1,y-1); (x+1,y-1)] |> board.FilterCoordsByBoundaries |> Seq.filter (fun (xp, yp) ->  
         match board[xp, yp] with
         | Some piece ->
@@ -93,7 +95,10 @@ let pawnBlackHitMoves<'Board, 'Piece when 'Board :> IEnumerable2DArray<'Piece> a
             false        
     )   
 
-let pawnBlackEnPassant<'Board, 'Piece when 'Board :> IEnumerable2DArray<'Piece> and 'Piece :> IPiece > (board : 'Board) ((x,y) : int*int) =
+let pawnBlackHitMoves = Func<IEnumerable2DArray<IPiece>, int*int, seq<int*int>> (pawnBlackPreHitMoves possibleMovesMode)
+let pawnBlackKingBlackList = Func<IEnumerable2DArray<IPiece>, int*int, seq<int*int>> (pawnBlackPreHitMoves blackListMode)
+
+let pawnBlackEnPassant ((board : IEnumerable2DArray<IPiece>), ((x,y) : int*int)) =
     if y = 3 then
         let enPassant1 =
             if x > 0 then
@@ -115,10 +120,9 @@ let pawnBlackEnPassant<'Board, 'Piece when 'Board :> IEnumerable2DArray<'Piece> 
     else
         Seq.empty    
 
-let pawnBlackElevationCheck (x,y) = 
-    y = 0                
+let pawnBlackElevationCheck = Func<int*int, bool> (fun (_,y) -> y = 0)             
 
-let kingStandardMoves<'Board, 'Piece when 'Board :> IEnumerable2DArray<'Piece> and 'Piece :> IPiece > ownPlayer (board : 'Board) ((x,y) : int*int) =
+let kingStandardMoves ownPlayer (board : IEnumerable2DArray<IPiece>) ((x,y) : int*int) =
     allDirs |> List.map (fun (xdir,ydir) -> x + xdir, y + ydir) |> board.FilterCoordsByBoundaries |> Seq.filter (fun (xp, yp) ->
         match board[xp,yp] with
         | Some piece ->
@@ -127,17 +131,20 @@ let kingStandardMoves<'Board, 'Piece when 'Board :> IEnumerable2DArray<'Piece> a
             true    
     )
 
+let whiteKingStandardMoves = Func<IEnumerable2DArray<IPiece>, int*int, seq<int*int>> (kingStandardMoves 1)
+let blackKingStandardMoves = Func<IEnumerable2DArray<IPiece>, int*int, seq<int*int>> (kingStandardMoves -1)
+
 let kingWhiteCastling =
     let castling1 = {KingDestPos = 6,0; RookStartPos = 7,0; RookDestPos = 5,0; FieldsInBetween = [(4,0);(5,0)]}
     let castling2 = {KingDestPos = 1,0; RookStartPos = 0,0; RookDestPos = 2,0; FieldsInBetween = [(1,0);(2,0)]}
-    castling1, castling2                           
+    seq [castling1; castling2]                           
 
 let kingBlackCastling =
     let castling1 = {KingDestPos = 6,7; RookStartPos = 7,7; RookDestPos = 5,7; FieldsInBetween = [(4,7);(5,7)]}
     let castling2 = {KingDestPos = 1,7; RookStartPos = 0,7; RookDestPos = 2,7; FieldsInBetween = [(1,7);(2,7)]}
-    castling1, castling2                           
+    seq [castling1; castling2]                           
 
-let knightPossibleMoves<'Board, 'Piece when 'Board :> IEnumerable2DArray<'Piece> and 'Piece :> IPiece > ownPlayer mode (board : 'Board) ((x,y) : int*int) =
+let knightPrePossibleMoves ownPlayer mode (board : IEnumerable2DArray<IPiece>) ((x,y) : int*int) =
     let dirs = [(1,2);(2,1);(-1,2);(2,-1);(1,-2);(-2,1);(-1,-2);(-2,-1)]
     dirs |> List.map (fun (xdir,ydir) -> x + xdir,y + ydir) |> board.FilterCoordsByBoundaries |> Seq.filter (fun (xp, yp) ->
         match board[xp,yp] with
@@ -147,16 +154,21 @@ let knightPossibleMoves<'Board, 'Piece when 'Board :> IEnumerable2DArray<'Piece>
             true    
     )
 
-let knightThreateningTest<'Board, 'Piece when 'Board :> IEnumerable2DArray<'Piece> and 'Piece :> IPiece > (ownPos : int*int) (checkPos : int*int) =
+let blackKnightPosMoves = Func<IEnumerable2DArray<IPiece>, int*int, seq<int*int>> (knightPrePossibleMoves -1 possibleMovesMode) 
+let blackKnightKingBlackList = Func<IEnumerable2DArray<IPiece>, int*int, seq<int*int>> (knightPrePossibleMoves -1 blackListMode)
+let whiteKnightPosMoves = Func<IEnumerable2DArray<IPiece>, int*int, seq<int*int>> (knightPrePossibleMoves 1 possibleMovesMode)
+let whiteKnightKingBlackList = Func<IEnumerable2DArray<IPiece>, int*int, seq<int*int>> (knightPrePossibleMoves 1 blackListMode) 
+
+let knightThreateningTest ((ownPos : int*int), (checkPos : int*int)) =
     let diff = (Euclid2DCoords checkPos) - (Euclid2DCoords ownPos)
     let diffAbs = Math.Abs diff.X, Math.Abs diff.Y
     match diffAbs with
     | (1,2) | (2,1) ->
         true
     | _ ->
-        false 
+        false
 
-let blockingPiecePossibleMoves<'Board, 'Piece when 'Board :> IEnumerable2DArray<'Piece> and 'Piece :> IPiece > dirs ownPlayer mode (board : 'Board) ((x,y) : int*int) =
+let blockingPiecePrePossibleMoves dirs ownPlayer mode (board : IEnumerable2DArray<IPiece>) ((x,y) : int*int) =
     let nonHitMoves =
         dirs |> Seq.collect (fun dir -> 
             board.ToSeqInDirWithCoords (x,y) dir |> Seq.skip 1 |> Seq.takeWhile (fun (piece, _) -> piece.IsNone) |> Seq.map snd
@@ -172,9 +184,22 @@ let blockingPiecePossibleMoves<'Board, 'Piece when 'Board :> IEnumerable2DArray<
                 Some coords
             | _ -> None    
         )
-    Seq.concat [nonHitMoves; hitMoves]
+    Seq.append nonHitMoves hitMoves
 
-let getFieldsBetweenIfDirMatches<'Board, 'Piece when 'Board :> IEnumerable2DArray<'Piece> and 'Piece :> IPiece > (board : 'Board) (ownPos : int*int) (toCheck : int *int) (dirs : List<int*int>) =
+let blackRookPossibleMoves = Func<IEnumerable2DArray<IPiece>, int*int, seq<int*int>> (blockingPiecePrePossibleMoves orthDirs -1 possibleMovesMode) 
+let blackRookKingBlackList = Func<IEnumerable2DArray<IPiece>, int*int, seq<int*int>> (blockingPiecePrePossibleMoves orthDirs -1 blackListMode)
+let whiteRookPossibleMoves = Func<IEnumerable2DArray<IPiece>, int*int, seq<int*int>> (blockingPiecePrePossibleMoves orthDirs 1 possibleMovesMode) 
+let whiteRookKingBlackList = Func<IEnumerable2DArray<IPiece>, int*int, seq<int*int>> (blockingPiecePrePossibleMoves orthDirs 1 blackListMode)
+let blackBishopPossibleMoves = Func<IEnumerable2DArray<IPiece>, int*int, seq<int*int>> (blockingPiecePrePossibleMoves diaDirs -1 possibleMovesMode) 
+let blackBishopKingBlackList = Func<IEnumerable2DArray<IPiece>, int*int, seq<int*int>> (blockingPiecePrePossibleMoves diaDirs -1 blackListMode)
+let whiteBishopPossibleMoves = Func<IEnumerable2DArray<IPiece>, int*int, seq<int*int>> (blockingPiecePrePossibleMoves diaDirs 1 possibleMovesMode) 
+let whiteBishopKingBlackList = Func<IEnumerable2DArray<IPiece>, int*int, seq<int*int>> (blockingPiecePrePossibleMoves diaDirs 1 blackListMode)
+let blackQueenPossibleMoves = Func<IEnumerable2DArray<IPiece>, int*int, seq<int*int>> (blockingPiecePrePossibleMoves allDirs -1 possibleMovesMode) 
+let blackQueenKingBlackList = Func<IEnumerable2DArray<IPiece>, int*int, seq<int*int>> (blockingPiecePrePossibleMoves allDirs -1 blackListMode)
+let whiteQueenPossibleMoves = Func<IEnumerable2DArray<IPiece>, int*int, seq<int*int>> (blockingPiecePrePossibleMoves allDirs 1 possibleMovesMode) 
+let whiteQueenKingBlackList = Func<IEnumerable2DArray<IPiece>, int*int, seq<int*int>> (blockingPiecePrePossibleMoves allDirs 1 blackListMode)
+
+let getFieldsBetweenIfDirMatches (board : IEnumerable2DArray<IPiece>) (ownPos : int*int) (toCheck : int *int) (dirs : List<int*int>) =
     let diff = (Euclid2DCoords toCheck) - (Euclid2DCoords ownPos)
     let dir = diff.NormalizeCompWise
     let len = Math.Max (diff.X, diff.Y)
@@ -183,15 +208,22 @@ let getFieldsBetweenIfDirMatches<'Board, 'Piece when 'Board :> IEnumerable2DArra
     else
         None    
 
-let blockingPieceThreateningTestReturnsThreatNeutralizingMoves<'Board, 'Piece when 'Board :> IEnumerable2DArray<'Piece> and 'Piece :> IPiece > (dirs : List<int*int>) (board : 'Board) (ownPos : int*int) (toCheck : int *int) =
+let blockingPieceThreateningTestReturnsThreatNeutralizingMoves (dirs : List<int*int>) (board : IEnumerable2DArray<IPiece>) (ownPos : int*int) (toCheck : int *int) =
     match getFieldsBetweenIfDirMatches board ownPos toCheck dirs with
     | Some fields when fields |> Seq.forall (fun (piece, _) -> piece.IsNone) ->
-        let fieldsBetween = fields |> Seq.map snd |> Seq.toList
-        ownPos :: fieldsBetween |> List.toSeq |> Some
+        let fieldsBetween = fields |> Seq.map snd
+        Seq.append fieldsBetween [ownPos] |> Some
     | _ ->
         None
 
-let getPotentialWhiteListAndPieceToApply<'Board, 'Piece when 'Board :> IEnumerable2DArray<'Piece> and 'Piece :> IPiece > (dirs : List<int*int>) ownPlayer (board : 'Board) (ownPos : int*int) (toCheck : int *int) =
+let rookThreateningTest = 
+    Func<IEnumerable2DArray<IPiece>, int*int, int*int, Option<seq<int*int>>> (blockingPieceThreateningTestReturnsThreatNeutralizingMoves orthDirs)
+let bishopThreateningTest = 
+    Func<IEnumerable2DArray<IPiece>, int*int, int*int, Option<seq<int*int>>> (blockingPieceThreateningTestReturnsThreatNeutralizingMoves diaDirs)
+let queenThreateningTest = 
+    Func<IEnumerable2DArray<IPiece>, int*int, int*int, Option<seq<int*int>>> (blockingPieceThreateningTestReturnsThreatNeutralizingMoves allDirs)
+
+let getPotentialWhiteListAndPieceToApply (dirs : List<int*int>) ownPlayer (board : IEnumerable2DArray<IPiece>) (ownPos : int*int) (toCheck : int *int) =
     match getFieldsBetweenIfDirMatches board ownPos toCheck dirs with
     | Some fields ->
         let otherPieces = fields |> Seq.choose (fun (maybePiece, pos) ->
@@ -201,11 +233,21 @@ let getPotentialWhiteListAndPieceToApply<'Board, 'Piece when 'Board :> IEnumerab
             | _ -> None  
         )
         match otherPieces |> Seq.toList with
-        | (onlyPiece, pos) :: [] ->
-            if onlyPiece.Player <> ownPlayer then                     
-                let fieldsWithOwn = ownPos :: (fields |> Seq.map snd |> Seq.toList) |> List.toSeq
-                Some (fieldsWithOwn, (onlyPiece, pos))
-            else
-                None    
+        | (onlyPiece, pos) :: [] when onlyPiece.Player <> ownPlayer ->
+            let fieldsWithOwn = Seq.append (fields |> Seq.map snd) [ownPos]
+            Some (fieldsWithOwn, (onlyPiece, pos))
         | _ -> None
-    | None -> None            
+    | None -> None
+
+let blackRookGetWhiteListAndPiece = 
+    Func<IEnumerable2DArray<IPiece>, int*int, int*int, Option<seq<int * int> * (IPiece * (int * int))>> (getPotentialWhiteListAndPieceToApply orthDirs -1)           
+let whiteRookGetWhiteListAndPiece = 
+    Func<IEnumerable2DArray<IPiece>, int*int, int*int, Option<seq<int * int> * (IPiece * (int * int))>> (getPotentialWhiteListAndPieceToApply orthDirs 1)
+let blackBishopGetWhiteListAndPiece = 
+    Func<IEnumerable2DArray<IPiece>, int*int, int*int, Option<seq<int * int> * (IPiece * (int * int))>> (getPotentialWhiteListAndPieceToApply diaDirs -1)           
+let whiteBishopGetWhiteListAndPiece = 
+    Func<IEnumerable2DArray<IPiece>, int*int, int*int, Option<seq<int * int> * (IPiece * (int * int))>> (getPotentialWhiteListAndPieceToApply diaDirs 1)
+let blackQueenGetWhiteListAndPiece = 
+    Func<IEnumerable2DArray<IPiece>, int*int, int*int, Option<seq<int * int> * (IPiece * (int * int))>> (getPotentialWhiteListAndPieceToApply allDirs -1)           
+let whiteQueenGetWhiteListAndPiece = 
+    Func<IEnumerable2DArray<IPiece>, int*int, int*int, Option<seq<int * int> * (IPiece * (int * int))>> (getPotentialWhiteListAndPieceToApply allDirs 1)                      

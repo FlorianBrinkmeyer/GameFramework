@@ -4,7 +4,7 @@
 <members>
 <member name="T:GameFramework.ZSValueCalcDelegate`1">
 <summary>
-Current board * active player -&gt; zero-sum value
+Current board -&gt; zero-sum value
 </summary>
 </member>
 <member name="T:GameFramework.MoveCalcDelegate`4">

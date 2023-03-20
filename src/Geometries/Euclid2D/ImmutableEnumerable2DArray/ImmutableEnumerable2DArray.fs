@@ -52,7 +52,7 @@ let seqOfSeqOptToMap (seqSeq : seq<seq<Option<'t>>>) =
     )
     Seq.zip dict.Keys dict.Values |> Map.ofSeq
 
-type ImmutableEnumerable2DArray<'t when 't : comparison> (xdim, ydim, map : Map<int*int, 't>) =
+type ImmutableEnumerable2DArray<'t when 't : equality> (xdim, ydim, map : Map<int*int, 't>) =
     member x.InternalMap = map
     override this.Equals other =
         let castedOther = other :?> ImmutableEnumerable2DArray<'t>

@@ -22,7 +22,7 @@ open Euclid2DGame
 open System
 open Euclid2D.Enumerable2DArray
 
-let turnedPiecesInDir<'Board when 'Board :> IEnumerable2DArray<int>> (board : 'Board) activePlayer pos dir =
+let turnedPiecesInDir (board : IEnumerable2DArray<int>) activePlayer pos dir =
     let otherPlayer = activePlayer * (-1)
     let enemyPiecesInDir = board.ToSeqInDirWithCoords pos dir |> Seq.skip 1 |> Seq.takeWhile (fun (maybePiece,_) ->
         match maybePiece with
@@ -41,7 +41,7 @@ let turnedPiecesInDir<'Board when 'Board :> IEnumerable2DArray<int>> (board : 'B
     else
         None            
 
-let rec possibleMoves<'Board when 'Board :> IEnumerable2DArray<int>> withPassing alreadyPassed (board : 'Board) previousPlayer state = 
+let rec possibleMoves withPassing alreadyPassed (board : IEnumerable2DArray<int>) previousPlayer state = 
     let activePlayer = previousPlayer * (-1)
     if state >= 4 then
         let posMoves = 
@@ -65,7 +65,7 @@ let makeMove<'Board when 'Board :> IEnumerable2DArray<int> and 'Board :> Immutab
     let allTurnedPieces = 
         if state >= 4 then
             let turnedPieces = allDirs |> List.choose (turnedPiecesInDir board activePlayer chosenMove) |> Seq.concat
-            Seq.concat [seq [chosenMove]; turnedPieces]
+            Seq.append turnedPieces [chosenMove]
         else
             [chosenMove]   
     let nextBoard = allTurnedPieces |> Seq.fold (fun (brd : 'Board) (x,y) -> brd.GetNext (x,y) (Some activePlayer) :?> 'Board) board   
@@ -79,10 +79,10 @@ let getZSValue<'Board when 'Board :> IEnumerable2DArray<int> and 'Board :> Immut
     let blackPiecesCount = board.AllEntriesWithCoords |> Seq.filter (fun (piece, _) -> piece = -1) |> Seq.length    
     (float) (whitePiecesCount - blackPiecesCount)
 
-let initZSGame xDim yDim activePlayer withPassing (resultMapper : Func<ImmutableGame,'T>) (agents : seq<AI_Agent>) =
+let initReversi xDim yDim startPlayer withPassing (resultMapper : Func<ImmutableGame,'T>) (agents : seq<AI_Agent>) =
     let board = ImmutableEnumerable2DArray.ImmutableEnumerable2DArray (xDim, yDim, Map.empty<int*int,int>)
-    let _, firstMoveCalcRes = possibleMoves withPassing false board (activePlayer * (-1)) 0
-    let game = ImmutableBoardSetGame (board, activePlayer, firstMoveCalcRes, makeMove, possibleMoves withPassing false, getZSValue, 0)
+    let _, firstMoveCalcRes = possibleMoves withPassing false board (startPlayer * (-1)) 0
+    let game = ImmutableBoardSetGame (board, startPlayer, firstMoveCalcRes, makeMove, possibleMoves withPassing false, getZSValue, 0)
     let gameCompanion = BoardGameCompanion (game, agents, resultMapper)
     let boardCompanion = TwoDSetBoardCompanion<int> gameCompanion
     gameCompanion, boardCompanion

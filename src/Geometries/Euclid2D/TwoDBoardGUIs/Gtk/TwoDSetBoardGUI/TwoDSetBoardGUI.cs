@@ -21,8 +21,7 @@ using System;
 using Euclid2D;
 using GameFramework;
 
-public abstract class TwoDSetBoardGUI<Board, Piece> : TwoDBoardGUI<Board, Piece>
-where Board : ITwoDSetBoard<Piece> 
+public abstract class TwoDSetBoardGUI<Piece> : TwoDBoardGUI<ITwoDSetBoard<Piece>, Piece>
 {
     override protected void OnOwnPlayersTurn (int activePlayer)
     {
@@ -48,7 +47,7 @@ where Board : ITwoDSetBoard<Piece>
         var position = Euclid2DCoords.FromTuple (evnt.Field);
         setFieldToPieceImage (position, board![position]); 
     }
-    override protected void initialize (int windowsWidth, int windowHeight, String pictureFolder, Board _board, 
+    override protected void initialize (int windowsWidth, int windowHeight, String pictureFolder, ITwoDSetBoard<Piece> _board, 
     IGameInformer<String> game, IEnumerable<int> thisGUIusers, IEnumerable<AI_Informer> AIs)
     {
         base.initialize (windowsWidth, windowHeight, pictureFolder, _board, game, thisGUIusers, AIs);

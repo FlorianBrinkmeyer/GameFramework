@@ -20,9 +20,7 @@ namespace Chess;
 using Euclid2DGame;
 using GameFramework;
 
-public class ChessGtkGUI<Board, Piece> : TwoDBoardGUIMovablePieces<Board, Piece>
-where Board : ITwoDBoardMovablePieces<Piece> 
-where Piece : IPiece 
+public class ChessGtkGUI : TwoDBoardGUIMovablePieces
 {
     override protected Gtk.Builder builder {get;} = new Gtk.Builder ();
     protected override string PlayerToString(int id)
@@ -55,12 +53,15 @@ where Piece : IPiece
             OnBoardInformerEvent (sender, moveEvent2);
         }
     }
-    public ChessGtkGUI (int windowsWidth, int windowHeight, String pictureFolder, String guiFilename, Board _board, 
+    public ChessGtkGUI (int windowsWidth, int windowHeight, String pictureFolder, String guiFilename, ITwoDBoardMovablePieces<IPiece> _board, 
     IGameInformer<String> _game, int [] thisGUIusers, IEnumerable<AI_Informer> AIs)
     {
         Gtk.Application.Init ();
         builder.AddFromFile (guiFilename);
         builder.Autoconnect (this);
+        var mainForm = (Gtk.ApplicationWindow) builder.GetObject ("Window");
+        mainForm.Title = "Chess";
+        mainForm.WindowPosition = Gtk.WindowPosition.Center;
         initialize (windowsWidth, windowHeight, pictureFolder, _board, _game, thisGUIusers, AIs);
     }
 }
