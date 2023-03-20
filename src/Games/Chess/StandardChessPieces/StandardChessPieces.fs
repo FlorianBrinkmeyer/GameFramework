@@ -49,7 +49,7 @@ type BasicChessPiece<'Coords, 'State when 'Coords :> IComparable and 'Coords : c
     member x.NextBlackList additionalBlacklist =
         match blacklist with
         | Some black ->
-            black |> Set.intersect (additionalBlacklist |> Set.ofSeq) |> Some
+            black |> Set.union (additionalBlacklist |> Set.ofSeq) |> Some
         | None ->
             additionalBlacklist |> Set.ofSeq |> Some
     override x.Equals other =
