@@ -137,3 +137,17 @@
 /home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/GameInitializer/bin/Debug/net7.0/NegaMaxTimeLimitedCaching.xml
 /home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/GameInitializer/bin/Debug/net7.0/AI_WithConsiderationTime.pdb
 /home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/GameInitializer/bin/Debug/net7.0/AI_WithConsiderationTime.xml
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/GameInitializer/bin/Debug/net7.0/ReversiResultMapper.dll
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/GameInitializer/bin/Debug/net7.0/ReversiResultMapper.pdb
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/GameInitializer/bin/Debug/net7.0/ReversiResultMapper.xml
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/GameInitializer/bin/Debug/net7.0/StandardChessPieces.dll
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/GameInitializer/bin/Debug/net7.0/TwoDChessCalculationFunctions.dll
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/GameInitializer/bin/Debug/net7.0/StandardChessPieces.pdb
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/GameInitializer/bin/Debug/net7.0/StandardChessPieces.xml
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/GameInitializer/bin/Debug/net7.0/TwoDChessCalculationFunctions.pdb
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/GameInitializer/bin/Debug/net7.0/TwoDChessCalculationFunctions.xml
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/GameInitializer/bin/Debug/net7.0/ChessResultMapper.dll
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/GameInitializer/bin/Debug/net7.0/TwoDStandardChessPieceFactory.dll
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/GameInitializer/bin/Debug/net7.0/ChessResultMapper.pdb
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/GameInitializer/bin/Debug/net7.0/ChessResultMapper.xml
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/GameInitializer/bin/Debug/net7.0/TwoDStandardChessPieceFactory.pdb

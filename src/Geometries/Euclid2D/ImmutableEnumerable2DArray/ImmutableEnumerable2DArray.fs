@@ -17,11 +17,12 @@ Copyright (C) 2023  Florian Brinkmeyer
 
 module ImmutableEnumerable2DArray
 open System
+open System.Collections
 open Euclid2D
 open Euclid2D.Enumerable2DArray
 
 let twoDArrayToMap (array : 't [,]) =
-    let dict = Collections.Generic.Dictionary<int*int, 't> ()
+    let dict = Generic.Dictionary<int*int, 't> ()
     array |> Array2D.iteri (fun x y value -> 
         if value <> null then
             dict[(x,y)] <- value
@@ -29,7 +30,7 @@ let twoDArrayToMap (array : 't [,]) =
     Seq.zip dict.Keys dict.Values |> Map.ofSeq
 
 let seqOfSeqToMap (seqSeq : seq<seq<'t>>) =
-    let dict = Collections.Generic.Dictionary<int*int, 't> ()
+    let dict = Generic.Dictionary<int*int, 't> ()
     seqSeq |> Seq.iteri (fun y line ->
         line |> Seq.iteri (fun x value ->
             if value <> null then
@@ -39,12 +40,12 @@ let seqOfSeqToMap (seqSeq : seq<seq<'t>>) =
     Seq.zip dict.Keys dict.Values |> Map.ofSeq
 
 let twoDArrayOptToMap (array : Option<'t> [,]) =
-    let dict = Collections.Generic.Dictionary<int*int, 't> ()
+    let dict = Generic.Dictionary<int*int, 't> ()
     array |> Array2D.iteri (fun x y value -> value |> Option.iter (fun v -> dict[(x,y)] <-v))
     Seq.zip dict.Keys dict.Values |> Map.ofSeq
 
 let seqOfSeqOptToMap (seqSeq : seq<seq<Option<'t>>>) =
-    let dict = Collections.Generic.Dictionary<int*int, 't> ()
+    let dict = Generic.Dictionary<int*int, 't> ()
     seqSeq |> Seq.iteri (fun y line ->
         line |> Seq.iteri (fun x value ->
             value |> Option.iter (fun v -> dict[(x,y)] <-v)
@@ -58,6 +59,22 @@ type ImmutableEnumerable2DArray<'t when 't : equality> (xdim, ydim, map : Map<in
         let castedOther = other :?> ImmutableEnumerable2DArray<'t>
         map = castedOther.InternalMap
     override this.GetHashCode () = (map :> Object).GetHashCode ()    
+    override this.ToString () =
+        let longestElemReprLen = (map.Values |> Seq.map (fun value -> (value.ToString ()).Length) |> Seq.max) + 1
+        let empty = String.replicate longestElemReprLen " "
+        let getRow y =
+            let row = (this :> IEnumerable2DArray<'t>).ToSeqInDir (0,y) (1,0) |> Seq.map (fun maybeValue ->
+                match maybeValue with
+                | Some value ->
+                    let str = value.ToString ()
+                    let rest = String.replicate (longestElemReprLen - str.Length) " "
+                    str + rest
+                | None ->
+                    empty    
+            )
+            let linkedRow = row |> Seq.reduce (+)
+            linkedRow + "\n"
+        [0..ydim-1] |> List.map getRow |> List.reduce (+)          
     interface ImmutableArray<int*int, 't> with
         member x.Item coords = map.TryFind coords
         member x.GetNext index maybeValue =
@@ -101,7 +118,7 @@ type ImmutableEnumerable2DArray<'t when 't : equality> (xdim, ydim, map : Map<in
         member this.ToSeqInDirWithCoords (x,y) (xDir,yDir) = ArrayToSeqTuple<'t> (this, (x,y), (xDir,yDir))            
         member this.ToSeqWhole = WholeArrayToSeq<'t> this
         member x.AllCoords = 
-            let stack = Collections.Generic.Stack<int * int> ()
+            let stack = Generic.Stack<int * int> ()
             for X in 0..(xdim-1) do
                 for Y in 0..(ydim-1) do
                     stack.Push (X,Y)

@@ -48,13 +48,13 @@ public class ChessGtkGUI : TwoDBoardGUIMovablePieces
         {
             var castlingEvent = evnt as BoardCastlingEvent<Tuple<int,int>>;
             var moveEvent1 = new BoardMovingEvent<Tuple<int,int>> (castlingEvent!.KingStartPos, castlingEvent.KingDestPos);
-            var moveEvent2 = new BoardMovingEvent<Tuple<int,int>> (castlingEvent.RookStartPos, castlingEvent.KingDestPos);
+            var moveEvent2 = new BoardMovingEvent<Tuple<int,int>> (castlingEvent.RookStartPos, castlingEvent.RookDestPos);
             OnBoardInformerEvent (sender, moveEvent1);
             OnBoardInformerEvent (sender, moveEvent2);
         }
     }
     public ChessGtkGUI (int windowsWidth, int windowHeight, String pictureFolder, String guiFilename, ITwoDBoardMovablePieces<IPiece> _board, 
-    IGameInformer<String> _game, int [] thisGUIusers, IEnumerable<AI_Informer> AIs)
+    IGameInformer<String> _game, IEnumerable<int> thisGUIusers, IEnumerable<AI_Informer> AIs)
     {
         Gtk.Application.Init ();
         builder.AddFromFile (guiFilename);
@@ -63,5 +63,10 @@ public class ChessGtkGUI : TwoDBoardGUIMovablePieces
         mainForm.Title = "Chess";
         mainForm.WindowPosition = Gtk.WindowPosition.Center;
         initialize (windowsWidth, windowHeight, pictureFolder, _board, _game, thisGUIusers, AIs);
+        game!.MoveMade += (sender, move) => {
+            SetLabel (2, String.Empty);
+            Console.WriteLine (board!.ToString ());
+            Console.WriteLine ();
+        };
     }
 }

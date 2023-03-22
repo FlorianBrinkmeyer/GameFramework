@@ -58,6 +58,7 @@ type BasicChessPiece<'Coords, 'State when 'Coords :> IComparable and 'Coords : c
             color = anotherPiece.Color && kind = anotherPiece.Kind && maybeAdditionalState = anotherPiece.MaybeAdditionalState
         | _ -> false
     override x.GetHashCode () = HashCode.Combine (color, maybeAdditionalState, kind)
+    override x.ToString () = kind + (color.ToString ())
     interface IPiece with
         member x.get_Kind () = kind
         member x.get_Player () = color
@@ -235,7 +236,7 @@ type Pawn<'Board, 'Coords when 'Coords :> IComparable and 'Coords : comparison a
                 finalBoard, moveCmd.Dest, events
             | _ ->
                 let transformEvent, nextPiece =
-                    if elevationCheck.Invoke coords then
+                    if elevationCheck.Invoke moveCmd.Dest then
                         let event = BoardTransformedEvent (moveCmd.Dest, queen) :> IBoardMoveEvent |> Some
                         event, queen
                     else
@@ -249,7 +250,7 @@ type Pawn<'Board, 'Coords when 'Coords :> IComparable and 'Coords : comparison a
                 let nextBoard = board.GetNext coords None
                 let finalBoard = nextBoard.GetNext moveCmd.Dest (Some nextPiece) :?> 'Board
                 let movingEvent = BoardMovingEvent (coords, moveCmd.Dest) :> IBoardMoveEvent |> Some
-                let events = [transformEvent; movingEvent] |> Seq.choose id
+                let events = [movingEvent; transformEvent] |> Seq.choose id
                 finalBoard, moveCmd.Dest, events
     interface INonKingChessPiece<'Board, 'Coords> with
         member x.BlackListForKing board coords =
@@ -273,8 +274,8 @@ type Pawn<'Board, 'Coords when 'Coords :> IComparable and 'Coords : comparison a
             board.GetNext coords nextPiece :?> 'Board
 
 type King<'Board, 'Coords when 'Coords :> IComparable and 'Coords : comparison and 'Board :> ImmutableArray<'Coords, IPiece>> 
-    (standardMoves : Func<'Board, 'Coords, seq<'Coords>>, castlingInfos : seq<CastlingInfo<'Coords>>, color : int, notMovedYet, 
-    blacklist : Set<'Coords>, rook : BlockablePiece<'Board, 'Coords>) =
+    (standardMoves : Func<'Board, 'Coords, seq<'Coords>>, blackListForKing : Func<'Board, 'Coords, seq<'Coords>>, 
+    castlingInfos : seq<CastlingInfo<'Coords>>, color : int, notMovedYet, blacklist : Set<'Coords>, rook : BlockablePiece<'Board, 'Coords>) =
     inherit BasicChessPiece<'Coords, bool> (color, "King", Some notMovedYet, None, Some blacklist)
     interface IPiece with
         member x.get_Kind () = "King"
@@ -315,9 +316,11 @@ type King<'Board, 'Coords when 'Coords :> IComparable and 'Coords : comparison a
                             | _ ->
                                 false    
                         | _ -> false    
-                    let couldBeThreatened = Seq.append info.FieldsInBetween [coords] |> Set.ofSeq
+                    let fieldsAreEmpty = 
+                        Seq.concat [info.AditionallyUnthreatenedFields; info.AditionallyEmptyFields;] |> Seq.forall (fun coords -> (board.Item coords).IsNone)
+                    let couldBeThreatened = Seq.append info.AditionallyUnthreatenedFields [coords] |> Set.ofSeq
                     let noThreats = Set.intersect couldBeThreatened blacklist |> Set.isEmpty
-                    notMovedYet && rookNotMovedYet && noThreats
+                    fieldsAreEmpty && notMovedYet && rookNotMovedYet && noThreats
                 )
                 infos |> Seq.map (fun info -> CastlingCommand info :> IMoveCommand<'Coords>)
             Seq.append standard castling
@@ -325,7 +328,7 @@ type King<'Board, 'Coords when 'Coords :> IComparable and 'Coords : comparison a
             let nextKing =
                 match notMovedYet with
                 | true ->
-                    King<'Board, 'Coords> (standardMoves, castlingInfos, color, false, blacklist, rook)
+                    King<'Board, 'Coords> (standardMoves, blackListForKing, castlingInfos, color, false, blacklist, rook)
                 | false ->
                     this    
             match moveCmd with
@@ -342,7 +345,9 @@ type King<'Board, 'Coords when 'Coords :> IComparable and 'Coords : comparison a
                 let movingEvent = BoardMovingEvent (coords, moveCmd.Dest)
                 finalBoard, moveCmd.Dest, [movingEvent]
     interface IKing<'Board, 'Coords> with
+        member x.BlackListForKing board coords =
+            blackListForKing.Invoke (board, coords)
         member x.AugmentByBlackList board coords addBlacklist =
             let newBlackList = Set.union blacklist (addBlacklist |> Set.ofSeq) 
-            let newKing = King<'Board, 'Coords> (standardMoves, castlingInfos, color, notMovedYet, newBlackList, rook)
+            let newKing = King<'Board, 'Coords> (standardMoves, blackListForKing, castlingInfos, color, notMovedYet, newBlackList, rook)
             board.GetNext coords (Some newKing) :?> 'Board

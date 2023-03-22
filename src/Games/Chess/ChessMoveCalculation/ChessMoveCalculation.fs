@@ -24,33 +24,26 @@ open GameFramework
 let calculatePossibleMoves<'Board, 'Coords when 'Coords :> IComparable and 'Coords : comparison and 'Board :> ImmutableArray<'Coords, IPiece>>
     (board : 'Board) activePlayer (maybePositionOfLastMovedPiece : Option<'Coords>) =              
         let ownKingPos, ownKing = 
-            board.KeyValuePairs |> Seq.pick (fun (pos, piece) -> 
-                match piece with
-                | :? IKing<'Board, 'Coords> as king when king.Player = activePlayer ->
-                    Some (pos, king)
-                | _ -> None
-            )
-        let ownNonKingPieces =
-            board.KeyValuePairs |> Seq.choose (fun (pos, piece) ->
-                match piece with
-                | :? INonKingChessPiece<'Board, 'Coords> as nonKingPiece when piece.Player = activePlayer ->
-                    Some (pos, nonKingPiece)
-                | _ -> None
-            )    
-        let otherNonKingPieces = 
-            board.KeyValuePairs |> Seq.choose (fun (pos, piece) -> 
-                match piece with
-                | :? INonKingChessPiece<'Board, 'Coords> as nonKingPiece when piece.Player <> activePlayer ->
-                    Some (pos, nonKingPiece)
-                | _ -> None   
-            ) 
+            let maybePosAndKing=
+                board.KeyValuePairs |> Seq.tryPick (fun (pos, piece) -> 
+                    match piece with
+                    | :? IKing<'Board, 'Coords> as king when king.Player = activePlayer ->
+                        Some (pos, king)
+                    | _ -> None
+                )
+            match maybePosAndKing with
+            | Some (pos, king) ->
+                pos, king
+            | None ->
+                raise (Exception "No king on board: This shouldn't happen")        
+        let otherPieces = board.KeyValuePairs |> Seq.filter (fun (_, piece) -> piece.Player <> activePlayer) 
         let boardWithoutKing = board.GetNext ownKingPos None :?> 'Board
         let kingBlackList = 
-            otherNonKingPieces |> Seq.map (fun (pos, piece) -> piece.BlackListForKing boardWithoutKing pos |> Set.ofSeq) 
+            otherPieces |> Seq.map (fun (pos, piece) -> (piece :?> IChessPiece<'Board, 'Coords>).BlackListForKing boardWithoutKing pos |> Set.ofSeq) 
                 |> Seq.fold (fun set1 set2 -> Set.union set1 set2) Set.empty
         let boardWithBlackListKing = ownKing.AugmentByBlackList board ownKingPos kingBlackList       
         let otherBlockablePieces = 
-            otherNonKingPieces |> Seq.choose (fun (pos, piece) -> 
+            otherPieces |> Seq.choose (fun (pos, piece) -> 
                 match piece with
                 | :? IBlockableChessPiece<'Board, 'Coords> as blockablePiece ->
                     Some (pos, blockablePiece)
@@ -78,9 +71,15 @@ let calculatePossibleMoves<'Board, 'Coords when 'Coords :> IComparable and 'Coor
             else     
                 let threats, lists = threatsAndNeutralizing |> Seq.toList |> List.unzip
                 let whitelist = lists |> List.map Set.ofSeq |> List.reduce (fun set1 set2 -> Set.intersect set1 set2)
-                Some (threats, whitelist)
+                Some (threats |> Set.ofList, whitelist)
         match kingThreats with
         | Some (kingThreatCoords, threatNeutralizingWhiteList) ->
+            let ownNonKingPieces = board.KeyValuePairs |> Seq.choose (fun (pos, piece) -> 
+                match piece with
+                | :? INonKingChessPiece<'Board, 'Coords> as nonKingPiece when piece.Player = activePlayer ->
+                    Some (pos, nonKingPiece)
+                | _ -> None    
+            ) 
             let boardWithWhiteListPiecesAndBlackListKing = 
                 ownNonKingPieces |> Seq.fold (fun nextBoard (pos, piece) -> 
                     piece.AugmentByWhiteList nextBoard pos threatNeutralizingWhiteList
@@ -97,7 +96,7 @@ let calculatePossibleMoves<'Board, 'Coords when 'Coords :> IComparable and 'Coor
             let additionalEvent = {CheckedPlayer = activePlayer; KingPos = ownKingPos; CheckedBy = kingThreatCoords} :> IBoardMoveEvent
             let moveCalcResult =
                 if possibleMoves.Length = 0 then
-                    GameOverZSValue (Double.PositiveInfinity * (float) activePlayer * (float) (-1))
+                    GameOverZSValue (Double.PositiveInfinity * (float) (activePlayer * (-1)))
                 else
                     PossibleMoves possibleMoves
             moveCalcResult, seq [additionalEvent]                

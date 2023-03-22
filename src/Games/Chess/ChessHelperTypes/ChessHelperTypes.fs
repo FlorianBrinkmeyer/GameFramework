@@ -18,7 +18,8 @@ Copyright (C) 2023  Florian Brinkmeyer
 namespace Chess
 open GameFramework
 
-type CastlingInfo<'Coords> = {KingDestPos : 'Coords; RookStartPos : 'Coords; RookDestPos : 'Coords; FieldsInBetween : seq<'Coords>}
+type CastlingInfo<'Coords> = 
+    {KingDestPos : 'Coords; RookStartPos : 'Coords; RookDestPos : 'Coords; AditionallyUnthreatenedFields : seq<'Coords>; AditionallyEmptyFields : seq<'Coords>}
 
 type EnPassantInfo<'Coords> = {PossibleOtherPawnPos : 'Coords; PossibleOwnDestPos : 'Coords}
 

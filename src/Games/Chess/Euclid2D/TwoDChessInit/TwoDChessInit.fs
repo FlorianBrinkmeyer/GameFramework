@@ -28,7 +28,7 @@ open GameFramework.Chess.MoveCalculation
 let initChess xDim yDim startPlayer (pieceFactory : Func<String, int, IPiece>) (boardStartConfigurationCsv : String) (resultMapper : Func<ImmutableGame,'GameResult>)
     (agents : seq<AI_Agent>) =
     let boardSeqOfSeq = 
-        boardStartConfigurationCsv |> File.ReadAllLines |> Seq.map (fun line -> line.Split (',') |> Seq.map (fun entry -> 
+        boardStartConfigurationCsv |> File.ReadAllLines |> Seq.rev |> Seq.map (fun line -> line.Split (',') |> Seq.map (fun entry -> 
             if entry <> String.Empty then
                 let kind = entry |> Seq.takeWhile Char.IsAsciiLetter |> Seq.toArray |> String
                 let player = entry |> Seq.skip kind.Length |> Seq.toArray |> Int32.Parse

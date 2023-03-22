@@ -19,17 +19,20 @@ namespace Chess
 
 open GameFramework
 
+type IChessPiece<'Board, 'Coords> =
+    inherit ISelfCalculatingPiece<'Board, 'Coords, IMoveCommand<'Coords>, IBoardMoveEvent>
+    ///Current board -> piece position -> black list for king
+    abstract BlackListForKing : 'Board (*current board*) -> 'Coords (*piece position*) -> seq<'Coords>
+
 type IKing<'Board, 'Coords> =
     inherit IPiece
-    inherit ISelfCalculatingPiece<'Board, 'Coords, IMoveCommand<'Coords>, IBoardMoveEvent>
+    inherit IChessPiece<'Board, 'Coords>
     ///Currend board -> piece position -> black list -> resulting board
     abstract AugmentByBlackList : 'Board (*current board*) -> 'Coords (*piece position*) -> seq<'Coords> (*black list*) -> 'Board (*resulting board*)
 
 type INonKingChessPiece<'Board, 'Coords> =
     inherit IPiece
-    inherit ISelfCalculatingPiece<'Board, 'Coords, IMoveCommand<'Coords>, IBoardMoveEvent>
-    ///Current board -> piece position -> black list for king
-    abstract BlackListForKing : 'Board (*current board*) -> 'Coords (*piece position*) -> seq<'Coords>
+    inherit IChessPiece<'Board, 'Coords>
     ///Current board -> piece position -> field to check -> threatening ? Some (threat neutralizing moves) : None 
     abstract IsThreateningField : 'Board (*current board*) -> 'Coords (*piece position*) -> 'Coords (*field to check*) -> Option<seq<'Coords>>
     ///Current board -> piece position -> white list -> resulting board

@@ -17,6 +17,10 @@
     <ProjectReference Include="..\AIAgents\MonteCarloSearchTree\MonteCarloSearchTree.fsproj" />
     <ProjectReference Include="..\AIAgents\NegaMaxTimeLimited\NegaMaxTimeLimited.fsproj" />
     <ProjectReference Include="..\AIAgents\NegaMaxTimeLimitedCaching\NegaMaxTimeLimitedCaching.fsproj" />
+    <ProjectReference Include="..\AI_Interfaces\AI_InterfacesForInitialization\AI_WithConsiderationTime\AI_WithConsiderationTime.fsproj" />
+    <ProjectReference Include="..\Games\Reversi\ReversiResultMapper\ReversiResultMapper.fsproj" />
+    <ProjectReference Include="..\Games\Chess\ChessResultMapper\ChessResultMapper.fsproj" />
+    <ProjectReference Include="..\Games\Chess\Euclid2D\TwoDStandardChessPieceFactory\TwoDStandardChessPieceFactory.csproj" />
   </ItemGroup>
 
 </Project>

@@ -108,8 +108,7 @@ where Board : Enumerable2DArray.IEnumerable2DArray<Piece>
                var piece = entry.Item1;
                setFieldToPieceImage (pos, piece);
           }
-          game.NextPlayer += activePlayer =>
-          {
+          game.NextPlayer += (activePlayer) => {
                if (ThisGUIusers!.Any (player => player == activePlayer))
                     Gtk.Application.Invoke ((sender, args) => {
                          OnOwnPlayersTurn (activePlayer);

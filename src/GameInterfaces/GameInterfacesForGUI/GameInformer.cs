@@ -26,6 +26,7 @@ public interface IGameInformer<GameResult>
     bool Running {get;}
     int ActivePlayer {get;}
     event NextPlayerEvent? NextPlayer;
+    event EventHandler? MoveMade;
     event GameOverEvent<GameResult>? GameOver; 
 }
 

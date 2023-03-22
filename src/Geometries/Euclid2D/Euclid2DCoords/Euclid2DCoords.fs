@@ -26,9 +26,8 @@ type Euclid2DCoords (x,y) =
     member this.AsTuple = tuple
     static member FromTuple tup = Euclid2DCoords tup
     override this.Equals other =
-        if other = null then
-            false
-        else    
+        match other with
+        | :? Euclid2DCoords | :? (int * int) when other <> null ->
             let otherTuple =
                 match other with
                 | :? Euclid2DCoords as coords ->
@@ -37,6 +36,7 @@ type Euclid2DCoords (x,y) =
                     tup
                 | _ -> raise (Exception "Not a comparable type.")
             tuple.Equals otherTuple
+        | _ -> false
     override this.GetHashCode () = tuple.GetHashCode ()
     override this.ToString () = sprintf " X : %A, Y: %A" this.X this.Y
     static member (+) (coords1 : Euclid2DCoords, coords2 : Euclid2DCoords) = Euclid2DCoords (coords1.X+coords2.X, coords1.Y+coords2.Y)
@@ -53,7 +53,8 @@ type Euclid2DCoords (x,y) =
                     match other with
                     | :? Euclid2DCoords as coords ->
                         coords.AsTuple
-                    | :? (int * int) as tup -> tup
+                    | :? (int * int) as tup -> 
+                        tup
                     | _ -> raise (Exception "Not a comparable type.")
                 (tuple :> IComparable).CompareTo otherTuple
     member this.NormalizeCompWise =

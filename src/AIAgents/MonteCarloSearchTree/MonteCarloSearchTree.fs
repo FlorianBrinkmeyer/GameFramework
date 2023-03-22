@@ -76,11 +76,11 @@ type MonteCarloTreeSearch (playerID : int, searchTime : int) =
                         //random rollout
                         let randomFinalState =
                             let rec helper (state : ImmutableGame) =
-                                if not state.Running then
-                                    state
-                                else    
+                                if state.Running then
                                     let randomMove = rnd.Next state.NumberOfPossibleMoves
                                     state.NthMove randomMove |> helper
+                                else    
+                                    state
                             nextState |> helper       
                         let finalScore = randomFinalState.Value player
                         let newChild = 

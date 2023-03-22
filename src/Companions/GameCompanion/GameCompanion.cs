@@ -35,6 +35,18 @@ public class GameCompanion<GameResult>: IGameMoveMaker, IReversibleGame<GameResu
     public bool Running => state.Running;
     public int ActivePlayer => state.ActivePlayer;
     protected virtual void TriggerTriggerBoardEvents () {}
+    public event MoveMadeEvent? MoveMadeEvent;
+    public event EventHandler? MoveMade;
+    public void TriggerMoveMade (int moveIndex)
+    {
+        MoveMade?.Invoke (this, new EventArgs ());
+        MoveMadeEvent?.Invoke (moveIndex);
+    }
+    public event NextPlayerEvent? NextPlayer;
+    public void TriggerNextPlayer (int id) => NextPlayer?.Invoke (id);
+    public event GameOverEvent<GameResult>? GameOver;
+    public void TriggerGameOver (GameResult result) => GameOver?.Invoke (result);
+    public event EventHandler? Undone;
     public virtual void MakeMove (int index)
     {
         state = state.NthMove (index);
@@ -80,13 +92,6 @@ public class GameCompanion<GameResult>: IGameMoveMaker, IReversibleGame<GameResu
             throw new Exception ("Undo impossible: No previous state.");
         }
     }
-    public event MoveMadeEvent? MoveMade;
-    public void TriggerMoveMade (int moveIndex) => MoveMade?.Invoke (moveIndex);
-    public event NextPlayerEvent? NextPlayer;
-    public void TriggerNextPlayer (int id) => NextPlayer?.Invoke (id);
-    public event GameOverEvent<GameResult>? GameOver;
-    public void TriggerGameOver (GameResult result) => GameOver?.Invoke (result);
-    public event EventHandler? Undone;
 }
 
 public interface IBoardGameCompanion<out Board, Evnt>

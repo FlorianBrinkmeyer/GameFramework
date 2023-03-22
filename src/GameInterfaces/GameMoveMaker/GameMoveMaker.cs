@@ -23,5 +23,5 @@ public delegate void MoveMadeEvent (int moveIndex);
 public interface IGameMoveMaker
 {
     void MakeMove (int move);
-    event MoveMadeEvent MoveMade;
+    event MoveMadeEvent? MoveMadeEvent;
 }

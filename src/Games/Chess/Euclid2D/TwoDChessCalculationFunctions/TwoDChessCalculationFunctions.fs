@@ -38,17 +38,23 @@ let pawnWhiteSpecialStartMove ((board : IEnumerable2DArray<IPiece>), ((x,y) : in
     else
         None
 
-let pawnWhitePreHitMoves mode (board : IEnumerable2DArray<IPiece>) ((x,y) : int*int) =
+let pawnWhiteHitMoves ((board : IEnumerable2DArray<IPiece>), ((x,y) : int*int)) =
     [(x-1,y+1); (x+1,y+1)] |> board.FilterCoordsByBoundaries |> Seq.filter (fun (xp, yp) ->  
         match board[xp, yp] with
         | Some piece ->
-            piece.Player = (-1) * mode
+            piece.Player = (-1)
         | None ->
             false        
     )   
 
-let pawnWhiteHitMoves = Func<IEnumerable2DArray<IPiece>, int*int, seq<int*int>> (pawnWhitePreHitMoves possibleMovesMode)
-let pawnWhiteKingBlackList = Func<IEnumerable2DArray<IPiece>, int*int, seq<int*int>> (pawnWhitePreHitMoves blackListMode)
+let pawnWhiteKingBlackList ((board : IEnumerable2DArray<IPiece>), ((x,y) : int*int)) =
+    [(x-1,y+1); (x+1,y+1)] |> board.FilterCoordsByBoundaries |> Seq.filter (fun (xp, yp) ->  
+        match board[xp, yp] with
+        | Some piece ->
+            piece.Player = 1
+        | None ->
+            true        
+    )   
 
 let pawnWhiteEnPassant ((board : IEnumerable2DArray<IPiece>), ((x,y) : int*int)) =
     if y = 4 then
@@ -86,17 +92,23 @@ let pawnBlackSpecialStartMove ((board : IEnumerable2DArray<IPiece>), ((x,y) : in
     else
         None    
 
-let pawnBlackPreHitMoves mode (board : IEnumerable2DArray<IPiece>) ((x,y) : int*int) =
+let pawnBlackHitMoves ((board : IEnumerable2DArray<IPiece>), ((x,y) : int*int)) =
     [(x-1,y-1); (x+1,y-1)] |> board.FilterCoordsByBoundaries |> Seq.filter (fun (xp, yp) ->  
         match board[xp, yp] with
         | Some piece ->
-            piece.Player = 1 * mode
+            piece.Player = 1
         | None ->
             false        
     )   
 
-let pawnBlackHitMoves = Func<IEnumerable2DArray<IPiece>, int*int, seq<int*int>> (pawnBlackPreHitMoves possibleMovesMode)
-let pawnBlackKingBlackList = Func<IEnumerable2DArray<IPiece>, int*int, seq<int*int>> (pawnBlackPreHitMoves blackListMode)
+let pawnBlackKingBlackList ((board : IEnumerable2DArray<IPiece>), ((x,y) : int*int)) =
+    [(x-1,y+1); (x+1,y+1)] |> board.FilterCoordsByBoundaries |> Seq.filter (fun (xp, yp) ->  
+        match board[xp, yp] with
+        | Some piece ->
+            piece.Player = -1
+        | None ->
+            true        
+    )   
 
 let pawnBlackEnPassant ((board : IEnumerable2DArray<IPiece>), ((x,y) : int*int)) =
     if y = 3 then
@@ -122,26 +134,28 @@ let pawnBlackEnPassant ((board : IEnumerable2DArray<IPiece>), ((x,y) : int*int))
 
 let pawnBlackElevationCheck = Func<int*int, bool> (fun (_,y) -> y = 0)             
 
-let kingStandardMoves ownPlayer (board : IEnumerable2DArray<IPiece>) ((x,y) : int*int) =
+let kingPreStandardMoves ownPlayer mode (board : IEnumerable2DArray<IPiece>) ((x,y) : int*int) =
     allDirs |> List.map (fun (xdir,ydir) -> x + xdir, y + ydir) |> board.FilterCoordsByBoundaries |> Seq.filter (fun (xp, yp) ->
         match board[xp,yp] with
         | Some piece ->
-            piece.Player <> ownPlayer
+            piece.Player <> ownPlayer * mode
         | None ->
             true    
     )
 
-let whiteKingStandardMoves = Func<IEnumerable2DArray<IPiece>, int*int, seq<int*int>> (kingStandardMoves 1)
-let blackKingStandardMoves = Func<IEnumerable2DArray<IPiece>, int*int, seq<int*int>> (kingStandardMoves -1)
+let whiteKingStandardMoves = Func<IEnumerable2DArray<IPiece>, int*int, seq<int*int>> (kingPreStandardMoves 1 possibleMovesMode)
+let whiteKingKingBlackList = Func<IEnumerable2DArray<IPiece>, int*int, seq<int*int>> (kingPreStandardMoves 1 blackListMode)
+let blackKingStandardMoves = Func<IEnumerable2DArray<IPiece>, int*int, seq<int*int>> (kingPreStandardMoves -1 possibleMovesMode)
+let blackKingKingBlackList = Func<IEnumerable2DArray<IPiece>, int*int, seq<int*int>> (kingPreStandardMoves -1 blackListMode)
 
 let kingWhiteCastling =
-    let castling1 = {KingDestPos = 6,0; RookStartPos = 7,0; RookDestPos = 5,0; FieldsInBetween = [(4,0);(5,0)]}
-    let castling2 = {KingDestPos = 1,0; RookStartPos = 0,0; RookDestPos = 2,0; FieldsInBetween = [(1,0);(2,0)]}
+    let castling1 = {KingDestPos = 6,0; RookStartPos = 7,0; RookDestPos = 5,0; AditionallyUnthreatenedFields = [(5,0);(6,0)]; AditionallyEmptyFields = [] }
+    let castling2 = {KingDestPos = 2,0; RookStartPos = 0,0; RookDestPos = 3,0; AditionallyUnthreatenedFields = [(2,0);(3,0)]; AditionallyEmptyFields = [(1,0)]}
     seq [castling1; castling2]                           
 
 let kingBlackCastling =
-    let castling1 = {KingDestPos = 6,7; RookStartPos = 7,7; RookDestPos = 5,7; FieldsInBetween = [(4,7);(5,7)]}
-    let castling2 = {KingDestPos = 1,7; RookStartPos = 0,7; RookDestPos = 2,7; FieldsInBetween = [(1,7);(2,7)]}
+    let castling1 = {KingDestPos = 6,7; RookStartPos = 7,7; RookDestPos = 5,7; AditionallyUnthreatenedFields = [(5,7);(6,7)]; AditionallyEmptyFields = []}
+    let castling2 = {KingDestPos = 2,7; RookStartPos = 0,7; RookDestPos = 3,7; AditionallyUnthreatenedFields = [(2,7);(3,7)]; AditionallyEmptyFields = [(1,7)]}
     seq [castling1; castling2]                           
 
 let knightPrePossibleMoves ownPlayer mode (board : IEnumerable2DArray<IPiece>) ((x,y) : int*int) =
