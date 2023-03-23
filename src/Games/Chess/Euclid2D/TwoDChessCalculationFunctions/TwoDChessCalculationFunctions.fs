@@ -102,7 +102,7 @@ let pawnBlackHitMoves ((board : IEnumerable2DArray<IPiece>), ((x,y) : int*int)) 
     )   
 
 let pawnBlackKingBlackList ((board : IEnumerable2DArray<IPiece>), ((x,y) : int*int)) =
-    [(x-1,y+1); (x+1,y+1)] |> board.FilterCoordsByBoundaries |> Seq.filter (fun (xp, yp) ->  
+    [(x-1,y-1); (x+1,y-1)] |> board.FilterCoordsByBoundaries |> Seq.filter (fun (xp, yp) ->  
         match board[xp, yp] with
         | Some piece ->
             piece.Player = -1
@@ -216,7 +216,7 @@ let whiteQueenKingBlackList = Func<IEnumerable2DArray<IPiece>, int*int, seq<int*
 let getFieldsBetweenIfDirMatches (board : IEnumerable2DArray<IPiece>) (ownPos : int*int) (toCheck : int *int) (dirs : List<int*int>) =
     let diff = (Euclid2DCoords toCheck) - (Euclid2DCoords ownPos)
     let dir = diff.NormalizeCompWise
-    let len = Math.Max (diff.X, diff.Y)
+    let len = Math.Max (Math.Abs diff.X, Math.Abs diff.Y)
     if dir*len = diff && dirs |> Seq.exists ((=) dir.AsTuple) then
         board.ToSeqInDirWithCoords ownPos dir.AsTuple |> Seq.skip 1 |> Seq.take (len - 1) |> Some
     else

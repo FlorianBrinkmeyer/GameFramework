@@ -182,7 +182,7 @@ type StartGUI () as this =
             "AIChooser" |> setSensitive true
     [<GLib.ConnectBefore>]
     member x.OnAIChooserChanged (sender : Object) (_ : EventArgs) =
-        let chosenAI = (sender :?> Gtk.ComboBoxText).ActiveText
+        let chosenAI = (sender :?> Gtk.ComboBoxText).ActiveText      
         if not (String.IsNullOrEmpty chosenAI) then
             deactivateMostAIWidgets ()
             "ConsiderationTimeEntry" |> setText "5000"

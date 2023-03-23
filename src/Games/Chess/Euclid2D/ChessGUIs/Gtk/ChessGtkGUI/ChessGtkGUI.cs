@@ -42,7 +42,7 @@ public class ChessGtkGUI : TwoDBoardGUIMovablePieces
                 labelText = "White king checked.";
             else
                 labelText = "Black king checked.";            
-            SetLabel (2, labelText);
+            SetLabel (3, labelText);
         }
         if (evnt is BoardCastlingEvent<Tuple<int,int>>)
         {
@@ -64,7 +64,7 @@ public class ChessGtkGUI : TwoDBoardGUIMovablePieces
         mainForm.WindowPosition = Gtk.WindowPosition.Center;
         initialize (windowsWidth, windowHeight, pictureFolder, _board, _game, thisGUIusers, AIs);
         game!.MoveMade += (sender, move) => {
-            SetLabel (2, String.Empty);
+            SetLabel (3, String.Empty);
             Console.WriteLine (board!.ToString ());
             Console.WriteLine ();
         };

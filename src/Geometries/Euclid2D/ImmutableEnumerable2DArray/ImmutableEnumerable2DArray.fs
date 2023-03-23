@@ -53,7 +53,7 @@ let seqOfSeqOptToMap (seqSeq : seq<seq<Option<'t>>>) =
     )
     Seq.zip dict.Keys dict.Values |> Map.ofSeq
 
-type ImmutableEnumerable2DArray<'t when 't : equality> (xdim, ydim, map : Map<int*int, 't>) =
+type ImmutableEnumerable2DArray<'t when 't : equality> (xdim, ydim, map : Map<int*int, 't>, ?previous : ImmutableEnumerable2DArray<'t>) =
     member x.InternalMap = map
     override this.Equals other =
         let castedOther = other :?> ImmutableEnumerable2DArray<'t>
@@ -77,17 +77,18 @@ type ImmutableEnumerable2DArray<'t when 't : equality> (xdim, ydim, map : Map<in
         [0..ydim-1] |> List.map getRow |> List.reduce (+)          
     interface ImmutableArray<int*int, 't> with
         member x.Item coords = map.TryFind coords
-        member x.GetNext index maybeValue =
+        member this.GetNext index maybeValue =
             let nextMap =
                 match maybeValue with
                 | Some value ->
                     map |> Map.add index value
                 | None ->
                     map |> Map.remove index
-            ImmutableEnumerable2DArray<'t> (xdim, ydim, nextMap) 
+            ImmutableEnumerable2DArray<'t> (xdim, ydim, nextMap, this) 
         member x.Keys = map.Keys
         member x.Values = map.Values
         member x.KeyValuePairs = Seq.zip map.Keys map.Values
+        member x.Previous = previous |> Option.map (fun value -> value :> ImmutableArray<int*int,'t>)
     interface ArrayType<Euclid2DCoords,'t> with
         member this.get_Item coords =
             match map.TryFind coords.AsTuple with

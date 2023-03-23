@@ -23,3 +23,4 @@ type ImmutableArray<'Index, 'T when 'Index :> IComparable and 'Index : compariso
     abstract Keys : seq<'Index>
     abstract Values : seq<'T>
     abstract KeyValuePairs : seq<'Index * 'T>
+    abstract Previous : Option<ImmutableArray<'Index, 'T>>

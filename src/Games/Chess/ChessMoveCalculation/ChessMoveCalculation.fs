@@ -22,7 +22,26 @@ open Chess
 open GameFramework
 
 let calculatePossibleMoves<'Board, 'Coords when 'Coords :> IComparable and 'Coords : comparison and 'Board :> ImmutableArray<'Coords, IPiece>>
-    (board : 'Board) activePlayer (maybePositionOfLastMovedPiece : Option<'Coords>) =              
+    (board : 'Board) activePlayer nonHitMovesInRow (maybePositionOfLastMovedPiece : Option<'Coords>) =              
+    let nextNonHitMovesInRow =
+        let lastMoveIsHitMove =
+            match board.Previous, maybePositionOfLastMovedPiece with
+            | Some previousBoard, Some pos ->
+                previousBoard.Item pos |> Option.isSome
+            | _ -> false
+        let pawnMoved =
+            match maybePositionOfLastMovedPiece with
+            | Some pos ->
+                match board.Item pos with
+                | Some piece ->
+                    piece.Kind = "Pawn"
+                | None -> false      
+            | None -> false
+        if lastMoveIsHitMove || pawnMoved then
+            0
+        else
+            nonHitMovesInRow + 1        
+    if nextNonHitMovesInRow < 50 then
         let ownKingPos, ownKing = 
             let maybePosAndKing=
                 board.KeyValuePairs |> Seq.tryPick (fun (pos, piece) -> 
@@ -35,21 +54,47 @@ let calculatePossibleMoves<'Board, 'Coords when 'Coords :> IComparable and 'Coor
             | Some (pos, king) ->
                 pos, king
             | None ->
+                //Can be used for debugging:
+                let rec writeBoards step maxStep (brd : Option<ImmutableArray<'Coords, IPiece>>) =
+                    if step < maxStep then
+                        let previous =
+                            match brd with
+                            | Some bd ->
+                                bd.Previous
+                            | None ->
+                                None    
+                        writeBoards (step + 1) maxStep previous
+                        if step % 2 = 0 then
+                            let name = (String.replicate step "previous ") + "board:"
+                            Console.WriteLine () 
+                            Console.WriteLine name
+                            Console.WriteLine () 
+                            match brd with
+                            | Some bd ->
+                                Console.WriteLine (bd.ToString ())
+                            | None ->
+                                Console.WriteLine "Empty board"
+                            Console.WriteLine () 
+                writeBoards 0 8 (board :> ImmutableArray<'Coords, IPiece> |> Some)           
                 raise (Exception "No king on board: This shouldn't happen")        
-        let otherPieces = board.KeyValuePairs |> Seq.filter (fun (_, piece) -> piece.Player <> activePlayer) 
+        let otherPieces = board.KeyValuePairs |> Seq.filter (fun (_, piece) -> piece.Player <> activePlayer) |> Seq.toList
         let boardWithoutKing = board.GetNext ownKingPos None :?> 'Board
         let kingBlackList = 
-            otherPieces |> Seq.map (fun (pos, piece) -> (piece :?> IChessPiece<'Board, 'Coords>).BlackListForKing boardWithoutKing pos |> Set.ofSeq) 
+            otherPieces |> List.map (fun (pos, piece) -> (piece :?> IChessPiece<'Board, 'Coords>).BlackListForKing boardWithoutKing pos |> Set.ofSeq) 
                 |> Seq.fold (fun set1 set2 -> Set.union set1 set2) Set.empty
-        let boardWithBlackListKing = ownKing.AugmentByBlackList board ownKingPos kingBlackList       
+        let boardWithKingBlackList = ownKing.AugmentByBlackList board ownKingPos kingBlackList       
         let otherBlockablePieces = 
-            otherPieces |> Seq.choose (fun (pos, piece) -> 
+            otherPieces |> List.choose (fun (pos, piece) -> 
                 match piece with
                 | :? IBlockableChessPiece<'Board, 'Coords> as blockablePiece ->
                     Some (pos, blockablePiece)
                 | _ -> None    
             ) 
-        let castedOtherBlockablePieces = otherBlockablePieces |> Seq.map (fun (pos, piece) -> pos, piece :> INonKingChessPiece<'Board, 'Coords>)
+        let boardWithKingBlackListAndNewlyCheckPreventingWhiteLists = 
+            otherBlockablePieces |> List.fold (fun nextBoard (pos, piece) -> 
+                piece.PotentiallyAugmentBlockingPieceByLists nextBoard pos ownKingPos
+            ) boardWithKingBlackList       
+        let castedOtherBlockablePieces = otherBlockablePieces |> List.map (fun (pos, piece) -> pos, piece :> INonKingChessPiece<'Board, 'Coords>)
         let maybeLastMovedOtherPiece = 
             maybePositionOfLastMovedPiece |> Option.map (fun positionOfLastMovedPiece -> (board.Item positionOfLastMovedPiece).Value)                   
         let allPotentiallyKingThreateningPieces =
@@ -57,40 +102,41 @@ let calculatePossibleMoves<'Board, 'Coords when 'Coords :> IComparable and 'Coor
             | None, None | Some _, Some (:? IKing<'Board, 'Coords>) ->
                 castedOtherBlockablePieces
             | Some positionOfLastMovedPiece, Some (:? INonKingChessPiece<'Board, 'Coords> as nonKingPiece) ->     
-                Seq.append castedOtherBlockablePieces [(positionOfLastMovedPiece, nonKingPiece)]
+                (positionOfLastMovedPiece, nonKingPiece) :: castedOtherBlockablePieces 
             | _ -> raise (Exception "Non-chess piece on board.")    
         let kingThreats =
-            let threatsAndNeutralizing = allPotentiallyKingThreateningPieces |> Seq.choose (fun (pos, piece) -> 
+            let threatsAndNeutralizing = allPotentiallyKingThreateningPieces |> List.choose (fun (pos, piece) -> 
                 match piece.IsThreateningField board pos ownKingPos with
                 | Some fields ->
                     Some (pos, fields)
                 | None -> None  
             )
-            if threatsAndNeutralizing |> Seq.isEmpty then
+            match threatsAndNeutralizing with
+            | [] ->
                 None
-            else     
-                let threats, lists = threatsAndNeutralizing |> Seq.toList |> List.unzip
+            | _ ->     
+                let threats, lists = threatsAndNeutralizing |> List.unzip
                 let whitelist = lists |> List.map Set.ofSeq |> List.reduce (fun set1 set2 -> Set.intersect set1 set2)
                 Some (threats |> Set.ofList, whitelist)
         match kingThreats with
         | Some (kingThreatCoords, threatNeutralizingWhiteList) ->
-            let ownNonKingPieces = board.KeyValuePairs |> Seq.choose (fun (pos, piece) -> 
+            let ownNonKingPieces = boardWithKingBlackListAndNewlyCheckPreventingWhiteLists.KeyValuePairs |> Seq.choose (fun (pos, piece) -> 
                 match piece with
                 | :? INonKingChessPiece<'Board, 'Coords> as nonKingPiece when piece.Player = activePlayer ->
                     Some (pos, nonKingPiece)
                 | _ -> None    
-            ) 
-            let boardWithWhiteListPiecesAndBlackListKing = 
+            )
+            let boardWithCheckEndingWhiteList = 
                 ownNonKingPieces |> Seq.fold (fun nextBoard (pos, piece) -> 
                     piece.AugmentByWhiteList nextBoard pos threatNeutralizingWhiteList
-                ) boardWithBlackListKing
+                ) boardWithKingBlackListAndNewlyCheckPreventingWhiteLists
             let allNewOwnPieces = 
-                boardWithWhiteListPiecesAndBlackListKing.KeyValuePairs |> Seq.filter (fun (_, piece) -> piece.Player = activePlayer)
+                boardWithCheckEndingWhiteList.KeyValuePairs |> Seq.filter (fun (_, piece) -> piece.Player = activePlayer)
             let possibleMoves =
                 let commands = 
                     allNewOwnPieces |> Seq.collect (fun (pos, piece) -> 
                         let castedPiece = piece :?> ISelfCalculatingPiece<'Board, 'Coords, IMoveCommand<'Coords>, IBoardMoveEvent>
-                        castedPiece.PossibleMoves boardWithWhiteListPiecesAndBlackListKing pos |> Seq.map (fun moveCom -> pos, moveCom)
+                        castedPiece.PossibleMoves board pos |> Seq.map (fun moveCom -> pos, moveCom)
                     )
                 commands |> Seq.mapi (fun index (pos, com) -> {Index = index; StartField = pos; Cmd = com}) |> Seq.toArray
             let additionalEvent = {CheckedPlayer = activePlayer; KingPos = ownKingPos; CheckedBy = kingThreatCoords} :> IBoardMoveEvent
@@ -99,19 +145,15 @@ let calculatePossibleMoves<'Board, 'Coords when 'Coords :> IComparable and 'Coor
                     GameOverZSValue (Double.PositiveInfinity * (float) (activePlayer * (-1)))
                 else
                     PossibleMoves possibleMoves
-            moveCalcResult, seq [additionalEvent]                
+            moveCalcResult, seq [additionalEvent], nextNonHitMovesInRow                
         | None ->
-            let boardWithAppliedLists = 
-                otherBlockablePieces |> Seq.fold (fun nextBoard (pos, piece) -> 
-                    piece.PotentiallyAugmentBlockingPieceByLists nextBoard pos ownKingPos
-                ) boardWithBlackListKing
             let allNewOwnPieces = 
-                boardWithAppliedLists.KeyValuePairs |> Seq.filter (fun (_, piece) -> piece.Player = activePlayer)
+                boardWithKingBlackListAndNewlyCheckPreventingWhiteLists.KeyValuePairs |> Seq.filter (fun (_, piece) -> piece.Player = activePlayer)
             let possibleMoves = 
                 let commands = 
                     allNewOwnPieces |> Seq.collect (fun (pos, piece) -> 
                         let castedPiece = piece :?> ISelfCalculatingPiece<'Board, 'Coords, IMoveCommand<'Coords>, IBoardMoveEvent>                       
-                        castedPiece.PossibleMoves boardWithAppliedLists pos |> Seq.map (fun moveCom -> pos, moveCom)
+                        castedPiece.PossibleMoves board pos |> Seq.map (fun moveCom -> pos, moveCom)
                     )
                 commands |> Seq.mapi (fun index (pos, moveCom) -> {Index = index; StartField = pos; Cmd = moveCom}) |> Seq.toArray
             let moveCalcResult =
@@ -119,4 +161,6 @@ let calculatePossibleMoves<'Board, 'Coords when 'Coords :> IComparable and 'Coor
                     GameOverZSValue 0.0
                 else
                     PossibleMoves possibleMoves
-            moveCalcResult, Seq.empty            
+            moveCalcResult, Seq.empty, nextNonHitMovesInRow
+    else
+        GameOverZSValue 0.0, Seq.empty, nextNonHitMovesInRow
