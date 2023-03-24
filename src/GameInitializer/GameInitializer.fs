@@ -27,7 +27,7 @@ let GUI = "StartGUI.xml"
 
 let monteCarloSearchTree = "Monte Carlo tree search"
 let negaMaxTimeLimited = "NegaMax time-limited"
-let negaMaxTimeLimitedCaching = "NegaMax time-limited with caching"
+let negaMaxPruning = "NegaMax time-limited with alpha-beta pruning and caching"
 
 type GameInfo = 
     {Name : String;
@@ -41,17 +41,17 @@ let reversiWithPassing =
 
 let reversiNoPassing = 
     {Name = "Reversi without passing"; 
-    SupportedAIs = [monteCarloSearchTree; negaMaxTimeLimited; negaMaxTimeLimitedCaching];
+    SupportedAIs = [negaMaxPruning; negaMaxTimeLimited; monteCarloSearchTree];
     PlayerIDsAndTitles = [(1,"White");(-1,"Black")]}    
 
 let standardChess = 
     {Name = "Chess"; 
-    SupportedAIs = [monteCarloSearchTree; negaMaxTimeLimited; negaMaxTimeLimitedCaching]; 
+    SupportedAIs = [negaMaxPruning; negaMaxTimeLimited; monteCarloSearchTree];
     PlayerIDsAndTitles = [(1,"White");(-1,"Black")]}    
 
 let games = [reversiWithPassing; reversiNoPassing; standardChess]
 
-let mutable AIagents = Generic.Dictionary<int, AI_Agent> ()
+let mutable AIagents = Generic.Dictionary<int, AI_Agent * String> ()
 let mutable maybeChosenPlayer : Option<int> = None
 
 type StartGUI () as this =
@@ -78,39 +78,21 @@ type StartGUI () as this =
                         5000
                     else
                         text |> Int32.Parse
-                let searchDepth =
-                    let text = "MaximalSearchDepthEntry" |> getText
-                    if String.IsNullOrEmpty text then
-                        100
-                    else
-                        text |> Int32.Parse    
                 let newAI =
                     if chosenAI = monteCarloSearchTree then
-                        MonteCarloTreeSearch (chosenPlayer, considerationTime) :> AI_Agent
+                        MonteCarloTreeSearch (chosenPlayer, considerationTime) :> AI_Agent, monteCarloSearchTree
                     elif chosenAI = negaMaxTimeLimited then
-                        NegaMaxTimeLimited (chosenPlayer, considerationTime, searchDepth)
-                    elif chosenAI = negaMaxTimeLimitedCaching then
-                        let justStoreHashes = "AllowHashCollisions" |> getIfChecked
-                        let text = "MaximallyCachedStatesEntry" |> getText
-                        if String.IsNullOrEmpty text then
-                            NegaMaxTimeLimitedCaching (chosenPlayer, considerationTime, searchDepth, justStoreHashes)
-                        else
-                            NegaMaxTimeLimitedCaching (chosenPlayer, considerationTime, searchDepth, justStoreHashes, text |> Int32.Parse)
+                        NegaMaxTimeLimited (chosenPlayer, considerationTime, 100), negaMaxTimeLimited
+                    elif chosenAI = negaMaxPruning then
+                        NegaMaxTimeLimitedPruningCaching (chosenPlayer, considerationTime, 100), negaMaxPruning
                     else
                         raise (Exception "AI case distinction incomplete.")
                 AIagents[chosenPlayer] <- newAI                        
         )
-    let deactivateMostAIWidgets () =
-        "MaximalSearchDepthEntry" |> setSensitive false
-        "MaximalSearchDepthEntry" |> setText String.Empty
-        "AllowHashCollisions" |> setSensitive false
-        "MaximallyCachedStatesEntry" |> setSensitive false
-        "MaximallyCachedStatesEntry" |> setText String.Empty
     let deactivateAllAIWidgets () =
         "AIChooser" |> setSensitive false
         "ConsiderationTimeEntry" |> setSensitive false
         "ConsiderationTimeEntry" |> setText String.Empty
-        deactivateMostAIWidgets ()
     do
         Gtk.Application.Init ()
         let filename = Path.Combine [|resourcesFolder; GUI|]
@@ -128,7 +110,7 @@ type StartGUI () as this =
             "PlayerChooser" |> fillCombo (game.PlayerIDsAndTitles |> List.map snd)
             "PlayerChooser" |> setSensitive true
             "StartButton" |> setSensitive true
-            AIagents <- Generic.Dictionary<int, AI_Agent> ()
+            AIagents <- Generic.Dictionary<int, AI_Agent * String> ()
             maybeChosenPlayer <- None
             "AssignAIToPlayer" |> setSensitive false
             "AssignAIToPlayer" |> setChecked false
@@ -143,33 +125,13 @@ type StartGUI () as this =
             if not (String.IsNullOrEmpty playerTitle) then
                 let playerID = game.PlayerIDsAndTitles |> List.find (fun (_, title) -> title = playerTitle) |> fst
                 maybeChosenPlayer <- Some playerID
-                deactivateMostAIWidgets ()
                 "AssignAIToPlayer" |> setSensitive true
                 match AIagents.TryGetValue playerID with
-                | true, (:? AI_WithConsiderationTime as AI) ->
+                | true, ((:? AI_WithConsiderationTime as AI), label) ->
                     "AssignAIToPlayer" |> setChecked true
                     "ConsiderationTimeEntry" |> setText (AI.ConsiderationTime.ToString ())
                     "ConsiderationTimeEntry" |> setSensitive true
-                    match AI with
-                    | :? NegaMaxTimeLimited as negaMaxTimeLim ->
-                        "ChosenAILabel" |> setLabel negaMaxTimeLimited
-                        "MaximalSearchDepthEntry" |> setText (negaMaxTimeLim.MaximalSearchDepth.ToString ())
-                        "MaximalSearchDepthEntry" |> setSensitive true
-                    | :? NegaMaxTimeLimitedCaching as negaMaxTimeLimCaching ->
-                        "ChosenAILabel" |> setLabel negaMaxTimeLimitedCaching
-                        "MaximalSearchDepthEntry" |> setText (negaMaxTimeLimCaching.MaximalSearchDepth.ToString ())
-                        "MaximalSearchDepthEntry" |> setSensitive true
-                        "AllowHashCollisions" |> setChecked negaMaxTimeLimCaching.JustStoreHashes
-                        "AllowHashCollisions" |> setSensitive true
-                        match negaMaxTimeLimCaching.CacheMaxSize with
-                        | Some cacheMaxSize ->
-                            "MaximallyCachedStatesEntry" |> setText (cacheMaxSize.ToString ())
-                        | None ->
-                            "MaximallyCachedStatesEntry" |> setText String.Empty
-                        "MaximallyCachedStatesEntry" |> setSensitive true
-                    | :? MonteCarloTreeSearch ->
-                        "ChosenAILabel" |> setLabel monteCarloSearchTree
-                    | _ -> ()
+                    "ChosenAILabel" |> setLabel label
                 | _ -> 
                     "AssignAIToPlayer" |> setChecked false
                     deactivateAllAIWidgets ()
@@ -184,27 +146,16 @@ type StartGUI () as this =
     member x.OnAIChooserChanged (sender : Object) (_ : EventArgs) =
         let chosenAI = (sender :?> Gtk.ComboBoxText).ActiveText      
         if not (String.IsNullOrEmpty chosenAI) then
-            deactivateMostAIWidgets ()
             "ConsiderationTimeEntry" |> setText "5000"
             "ConsiderationTimeEntry" |> setSensitive true
             "ChosenAILabel" |> setLabel chosenAI
-            if chosenAI = negaMaxTimeLimited then
-                "MaximalSearchDepthEntry" |> setSensitive true
-                "MaximalSearchDepthEntry" |> setText "100"
-            elif chosenAI = negaMaxTimeLimitedCaching then
-                "MaximalSearchDepthEntry" |> setSensitive true
-                "MaximalSearchDepthEntry" |> setText "100"
-                "AllowHashCollisions" |> setSensitive true
-                "AllowHashCollisions" |> setChecked false
-                "MaximallyCachedStatesEntry" |> setSensitive true
-                "MaximallyCachedStatesEntry" |> setText String.Empty
     [<GLib.ConnectBefore>]
     member x.OnStartClicked (sender : Object) (_ : EventArgs) =
         let mainForm = builder.GetObject "MainForm" :?> Gtk.ApplicationWindow
         mainForm.Hide ()
         maybeCreateNewAI ()
         let game = games |> List.find (fun gm -> gm.Name = ("GameChooser" |> getActive))
-        let ais = AIagents.Values
+        let ais = AIagents.Values |> Seq.map fst
         let aiInformers = ais |> Seq.choose (fun ai ->
             match ai with
             | :? AI_Informer as informer ->

@@ -151,3 +151,6 @@
 /home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/GameInitializer/bin/Debug/net7.0/ChessResultMapper.pdb
 /home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/GameInitializer/bin/Debug/net7.0/ChessResultMapper.xml
 /home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/GameInitializer/bin/Debug/net7.0/TwoDStandardChessPieceFactory.pdb
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/GameInitializer/bin/Debug/net7.0/NegaMaxPruningCaching.dll
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/GameInitializer/bin/Debug/net7.0/NegaMaxPruningCaching.pdb
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/GameInitializer/bin/Debug/net7.0/NegaMaxPruningCaching.xml

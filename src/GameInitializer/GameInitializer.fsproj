@@ -21,6 +21,7 @@
     <ProjectReference Include="..\Games\Reversi\ReversiResultMapper\ReversiResultMapper.fsproj" />
     <ProjectReference Include="..\Games\Chess\ChessResultMapper\ChessResultMapper.fsproj" />
     <ProjectReference Include="..\Games\Chess\Euclid2D\TwoDStandardChessPieceFactory\TwoDStandardChessPieceFactory.csproj" />
+    <ProjectReference Include="..\AIAgents\NegaMaxPruningCaching\NegaMaxPruningCaching.fsproj" />
   </ItemGroup>
 
 </Project>
