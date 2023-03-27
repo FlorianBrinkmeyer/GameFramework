@@ -57,6 +57,7 @@ let mutable maybeChosenPlayer : Option<int> = None
 type StartGUI () as this =
     let mutable builder : Gtk.Builder = new Gtk.Builder () 
     let setLabel (text : String) (name : String) = (builder.GetObject name :?> Gtk.Label).Text <- text
+    let getLabel (name : String) = (builder.GetObject name :?> Gtk.Label).Text
     let getText (name : String) = (builder.GetObject name :?> Gtk.Entry).Text
     let setText (text : String) (name : String) = (builder.GetObject name :?> Gtk.Entry).Text <- text 
     let setSensitive sensitive (name : String) = (builder.GetObject name :?> Gtk.Widget).Sensitive <- sensitive
@@ -66,11 +67,14 @@ type StartGUI () as this =
         let combo = builder.GetObject name :?> Gtk.ComboBoxText
         combo.RemoveAll ()
         lines |> Seq.iter combo.AppendText 
+    let clearCombo (name : String) =
+        let combo = builder.GetObject name :?> Gtk.ComboBoxText
+        combo.Clear ()
     let getActive (name : String) = 
         (builder.GetObject name :?> Gtk.ComboBoxText).ActiveText
     let maybeCreateNewAI () =
         maybeChosenPlayer |> Option.iter (fun chosenPlayer -> 
-            let chosenAI = "AIChooser" |> getActive
+            let chosenAI = "ChosenAILabel" |> getLabel
             if not (String.IsNullOrEmpty chosenAI) && "AssignAIToPlayer" |> getIfChecked then
                 let considerationTime =
                     let text = "ConsiderationTimeEntry" |> getText
@@ -126,22 +130,31 @@ type StartGUI () as this =
                 let playerID = game.PlayerIDsAndTitles |> List.find (fun (_, title) -> title = playerTitle) |> fst
                 maybeChosenPlayer <- Some playerID
                 "AssignAIToPlayer" |> setSensitive true
+                "AIChooser" |> fillCombo game.SupportedAIs
                 match AIagents.TryGetValue playerID with
                 | true, ((:? AI_WithConsiderationTime as AI), label) ->
                     "AssignAIToPlayer" |> setChecked true
+                    "AIChooser" |> setSensitive true
                     "ConsiderationTimeEntry" |> setText (AI.ConsiderationTime.ToString ())
                     "ConsiderationTimeEntry" |> setSensitive true
                     "ChosenAILabel" |> setLabel label
                 | _ -> 
                     "AssignAIToPlayer" |> setChecked false
+                    "ChosenAILabel" |> setLabel String.Empty
                     deactivateAllAIWidgets ()
     [<GLib.ConnectBefore>]
     member x.OnAssignAIToPlayerToggled (sender : Object) (_ : EventArgs) =
         deactivateAllAIWidgets ()
+        let game = games |> List.find (fun gm -> gm.Name = ("GameChooser" |> getActive))
         if (sender :?> Gtk.CheckButton).Active then
-            let game = games |> List.find (fun gm -> gm.Name = ("GameChooser" |> getActive))
             "AIChooser" |> fillCombo game.SupportedAIs
             "AIChooser" |> setSensitive true
+        else
+            "ChosenAILabel" |> setLabel String.Empty    
+            let playerTitle = "PlayerChooser" |> getActive
+            if not (String.IsNullOrEmpty playerTitle) then
+                let playerID = game.PlayerIDsAndTitles |> List.find (fun (_, title) -> title = playerTitle) |> fst
+                AIagents.Remove playerID |> ignore
     [<GLib.ConnectBefore>]
     member x.OnAIChooserChanged (sender : Object) (_ : EventArgs) =
         let chosenAI = (sender :?> Gtk.ComboBoxText).ActiveText      
@@ -171,6 +184,7 @@ type StartGUI () as this =
                 let imageFolder = Path.Combine [|resourcesFolder; "ReversiPieceImages"|]
                 let guiBuilder = Path.Combine [|resourcesFolder; "SimpleTwoDBoardGUI.xml"|]
                 Reversi.ReversiGtkGUI (800, 830, imageFolder, guiBuilder, boardCompanion, gameCompanion, humanPlayers, aiInformers)
+            gui.Quit.AddHandler (fun _ _ -> mainForm.Show ())
             gameCompanion.Run ()
         elif game = reversiNoPassing then
             let gameCompanion, boardCompanion = Reversi.Init.initReversi 8 8 (-1) false Reversi.ResultMapper.resultMapper ais
@@ -178,6 +192,7 @@ type StartGUI () as this =
                 let imageFolder = Path.Combine [|resourcesFolder; "ReversiPieceImages"|]
                 let guiBuilder = Path.Combine [|resourcesFolder; "SimpleTwoDBoardGUI.xml"|]
                 Reversi.ReversiGtkGUI (800, 830, imageFolder, guiBuilder, boardCompanion, gameCompanion, humanPlayers, aiInformers)
+            gui.Quit.AddHandler (fun _ _ -> mainForm.Show ())
             gameCompanion.Run ()
         elif game = standardChess then
             let startPositionFileName = Path.Combine [|resourcesFolder; "StandardChessStartPosition.csv"|]
@@ -188,6 +203,7 @@ type StartGUI () as this =
                 let imageFolder = Path.Combine [|resourcesFolder; "ChessPieceImages"|]
                 let guiBuilder = Path.Combine [|resourcesFolder; "SimpleTwoDBoardGUI.xml"|]
                 Chess.ChessGtkGUI (800, 830, imageFolder, guiBuilder, boardCompanion, gameCompanion, humanPlayers, aiInformers)
+            gui.Quit.AddHandler (fun _ _ -> mainForm.Show ())
             gameCompanion.Run ()        
         else
             raise (Exception "Game case distinction incomplete.")

@@ -119,8 +119,11 @@ where Board : Enumerable2DArray.IEnumerable2DArray<Piece>
           foreach (AI_Informer ai in AIs)
                ai.SendMessage += OnAIMessage;
      }
+     public event EventHandler? Quit;
      void OnQuit (Object sender, EventArgs args)
      {
-          Gtk.Application.Quit ();
+          var mainForm = (Gtk.ApplicationWindow) builder.GetObject ("Window");
+          mainForm.Dispose ();
+          Quit?.Invoke (this, new EventArgs ());
      }     
 }

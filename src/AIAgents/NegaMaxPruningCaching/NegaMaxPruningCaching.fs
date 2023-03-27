@@ -68,7 +68,7 @@ type NegaMaxTimeLimitedPruningCaching (playerID : int, searchTime : int, maxDept
             let mutable timeLeft = true
             let timeLimitedSearch =
                 async {
-                    let mutable searchDepth = 2.0
+                    let mutable searchDepth = 1.0
                     let state = game :?> ImmutableGame
                     let children = Array.init state.NumberOfPossibleMoves (fun index -> state.NthMove index |> getNewNode)
                     let childMinDepth = children |> Seq.map (fun child -> child.Depth) |> Seq.min
@@ -135,34 +135,40 @@ type NegaMaxTimeLimitedPruningCaching (playerID : int, searchTime : int, maxDept
                             if node.Depth >= depth then
                                 node
                             else
-                                match cachedStates.TryGetValue node.State with
-                                | true, attr when attr.Depth >= depth ->
-                                    usedCacheCount <- usedCacheCount + 1
-                                    match attr.Bound with
-                                    | Exact ->
-                                        {node with Value = attr.Value; Depth = attr.Depth}
-                                    | LowerBound ->
-                                        let alpha = Math.Max (node.Alpha, attr.Value)
-                                        if alpha >= node.Beta then
-                                            {node with Value = attr.Value; Depth = attr.Depth; Alpha = alpha}
-                                        else
-                                            main alpha node.Beta
-                                    | UpperBound ->
-                                        let beta = Math.Min (node.Beta, attr.Value)
-                                        if node.Alpha >= beta then
-                                            {node with Value = attr.Value; Depth = attr.Depth; Beta = beta}
-                                        else
-                                            main node.Alpha beta                       
-                                | _ ->
+                                match node.DepthAim with
+                                | Some aim when aim >= depth ->
                                     main node.Alpha node.Beta
+                                | _ ->    
+                                    match cachedStates.TryGetValue node.State with
+                                    | true, attr when attr.Depth >= depth ->
+                                        usedCacheCount <- usedCacheCount + 1
+                                        match attr.Bound with
+                                        | Exact ->
+                                            {node with Value = attr.Value; Depth = attr.Depth}
+                                        | LowerBound ->
+                                            let alpha = Math.Max (node.Alpha, attr.Value)
+                                            if alpha >= node.Beta then
+                                                {node with Value = attr.Value; Depth = attr.Depth; Alpha = alpha}
+                                            else
+                                                main alpha node.Beta
+                                        | UpperBound ->
+                                            let beta = Math.Min (node.Beta, attr.Value)
+                                            if node.Alpha >= beta then
+                                                {node with Value = attr.Value; Depth = attr.Depth; Beta = beta}
+                                            else
+                                                main node.Alpha beta                       
+                                    | _ ->
+                                        main node.Alpha node.Beta
                         tree <- helper tree searchDepth
                         if tree.Depth >= searchDepth then
-                            sendMessage.Trigger (sprintf "Reached search depth: %A, Cached states: %A, Used cache %A times, Maximally reached depth: %A" 
-                                ((int) searchDepth) cachedStates.Count usedCacheCount ((int) reachedMaxDepth))                           
+                            let message = 
+                                String.Format ("Reached search depth: {0:0}, Cached states: {1}, Used cache {2} times, Maximally reached depth: {3:0}",
+                                    searchDepth, cachedStates.Count, usedCacheCount, reachedMaxDepth)
+                            sendMessage.Trigger message
                             searchDepth <- tree.Depth + 1.0
                             tree <- {tree with Alpha = Double.NegativeInfinity; Beta = Double.PositiveInfinity}
                             if searchDepth > reachedMaxDepth then
-                                reachedMaxDepth <- searchDepth   
+                                reachedMaxDepth <- searchDepth
                     let chosenMove = 
                         [0..(game.NumberOfPossibleMoves-1)] |> List.maxBy (fun index -> -tree.Children.Value[index].Value)
                     mutableGame.MakeMove chosenMove
