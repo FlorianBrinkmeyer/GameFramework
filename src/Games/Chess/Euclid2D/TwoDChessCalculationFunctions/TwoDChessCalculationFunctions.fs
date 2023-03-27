@@ -33,7 +33,7 @@ let pawnWhiteStandardMove ((board : IEnumerable2DArray<IPiece>), ((x,y) : int*in
         None    
 
 let pawnWhiteSpecialStartMove ((board : IEnumerable2DArray<IPiece>), ((x,y) : int*int)) =
-    if board[x,3].IsNone then
+    if board[x,3].IsNone && board[x,2].IsNone then
         Some (x,3)
     else
         None
@@ -87,7 +87,7 @@ let pawnBlackStandardMove ((board : IEnumerable2DArray<IPiece>), ((x,y) : int*in
         None    
 
 let pawnBlackSpecialStartMove ((board : IEnumerable2DArray<IPiece>), ((x,y) : int*int)) =
-    if board[x,4].IsNone then
+    if board[x,4].IsNone && board[x,5].IsNone then
         Some (x,4)
     else
         None    

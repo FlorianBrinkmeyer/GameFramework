@@ -23,6 +23,7 @@ open System.Collections
 type Node = {State : ImmutableGame;
              Value : float;
              Depth : float;
+             DepthAim : Option<float>
              Alpha : float;
              Beta : float;
              Children : Option<Node []>}
@@ -62,11 +63,12 @@ type NegaMaxTimeLimitedPruningCaching (playerID : int, searchTime : int, maxDept
                  Depth = depth;
                  Alpha = Double.NegativeInfinity;
                  Beta = Double.PositiveInfinity
-                 Children = None}
+                 Children = None
+                 DepthAim = None}
             let mutable timeLeft = true
             let timeLimitedSearch =
                 async {
-                    let mutable searchDepth = 1.0
+                    let mutable searchDepth = 2.0
                     let state = game :?> ImmutableGame
                     let children = Array.init state.NumberOfPossibleMoves (fun index -> state.NthMove index |> getNewNode)
                     let childMinDepth = children |> Seq.map (fun child -> child.Depth) |> Seq.min
@@ -77,42 +79,59 @@ type NegaMaxTimeLimitedPruningCaching (playerID : int, searchTime : int, maxDept
                          Depth = childMinDepth + 1.0
                          Alpha = Double.NegativeInfinity;
                          Beta = Double.PositiveInfinity
-                         Children = Some children}                                                           
+                         Children = Some children
+                         DepthAim = None}                                                           
                     let mutable tree = startNode
                     while searchDepth <= maxDepth && timeLeft do
                         let rec helper (node : Node) depth =
-                            let main (node : Node) alpha beta =
+                            let main alpha beta =
                                 match node.Children with
                                 | Some children ->
                                     let (index, chosenChild) =
                                         let childrenToComplete = 
-                                            children |> Array.mapi (fun index child  -> index, child) |> Seq.filter (fun (_, child) -> child.Depth < depth - 1.0) 
+                                            children |> Array.mapi (fun index child  -> index, child) 
+                                                |> Seq.filter (fun (_, child) -> child.Depth < depth - 1.0) 
                                         childrenToComplete |> Seq.minBy (fun (_, child) -> child.Value)
-                                    let childWithAlphaBeta = {chosenChild with Alpha = -beta; Beta = -alpha}
+                                    let childWithAlphaBeta = 
+                                        match chosenChild.DepthAim with
+                                        | Some aim when aim >= depth - 1.0 ->
+                                            chosenChild
+                                        | _ ->    
+                                            {chosenChild with Alpha = -beta; Beta = -alpha; DepthAim = Some (depth - 1.0)}
                                     let newChild = helper childWithAlphaBeta (depth - 1.0)
                                     children[index] <- newChild
-                                    let newAlpha = Math.Max (alpha, newChild.Value)
-                                    if ((newChild.Depth >= depth - 1.0) && (newAlpha >= beta)) || (children |> Seq.forall (fun child -> child.Depth >= depth - 1.0)) then
-                                        let relevantChildren = children |> Seq.filter (fun child -> child.Depth >= depth - 1.0)
-                                        let relChildrenMinDepth = relevantChildren |> Seq.map (fun child -> child.Depth) |> Seq.min
-                                        let newDepth = relChildrenMinDepth + 1.0
-                                        let newValue = relevantChildren |> Seq.map (fun child -> -child.Value) |> Seq.max    
+                                    let newAlpha = 
+                                        if newChild.Depth >= depth - 1.0 then
+                                            Math.Max (alpha, -newChild.Value)
+                                        else
+                                            alpha        
+                                    let cacheState newValue newDepth =
                                         let flag =
                                             if newValue <= node.Alpha then
                                                 UpperBound
-                                            elif newValue >= node.Beta then
+                                            elif newValue >= beta then
                                                 LowerBound
                                             else
                                                 Exact
-                                        cachedStates[node.State] <- {Value = newValue; Depth = newDepth; Bound = flag}               
-                                        {node with Alpha = newAlpha; Depth = newDepth; Value = newValue}
-                                    else
+                                        cachedStates[node.State] <- {Value = newValue; Depth = newDepth; Bound = flag}                
+                                    if children |> Seq.forall (fun child -> child.Depth >= depth - 1.0) then
+                                        let childrenMinDepth = children |> Seq.map (fun child -> child.Depth) |> Seq.min
+                                        let newDepth = childrenMinDepth + 1.0
+                                        let newValue = children |> Seq.map (fun child -> -child.Value) |> Seq.max    
+                                        cacheState newValue newDepth
+                                        {node with Depth = newDepth; Value = newValue}
+                                    elif newAlpha >= beta then
+                                        cacheState newAlpha depth
+                                        {node with Depth = depth; Value = newAlpha}                                        
+                                    elif newChild.Depth >= depth - 1.0 then
                                         {node with Alpha = newAlpha}
+                                    else
+                                        node    
                                 | None ->
                                     let children = Array.init node.State.NumberOfPossibleMoves (fun index -> node.State.NthMove index |> getNewNode)
                                     let childMinDepth = children |> Seq.map (fun child -> child.Depth) |> Seq.min
                                     let value = children |> Seq.map (fun child -> -child.Value) |> Seq.max
-                                    {node with Children = Some children; Depth = childMinDepth + 1.0; Value = value}                                                           
+                                    {node with Children = Some children; Depth = childMinDepth + 1.0; Value = value}
                             if node.Depth >= depth then
                                 node
                             else
@@ -120,21 +139,28 @@ type NegaMaxTimeLimitedPruningCaching (playerID : int, searchTime : int, maxDept
                                 | true, attr when attr.Depth >= depth ->
                                     usedCacheCount <- usedCacheCount + 1
                                     match attr.Bound with
-                                    | UpperBound ->
-                                        let beta = Math.Min (node.Beta, attr.Value)
-                                        main node node.Alpha beta
-                                    | LowerBound ->
-                                        let alpha = Math.Max (node.Alpha, attr.Value)
-                                        main node alpha node.Beta
                                     | Exact ->
                                         {node with Value = attr.Value; Depth = attr.Depth}
+                                    | LowerBound ->
+                                        let alpha = Math.Max (node.Alpha, attr.Value)
+                                        if alpha >= node.Beta then
+                                            {node with Value = attr.Value; Depth = attr.Depth; Alpha = alpha}
+                                        else
+                                            main alpha node.Beta
+                                    | UpperBound ->
+                                        let beta = Math.Min (node.Beta, attr.Value)
+                                        if node.Alpha >= beta then
+                                            {node with Value = attr.Value; Depth = attr.Depth; Beta = beta}
+                                        else
+                                            main node.Alpha beta                       
                                 | _ ->
-                                    main node node.Alpha node.Beta        
+                                    main node.Alpha node.Beta
                         tree <- helper tree searchDepth
                         if tree.Depth >= searchDepth then
                             sendMessage.Trigger (sprintf "Reached search depth: %A, Cached states: %A, Used cache %A times, Maximally reached depth: %A" 
-                                ((int) searchDepth) cachedStates.Count usedCacheCount ((int)reachedMaxDepth))                           
+                                ((int) searchDepth) cachedStates.Count usedCacheCount ((int) reachedMaxDepth))                           
                             searchDepth <- tree.Depth + 1.0
+                            tree <- {tree with Alpha = Double.NegativeInfinity; Beta = Double.PositiveInfinity}
                             if searchDepth > reachedMaxDepth then
                                 reachedMaxDepth <- searchDepth   
                     let chosenMove = 

@@ -20,7 +20,6 @@ namespace StandardChess;
 using System;
 using Chess;
 using GameFramework;
-using Microsoft.FSharp.Core;
 using Microsoft.FSharp.Collections;
 
 public class PieceFactory
@@ -35,58 +34,52 @@ public class PieceFactory
                     result = new Pawn<ImmutableEnumerable2DArray.ImmutableEnumerable2DArray<IPiece>, Tuple<int, int>> 
                         (TwoDMoveCalculation.pawnWhiteStandardMove, TwoDMoveCalculation.pawnWhiteSpecialStartMove, TwoDMoveCalculation.pawnWhiteHitMoves,
                         TwoDMoveCalculation.pawnWhiteKingBlackList, TwoDMoveCalculation.pawnWhiteEnPassant, TwoDMoveCalculation.pawnWhiteElevationCheck,
-                        1, 0, FSharpOption<FSharpSet<Tuple<int, int>>>.None, FSharpOption<FSharpSet<Tuple<int, int>>>.None, InitPiece ("Queen", 1));
+                        1, 0, null, null, InitPiece ("Queen", 1));
                 else
                     result = new Pawn<ImmutableEnumerable2DArray.ImmutableEnumerable2DArray<IPiece>, Tuple<int, int>> 
                         (TwoDMoveCalculation.pawnBlackStandardMove, TwoDMoveCalculation.pawnBlackSpecialStartMove, TwoDMoveCalculation.pawnBlackHitMoves,
                         TwoDMoveCalculation.pawnBlackKingBlackList, TwoDMoveCalculation.pawnBlackEnPassant, TwoDMoveCalculation.pawnBlackElevationCheck,
-                        -1, 0, FSharpOption<FSharpSet<Tuple<int, int>>>.None, FSharpOption<FSharpSet<Tuple<int, int>>>.None, InitPiece ("Queen", -1));
+                        -1, 0, null, null, InitPiece ("Queen", -1));
                 break;
             case "Knight":
                 if (color==1)
                     result = new StandardNonBlockablePiece<ImmutableEnumerable2DArray.ImmutableEnumerable2DArray<IPiece>, Tuple<int, int>>
                         (TwoDMoveCalculation.whiteKnightPosMoves, TwoDMoveCalculation.whiteKnightKingBlackList, TwoDMoveCalculation.knightThreateningTest,
-                        1, "Knight", 3.0, FSharpOption<FSharpSet<Tuple<int, int>>>.None, FSharpOption<FSharpSet<Tuple<int, int>>>.None);
+                        1, "Knight", 3.0, null, null);
                 else
                     result = new StandardNonBlockablePiece<ImmutableEnumerable2DArray.ImmutableEnumerable2DArray<IPiece>, Tuple<int, int>>
                         (TwoDMoveCalculation.blackKnightPosMoves, TwoDMoveCalculation.blackKnightKingBlackList, TwoDMoveCalculation.knightThreateningTest,
-                        -1, "Knight", 3.0, FSharpOption<FSharpSet<Tuple<int, int>>>.None, FSharpOption<FSharpSet<Tuple<int, int>>>.None);
+                        -1, "Knight", 3.0, null, null);
                 break;
             case "Rook":
                 if (color==1)
                     result = new BlockablePiece<ImmutableEnumerable2DArray.ImmutableEnumerable2DArray<IPiece>, Tuple<int, int>> 
                         (TwoDMoveCalculation.whiteRookPossibleMoves, TwoDMoveCalculation.whiteRookKingBlackList, TwoDMoveCalculation.rookThreateningTest,
-                        TwoDMoveCalculation.whiteRookGetWhiteListAndPiece, 1, "Rook", 5.0, true, FSharpOption<FSharpSet<Tuple<int, int>>>.None,
-                        FSharpOption<FSharpSet<Tuple<int, int>>>.None);
+                        TwoDMoveCalculation.whiteRookGetWhiteListAndPiece, 1, "Rook", 5.0, true, null, null);
                 else
                     result = new BlockablePiece<ImmutableEnumerable2DArray.ImmutableEnumerable2DArray<IPiece>, Tuple<int, int>> 
                         (TwoDMoveCalculation.blackRookPossibleMoves, TwoDMoveCalculation.blackRookKingBlackList, TwoDMoveCalculation.rookThreateningTest,
-                        TwoDMoveCalculation.blackRookGetWhiteListAndPiece, -1, "Rook", 5.0, true, FSharpOption<FSharpSet<Tuple<int, int>>>.None,
-                        FSharpOption<FSharpSet<Tuple<int, int>>>.None);
+                        TwoDMoveCalculation.blackRookGetWhiteListAndPiece, -1, "Rook", 5.0, true, null, null);
                 break;        
             case "Bishop":
                 if (color==1)
                     result = new BlockablePiece<ImmutableEnumerable2DArray.ImmutableEnumerable2DArray<IPiece>, Tuple<int, int>>
                         (TwoDMoveCalculation.whiteBishopPossibleMoves, TwoDMoveCalculation.whiteBishopKingBlackList, TwoDMoveCalculation.bishopThreateningTest,
-                        TwoDMoveCalculation.whiteBishopGetWhiteListAndPiece, 1, "Bishop", 3.0, FSharpOption<bool>.None, 
-                        FSharpOption<FSharpSet<Tuple<int, int>>>.None, FSharpOption<FSharpSet<Tuple<int, int>>>.None);
+                        TwoDMoveCalculation.whiteBishopGetWhiteListAndPiece, 1, "Bishop", 3.0, null, null, null);
                 else                 
                     result = new BlockablePiece<ImmutableEnumerable2DArray.ImmutableEnumerable2DArray<IPiece>, Tuple<int, int>>
                         (TwoDMoveCalculation.blackBishopPossibleMoves, TwoDMoveCalculation.blackBishopKingBlackList, TwoDMoveCalculation.bishopThreateningTest,
-                        TwoDMoveCalculation.blackBishopGetWhiteListAndPiece, -1, "Bishop", 3.0, FSharpOption<bool>.None,
-                        FSharpOption<FSharpSet<Tuple<int, int>>>.None, FSharpOption<FSharpSet<Tuple<int, int>>>.None);
+                        TwoDMoveCalculation.blackBishopGetWhiteListAndPiece, -1, "Bishop", 3.0, null, null, null);
                 break;
             case "Queen":
                 if (color==1)
                     result = new BlockablePiece<ImmutableEnumerable2DArray.ImmutableEnumerable2DArray<IPiece>, Tuple<int, int>>
                         (TwoDMoveCalculation.whiteQueenPossibleMoves, TwoDMoveCalculation.whiteQueenKingBlackList, TwoDMoveCalculation.queenThreateningTest,
-                        TwoDMoveCalculation.whiteQueenGetWhiteListAndPiece, 1, "Queen", 9.0, FSharpOption<bool>.None,
-                        FSharpOption<FSharpSet<Tuple<int, int>>>.None, FSharpOption<FSharpSet<Tuple<int, int>>>.None);
+                        TwoDMoveCalculation.whiteQueenGetWhiteListAndPiece, 1, "Queen", 9.0, null, null, null);
                 else            
                     result = new BlockablePiece<ImmutableEnumerable2DArray.ImmutableEnumerable2DArray<IPiece>, Tuple<int, int>>
                         (TwoDMoveCalculation.blackQueenPossibleMoves, TwoDMoveCalculation.blackQueenKingBlackList, TwoDMoveCalculation.queenThreateningTest,
-                        TwoDMoveCalculation.blackQueenGetWhiteListAndPiece, -1, "Queen", 9.0, FSharpOption<bool>.None,
-                        FSharpOption<FSharpSet<Tuple<int, int>>>.None, FSharpOption<FSharpSet<Tuple<int, int>>>.None);
+                        TwoDMoveCalculation.blackQueenGetWhiteListAndPiece, -1, "Queen", 9.0, null, null, null);
                 break;
             case "King":
                 if (color==1)
