@@ -27,7 +27,7 @@ let GUI = "StartGUI.xml"
 
 let monteCarloSearchTree = "Monte Carlo tree search"
 let negaMaxTimeLimited = "NegaMax time-limited"
-let negaMaxPruning = "NegaMax time-limited with alpha-beta pruning and caching"
+let negaMaxPruningCaching = "NegaMax time-limited with alpha-beta pruning and caching"
 
 type GameInfo = 
     {Name : String;
@@ -41,12 +41,12 @@ let reversiWithPassing =
 
 let reversiNoPassing = 
     {Name = "Reversi without passing"; 
-    SupportedAIs = [negaMaxPruning; negaMaxTimeLimited; monteCarloSearchTree];
+    SupportedAIs = [negaMaxPruningCaching; monteCarloSearchTree; negaMaxTimeLimited];
     PlayerIDsAndTitles = [(1,"White");(-1,"Black")]}    
 
 let standardChess = 
     {Name = "Chess"; 
-    SupportedAIs = [negaMaxPruning; negaMaxTimeLimited; monteCarloSearchTree];
+    SupportedAIs = [negaMaxPruningCaching; monteCarloSearchTree; negaMaxTimeLimited];
     PlayerIDsAndTitles = [(1,"White");(-1,"Black")]}    
 
 let games = [reversiWithPassing; reversiNoPassing; standardChess]
@@ -87,8 +87,8 @@ type StartGUI () as this =
                         MonteCarloTreeSearch (chosenPlayer, considerationTime) :> AI_Agent, monteCarloSearchTree
                     elif chosenAI = negaMaxTimeLimited then
                         NegaMaxTimeLimited (chosenPlayer, considerationTime, 100), negaMaxTimeLimited
-                    elif chosenAI = negaMaxPruning then
-                        NegaMaxTimeLimitedPruningCaching (chosenPlayer, considerationTime, 100), negaMaxPruning
+                    elif chosenAI = negaMaxPruningCaching then
+                        NegaMaxTimeLimitedPruningCaching (chosenPlayer, considerationTime, 100, 4), negaMaxPruningCaching
                     else
                         raise (Exception "AI case distinction incomplete.")
                 AIagents[chosenPlayer] <- newAI                        

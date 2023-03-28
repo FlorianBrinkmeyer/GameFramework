@@ -15,8 +15,9 @@ Copyright (C) 2023  Florian Brinkmeyer
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 *)
 
-namespace GameFramework
+module GameFramework
 
+open GameFramework
 open System
 open System.Collections
 
@@ -32,8 +33,16 @@ type Bound = LowerBound | UpperBound | Exact
 
 type GameStateAttr = {Value : float; Depth : float; Bound : Bound}
 
-type NegaMaxTimeLimitedPruningCaching (playerID : int, searchTime : int, maxDepth : int) =
-    let cachedStates = Generic.Dictionary<ImmutableGame, GameStateAttr> ()
+let asyncMap (mapper : 't -> 'u) (items: seq<'t>) = 
+    items |> Seq.map (fun item -> async {return mapper item}) |> Async.Parallel |> Async.RunSynchronously
+
+type NegaMaxTimeLimitedPruningCaching (playerID : int, searchTime : int, maxDepth : int, ?usedThreads) =
+    let cachedStates, threadsCount = 
+        match usedThreads with
+        | Some count ->
+            Concurrent.ConcurrentDictionary<ImmutableGame, GameStateAttr> () :> Generic.IDictionary<ImmutableGame, GameStateAttr>, count
+        | None ->    
+            Generic.Dictionary<ImmutableGame, GameStateAttr> (), 1
     let mutable usedCacheCount = 0
     let mutable reachedMaxDepth = 0.0
     let mutable player = playerID
@@ -73,6 +82,7 @@ type NegaMaxTimeLimitedPruningCaching (playerID : int, searchTime : int, maxDept
                     let children = Array.init state.NumberOfPossibleMoves (fun index -> state.NthMove index |> getNewNode)
                     let childMinDepth = children |> Seq.map (fun child -> child.Depth) |> Seq.min
                     let value = children |> Seq.map (fun child -> -child.Value) |> Seq.max
+                    let mutable multiThreadingInUse = false
                     let startNode = 
                         {State = state;
                          Value = value
@@ -83,28 +93,47 @@ type NegaMaxTimeLimitedPruningCaching (playerID : int, searchTime : int, maxDept
                          DepthAim = None}                                                           
                     let mutable tree = startNode
                     while searchDepth <= maxDepth && timeLeft do
-                        let rec helper (node : Node) depth =
+                        let rec helper depth (node : Node) =
                             let main alpha beta =
                                 match node.Children with
                                 | Some children ->
-                                    let (index, chosenChild) =
-                                        let childrenToComplete = 
-                                            children |> Array.mapi (fun index child  -> index, child) 
-                                                |> Seq.filter (fun (_, child) -> child.Depth < depth - 1.0) 
-                                        childrenToComplete |> Seq.minBy (fun (_, child) -> child.Value)
-                                    let childWithAlphaBeta = 
-                                        match chosenChild.DepthAim with
-                                        | Some aim when aim >= depth - 1.0 ->
-                                            chosenChild
-                                        | _ ->    
-                                            {chosenChild with Alpha = -beta; Beta = -alpha; DepthAim = Some (depth - 1.0)}
-                                    let newChild = helper childWithAlphaBeta (depth - 1.0)
-                                    children[index] <- newChild
-                                    let newAlpha = 
-                                        if newChild.Depth >= depth - 1.0 then
-                                            Math.Max (alpha, -newChild.Value)
+                                    let childrenToComplete = 
+                                        children |> Array.mapi (fun index child  -> index, child) 
+                                            |> Array.filter (fun (_, child) -> child.Depth < depth - 1.0) |> Array.sortBy (fun (_, child) -> child.Value) 
+                                    let childrenToUpdate =
+                                        if multiThreadingInUse then
+                                            childrenToComplete |> Array.take 1
+                                        elif childrenToComplete.Length >= threadsCount then
+                                            childrenToComplete |> Array.take threadsCount
                                         else
-                                            alpha        
+                                            childrenToComplete    
+                                    let childrenWithAlphaBeta = 
+                                        childrenToUpdate |> Array.map (fun (_, child) ->
+                                            match child.DepthAim with
+                                            | Some aim when aim >= depth - 1.0 ->
+                                                child
+                                            | _ ->    
+                                                {child with Alpha = -beta; Beta = -alpha; DepthAim = Some (depth - 1.0)}
+                                        )
+                                    let newChildren = 
+                                        if childrenToComplete.Length = 1 then
+                                            childrenWithAlphaBeta |> Array.map (helper (depth - 1.0))
+                                        else
+                                            multiThreadingInUse <- true
+                                            let res = childrenWithAlphaBeta |> asyncMap (helper (depth - 1.0))
+                                            multiThreadingInUse <- false
+                                            res
+                                    childrenToUpdate |> Array.map fst |> Array.iteri (fun sourceIndex destIndex ->
+                                        children[destIndex] <- newChildren[sourceIndex]
+                                    )
+                                    let newAlpha = 
+                                        let childrenValues = 
+                                            newChildren |> Seq.filter (fun child -> child.Depth >= depth - 1.0) |> Seq.map (fun child -> -child.Value)
+                                        if childrenValues |> Seq.isEmpty then
+                                            alpha
+                                        else
+                                            let childrenAlpha = childrenValues |> Seq.max    
+                                            Math.Max (alpha, childrenAlpha)
                                     let cacheState newValue newDepth =
                                         let flag =
                                             if newValue <= node.Alpha then
@@ -123,10 +152,8 @@ type NegaMaxTimeLimitedPruningCaching (playerID : int, searchTime : int, maxDept
                                     elif newAlpha >= beta then
                                         cacheState newAlpha depth
                                         {node with Depth = depth; Value = newAlpha}                                        
-                                    elif newChild.Depth >= depth - 1.0 then
+                                    else 
                                         {node with Alpha = newAlpha}
-                                    else
-                                        node    
                                 | None ->
                                     let children = Array.init node.State.NumberOfPossibleMoves (fun index -> node.State.NthMove index |> getNewNode)
                                     let childMinDepth = children |> Seq.map (fun child -> child.Depth) |> Seq.min
@@ -159,7 +186,7 @@ type NegaMaxTimeLimitedPruningCaching (playerID : int, searchTime : int, maxDept
                                                 main node.Alpha beta                       
                                     | _ ->
                                         main node.Alpha node.Beta
-                        tree <- helper tree searchDepth
+                        tree <- helper searchDepth tree 
                         if tree.Depth >= searchDepth then
                             let message = 
                                 String.Format ("Reached search depth: {0:0}, Cached states: {1}, Used cache {2} times, Maximally reached depth: {3:0}",
