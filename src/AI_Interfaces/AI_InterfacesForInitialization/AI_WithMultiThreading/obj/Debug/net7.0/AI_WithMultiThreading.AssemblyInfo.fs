@@ -7,11 +7,11 @@ open System
 open System.Reflection
 
 
-[<assembly: System.Reflection.AssemblyCompanyAttribute("NegaMaxTimeLimitedCaching")>]
+[<assembly: System.Reflection.AssemblyCompanyAttribute("AI_WithMultiThreading")>]
 [<assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")>]
 [<assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")>]
 [<assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")>]
-[<assembly: System.Reflection.AssemblyProductAttribute("NegaMaxTimeLimitedCaching")>]
-[<assembly: System.Reflection.AssemblyTitleAttribute("NegaMaxTimeLimitedCaching")>]
+[<assembly: System.Reflection.AssemblyProductAttribute("AI_WithMultiThreading")>]
+[<assembly: System.Reflection.AssemblyTitleAttribute("AI_WithMultiThreading")>]
 [<assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")>]
 do()

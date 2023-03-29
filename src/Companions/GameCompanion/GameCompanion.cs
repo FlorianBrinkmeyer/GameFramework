@@ -37,6 +37,7 @@ public class GameCompanion<GameResult>: IGameMoveMaker, IReversibleGame<GameResu
     protected virtual void TriggerTriggerBoardEvents () {}
     public event MoveMadeEvent? MoveMadeEvent;
     public event EventHandler? MoveMade;
+    public event EventHandler? ReInitialized;
     public void TriggerMoveMade (int moveIndex)
     {
         MoveMade?.Invoke (this, new EventArgs ());
@@ -70,6 +71,7 @@ public class GameCompanion<GameResult>: IGameMoveMaker, IReversibleGame<GameResu
     }
     public void Run ()
     {
+        ReInitialized?.Invoke (this, new EventArgs ());
         AI_Agent? agent;
         if ((playerToAIAgent != null) && (playerToAIAgent.TryGetValue (ActivePlayer, out agent)))
         {
@@ -91,6 +93,21 @@ public class GameCompanion<GameResult>: IGameMoveMaker, IReversibleGame<GameResu
         {
             throw new Exception ("Undo impossible: No previous state.");
         }
+    }
+    public override bool Equals (object? obj)
+    {
+        if (obj is ImmutableGame)
+            return state.Equals (obj);
+        else
+            return base.Equals (obj);
+    }
+    public override int GetHashCode()
+    {
+        return state.GetHashCode ();
+    }
+    public override string ToString()
+    {
+        return state.ToString ()!;
     }
 }
 

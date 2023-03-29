@@ -51,3 +51,9 @@
 /home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/AIAgents/MonteCarloSearchTree/bin/Debug/net7.0/AI_WithConsiderationTime.dll
 /home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/AIAgents/MonteCarloSearchTree/bin/Debug/net7.0/AI_WithConsiderationTime.pdb
 /home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/AIAgents/MonteCarloSearchTree/bin/Debug/net7.0/AI_WithConsiderationTime.xml
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/AIAgents/MonteCarloSearchTree/bin/Debug/net7.0/AI_WithMultiThreading.dll
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/AIAgents/MonteCarloSearchTree/bin/Debug/net7.0/AI_WithMultiThreading.pdb
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/AIAgents/MonteCarloSearchTree/bin/Debug/net7.0/AI_WithMultiThreading.xml
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/AIAgents/MonteCarloSearchTree/bin/Debug/net7.0/ReInitializableAI.dll
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/AIAgents/MonteCarloSearchTree/bin/Debug/net7.0/ReInitializableAI.pdb
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/AIAgents/MonteCarloSearchTree/bin/Debug/net7.0/ReInitializableAI.xml

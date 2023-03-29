@@ -1,0 +1,13 @@
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/AI_Interfaces/AI_InterfacesForInitialization/ReInitializableAI/bin/Debug/net7.0/ReInitializableAI.deps.json
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/AI_Interfaces/AI_InterfacesForInitialization/ReInitializableAI/bin/Debug/net7.0/ReInitializableAI.dll
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/AI_Interfaces/AI_InterfacesForInitialization/ReInitializableAI/bin/Debug/net7.0/ReInitializableAI.pdb
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/AI_Interfaces/AI_InterfacesForInitialization/ReInitializableAI/bin/Debug/net7.0/ReInitializableAI.xml
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/AI_Interfaces/AI_InterfacesForInitialization/ReInitializableAI/obj/Debug/net7.0/ReInitializableAI.fsproj.AssemblyReference.cache
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/AI_Interfaces/AI_InterfacesForInitialization/ReInitializableAI/obj/Debug/net7.0/ReInitializableAI.AssemblyInfoInputs.cache
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/AI_Interfaces/AI_InterfacesForInitialization/ReInitializableAI/obj/Debug/net7.0/ReInitializableAI.AssemblyInfo.fs
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/AI_Interfaces/AI_InterfacesForInitialization/ReInitializableAI/obj/Debug/net7.0/ReInitializableAI.fsproj.CoreCompileInputs.cache
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/AI_Interfaces/AI_InterfacesForInitialization/ReInitializableAI/obj/Debug/net7.0/ReInitializableAI.dll
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/AI_Interfaces/AI_InterfacesForInitialization/ReInitializableAI/obj/Debug/net7.0/refint/ReInitializableAI.dll
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/AI_Interfaces/AI_InterfacesForInitialization/ReInitializableAI/obj/Debug/net7.0/ReInitializableAI.xml
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/AI_Interfaces/AI_InterfacesForInitialization/ReInitializableAI/obj/Debug/net7.0/ReInitializableAI.pdb
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/AI_Interfaces/AI_InterfacesForInitialization/ReInitializableAI/obj/Debug/net7.0/ref/ReInitializableAI.dll

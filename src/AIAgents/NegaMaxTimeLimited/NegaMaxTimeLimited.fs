@@ -18,16 +18,14 @@ Copyright (C) 2023  Florian Brinkmeyer
 namespace GameFramework
 open System
 
-type NegaMaxTimeLimited (playerID : int, searchTime : int, maxDepth : int) =
+type NegaMaxTimeLimited (player : int, searchTime : int, maxDepth : int) =
+    let rnd = Random ()
     let sendMessage = Event<String> ()
-    let mutable player = playerID
     let mutable considerationTime = searchTime
     let mutable reachedMaxDepth = 0
     member val MaximalSearchDepth = maxDepth with get, set
     interface AI_WithConsiderationTime with
-        member x.Player
-            with get () = player
-            and set (value) = player <- value
+        member x.Player = player
         member x.ConsiderationTime
             with get () = considerationTime
             and set (value) = considerationTime <- value
@@ -64,7 +62,10 @@ type NegaMaxTimeLimited (playerID : int, searchTime : int, maxDepth : int) =
                         let moveAndValue = 
                             [0..(immutableGame.NumberOfPossibleMoves-1)] |> List.map (fun move -> move, (helper (searchDepth-1) (immutableGame.NthMove move))) 
                         if timeLeft then
-                            chosenMove <- moveAndValue |> List.maxBy (fun (_, maybeValue) -> - maybeValue.Value) |> fst
+                            let maxValue = moveAndValue |> List.map (fun (_, maybeValue) -> - maybeValue.Value) |> List.max
+                            let maxMoves = 
+                                moveAndValue |> List.filter (fun (_, maybeValue) -> - maybeValue.Value = maxValue) |> List.map fst |> List.toArray
+                            chosenMove <- maxMoves[rnd.Next maxMoves.Length]
                             if searchDepth > reachedMaxDepth then
                                 reachedMaxDepth <- searchDepth
                             sendMessage.Trigger (sprintf "Reached search depth: %A, Maximally reached depth: %A" searchDepth reachedMaxDepth)

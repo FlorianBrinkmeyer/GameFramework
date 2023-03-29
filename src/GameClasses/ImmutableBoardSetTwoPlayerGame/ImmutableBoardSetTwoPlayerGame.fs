@@ -46,6 +46,8 @@ type ImmutableBoardSetGame<'Board, 'MoveCommand, 'BoardEvnt, 'State when 'Board 
             let castedOther = other :?> ImmutableBoardSetGame<'Board, 'MoveCommand, 'BoardEvnt, 'State>
             activePlayer = castedOther.ActivePlayer && board = castedOther.Board
         override x.GetHashCode () = HashCode.Combine (activePlayer, board)                
+        override x.ToString () =
+            sprintf "ActivePlayer: %A \n\n%A" activePlayer board
         interface IBoardGameForCompanion<'Board, 'BoardEvnt> with
             member x.get_GameBoard () = board
             member x.BoardEvents = 

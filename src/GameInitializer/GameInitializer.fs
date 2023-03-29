@@ -24,29 +24,37 @@ open System.Collections
 
 let resourcesFolder = "../../Resources"
 let GUI = "StartGUI.xml"
+let standardAIConsiderationTime = 10000
+let standardUsedThreadsByAI = 4
 
-let monteCarloSearchTree = "Monte Carlo tree search"
+let monteCarloSearchTree = "Monte Carlo tree search with multi-threading"
+let negaMaxPruningCaching = "NegaMax time-limited with alpha-beta pruning, caching and multi-threading"
 let negaMaxTimeLimited = "NegaMax time-limited"
-let negaMaxPruningCaching = "NegaMax time-limited with alpha-beta pruning and caching"
+
+let aisWithMultiThreading = [monteCarloSearchTree; negaMaxPruningCaching]
 
 type GameInfo = 
     {Name : String;
     SupportedAIs : List<String>;
+    UsesInfiniteValues : bool;
     PlayerIDsAndTitles : List<int * String>}
 
 let reversiWithPassing = 
     {Name = "Reversi"; 
     SupportedAIs = [monteCarloSearchTree]; 
+    UsesInfiniteValues = false;
     PlayerIDsAndTitles = [(1,"White");(-1,"Black")]}    
 
 let reversiNoPassing = 
     {Name = "Reversi without passing"; 
     SupportedAIs = [negaMaxPruningCaching; monteCarloSearchTree; negaMaxTimeLimited];
+    UsesInfiniteValues = false;
     PlayerIDsAndTitles = [(1,"White");(-1,"Black")]}    
 
 let standardChess = 
     {Name = "Chess"; 
     SupportedAIs = [negaMaxPruningCaching; monteCarloSearchTree; negaMaxTimeLimited];
+    UsesInfiniteValues = true;
     PlayerIDsAndTitles = [(1,"White");(-1,"Black")]}    
 
 let games = [reversiWithPassing; reversiNoPassing; standardChess]
@@ -72,23 +80,29 @@ type StartGUI () as this =
         combo.Clear ()
     let getActive (name : String) = 
         (builder.GetObject name :?> Gtk.ComboBoxText).ActiveText
-    let maybeCreateNewAI () =
+    let maybeCreateNewAI gameUsesInfiniteValues =
         maybeChosenPlayer |> Option.iter (fun chosenPlayer -> 
             let chosenAI = "ChosenAILabel" |> getLabel
             if not (String.IsNullOrEmpty chosenAI) && "AssignAIToPlayer" |> getIfChecked then
                 let considerationTime =
                     let text = "ConsiderationTimeEntry" |> getText
                     if String.IsNullOrEmpty text then
-                        5000
+                        standardAIConsiderationTime
+                    else
+                        text |> Int32.Parse
+                let usedThreads =
+                    let text = "UsedThreadsEntry" |> getText
+                    if String.IsNullOrEmpty text then
+                        standardAIConsiderationTime
                     else
                         text |> Int32.Parse
                 let newAI =
                     if chosenAI = monteCarloSearchTree then
-                        MonteCarloTreeSearch (chosenPlayer, considerationTime) :> AI_Agent, monteCarloSearchTree
+                        MonteCarloTreeSearch (chosenPlayer, considerationTime, gameUsesInfiniteValues, usedThreads) :> AI_Agent, monteCarloSearchTree
                     elif chosenAI = negaMaxTimeLimited then
                         NegaMaxTimeLimited (chosenPlayer, considerationTime, 100), negaMaxTimeLimited
                     elif chosenAI = negaMaxPruningCaching then
-                        NegaMaxTimeLimitedPruningCaching (chosenPlayer, considerationTime, 100, 4), negaMaxPruningCaching
+                        NegaMaxTimeLimitedPruningCaching (chosenPlayer, considerationTime, 100, usedThreads), negaMaxPruningCaching
                     else
                         raise (Exception "AI case distinction incomplete.")
                 AIagents[chosenPlayer] <- newAI                        
@@ -97,6 +111,8 @@ type StartGUI () as this =
         "AIChooser" |> setSensitive false
         "ConsiderationTimeEntry" |> setSensitive false
         "ConsiderationTimeEntry" |> setText String.Empty
+        "UsedThreadsEntry" |> setSensitive false
+        "UsedThreadsEntry" |> setText String.Empty
     do
         Gtk.Application.Init ()
         let filename = Path.Combine [|resourcesFolder; GUI|]
@@ -121,10 +137,10 @@ type StartGUI () as this =
             deactivateAllAIWidgets ()
     [<GLib.ConnectBefore>]
     member x.OnPlayerChanged (sender : Object) (_ : EventArgs) =
-        maybeCreateNewAI ()
         let gameName = "GameChooser" |> getActive
         if not (String.IsNullOrEmpty gameName) then
             let game = games |> List.find (fun gm -> gm.Name = gameName)
+            maybeCreateNewAI game.UsesInfiniteValues
             let playerTitle = "PlayerChooser" |> getActive
             if not (String.IsNullOrEmpty playerTitle) then
                 let playerID = game.PlayerIDsAndTitles |> List.find (fun (_, title) -> title = playerTitle) |> fst
@@ -138,6 +154,13 @@ type StartGUI () as this =
                     "ConsiderationTimeEntry" |> setText (AI.ConsiderationTime.ToString ())
                     "ConsiderationTimeEntry" |> setSensitive true
                     "ChosenAILabel" |> setLabel label
+                    match AI with
+                    | :? AI_WithMultiThreading as multiAI ->
+                        "UsedThreadsEntry" |> setText (multiAI.UsedThreads.ToString ())
+                        "UsedThreadsEntry" |> setSensitive true                    
+                    | _ -> 
+                        "UsedThreadsEntry" |> setText String.Empty
+                        "UsedThreadsEntry" |> setSensitive false                   
                 | _ -> 
                     "AssignAIToPlayer" |> setChecked false
                     "ChosenAILabel" |> setLabel String.Empty
@@ -159,15 +182,22 @@ type StartGUI () as this =
     member x.OnAIChooserChanged (sender : Object) (_ : EventArgs) =
         let chosenAI = (sender :?> Gtk.ComboBoxText).ActiveText      
         if not (String.IsNullOrEmpty chosenAI) then
-            "ConsiderationTimeEntry" |> setText "5000"
+            "ConsiderationTimeEntry" |> setText (standardAIConsiderationTime.ToString ())
             "ConsiderationTimeEntry" |> setSensitive true
+            match aisWithMultiThreading |> List.tryFind (fun ai -> ai = chosenAI) with
+            | Some _ ->
+                "UsedThreadsEntry" |> setText (standardUsedThreadsByAI.ToString ())
+                "UsedThreadsEntry" |> setSensitive true                  
+            | None ->
+                "UsedThreadsEntry" |> setText String.Empty
+                "UsedThreadsEntry" |> setSensitive false                  
             "ChosenAILabel" |> setLabel chosenAI
     [<GLib.ConnectBefore>]
     member x.OnStartClicked (sender : Object) (_ : EventArgs) =
         let mainForm = builder.GetObject "MainForm" :?> Gtk.ApplicationWindow
         mainForm.Hide ()
-        maybeCreateNewAI ()
         let game = games |> List.find (fun gm -> gm.Name = ("GameChooser" |> getActive))
+        maybeCreateNewAI game.UsesInfiniteValues
         let ais = AIagents.Values |> Seq.map fst
         let aiInformers = ais |> Seq.choose (fun ai ->
             match ai with
@@ -175,6 +205,13 @@ type StartGUI () as this =
                 Some informer
             | _ -> None    
         )
+        let reinitializableAIs = ais |> Seq.choose (fun ai ->
+            match ai with
+            | :? IReInitializableAI as reinit ->
+                Some reinit
+            | _ -> None           
+        )
+        reinitializableAIs |> Seq.iter (fun ai -> ai.ReInitialize ())
         let aiPlayers = ais |> Seq.map (fun ai -> ai.Player) |> Set.ofSeq
         let allPlayers = game.PlayerIDsAndTitles |> List.map fst |> Set.ofList
         let humanPlayers = allPlayers - aiPlayers

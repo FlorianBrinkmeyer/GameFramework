@@ -65,8 +65,8 @@ public class ChessGtkGUI : TwoDBoardGUIMovablePieces
         initialize (windowsWidth, windowHeight, pictureFolder, _board, _game, thisGUIusers, AIs);
         game!.MoveMade += (sender, move) => {
             SetLabel (3, String.Empty);
-            Console.WriteLine (board!.ToString ());
-            Console.WriteLine ();
+            //Console.WriteLine (game!.ToString ());
+            //Console.WriteLine ();
         };
     }
 }

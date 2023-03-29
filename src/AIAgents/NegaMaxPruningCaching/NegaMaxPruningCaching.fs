@@ -27,34 +27,41 @@ type Node = {State : ImmutableGame;
              DepthAim : Option<float>
              Alpha : float;
              Beta : float;
-             Children : Option<Node []>}
+             MaybeChildren : Option<Node []>}
 
 type Bound = LowerBound | UpperBound | Exact
 
-type GameStateAttr = {Value : float; Depth : float; Bound : Bound}
+type GameStateAttr = {Value : float; Depth : float; Bound : Bound; State : ImmutableGame}
 
-let asyncMap (mapper : 't -> 'u) (items: seq<'t>) = 
+let asyncMap mapper items = 
     items |> Seq.map (fun item -> async {return mapper item}) |> Async.Parallel |> Async.RunSynchronously
 
-type NegaMaxTimeLimitedPruningCaching (playerID : int, searchTime : int, maxDepth : int, ?usedThreads) =
+type NegaMaxTimeLimitedPruningCaching (player : int, searchTime : int, maxDepth : int, ?usedThreads) =
     let cachedStates, threadsCount = 
         match usedThreads with
-        | Some count ->
+        | Some count  when count > 1 ->
             Concurrent.ConcurrentDictionary<ImmutableGame, GameStateAttr> () :> Generic.IDictionary<ImmutableGame, GameStateAttr>, count
-        | None ->    
+        | _ ->    
             Generic.Dictionary<ImmutableGame, GameStateAttr> (), 1
+    let rnd = Random ()
+    let sendMessage = Event<String> ()
+    let mutable registeredMoveMadeEvent = false
+    let mutable multiThreadingInUse = false
+    let mutable maybePermanentTree = None
     let mutable usedCacheCount = 0
     let mutable reachedMaxDepth = 0.0
-    let mutable player = playerID
     let mutable considerationTime = searchTime
-    let sendMessage = Event<String> ()
+    interface IReInitializableAI with
+        member x.ReInitialize () =
+            maybePermanentTree <- None
+            registeredMoveMadeEvent <- false
     interface AI_WithConsiderationTime with
-        member x.Player
-            with get () = player
-            and set (value) = player <- value
+        member x.Player = player
         member x.ConsiderationTime 
             with get () = considerationTime
             and set (value) = considerationTime <- value
+    interface AI_WithMultiThreading with
+        member x.UsedThreads = threadsCount
     interface AI_Informer with
         [<CLIEvent>]
         member x.SendMessage = sendMessage.Publish 
@@ -72,30 +79,33 @@ type NegaMaxTimeLimitedPruningCaching (playerID : int, searchTime : int, maxDept
                  Depth = depth;
                  Alpha = Double.NegativeInfinity;
                  Beta = Double.PositiveInfinity
-                 Children = None
+                 MaybeChildren = None
                  DepthAim = None}
             let mutable timeLeft = true
             let timeLimitedSearch =
                 async {
-                    let mutable searchDepth = 1.0
-                    let state = game :?> ImmutableGame
-                    let children = Array.init state.NumberOfPossibleMoves (fun index -> state.NthMove index |> getNewNode)
-                    let childMinDepth = children |> Seq.map (fun child -> child.Depth) |> Seq.min
-                    let value = children |> Seq.map (fun child -> -child.Value) |> Seq.max
-                    let mutable multiThreadingInUse = false
-                    let startNode = 
-                        {State = state;
-                         Value = value
-                         Depth = childMinDepth + 1.0
-                         Alpha = Double.NegativeInfinity;
-                         Beta = Double.PositiveInfinity
-                         Children = Some children
-                         DepthAim = None}                                                           
-                    let mutable tree = startNode
+                    let mutable tree = 
+                        (*match maybePermanentTree with
+                        | Some permanentTree ->
+                            permanentTree
+                        | None ->    *)
+                            let state = game :?> ImmutableGame
+                            let children = Array.init state.NumberOfPossibleMoves (fun index -> state.NthMove index |> getNewNode)
+                            let childMinDepth = children |> Seq.map (fun child -> child.Depth) |> Seq.min
+                            let value = children |> Seq.map (fun child -> -child.Value) |> Seq.max
+                            let mutable multiThreadingInUse = false
+                            {State = state;
+                             Value = value
+                             Depth = childMinDepth + 1.0
+                             Alpha = Double.NegativeInfinity;
+                             Beta = Double.PositiveInfinity
+                             MaybeChildren = Some children
+                             DepthAim = None}                                                           
+                    let mutable searchDepth = tree.Depth
                     while searchDepth <= maxDepth && timeLeft do
                         let rec helper depth (node : Node) =
                             let main alpha beta =
-                                match node.Children with
+                                match node.MaybeChildren with
                                 | Some children ->
                                     let childrenToComplete = 
                                         children |> Array.mapi (fun index child  -> index, child) 
@@ -142,7 +152,7 @@ type NegaMaxTimeLimitedPruningCaching (playerID : int, searchTime : int, maxDept
                                                 LowerBound
                                             else
                                                 Exact
-                                        cachedStates[node.State] <- {Value = newValue; Depth = newDepth; Bound = flag}                
+                                        cachedStates[node.State] <- {Value = newValue; Depth = newDepth; Bound = flag; State = node.State}                
                                     if children |> Seq.forall (fun child -> child.Depth >= depth - 1.0) then
                                         let childrenMinDepth = children |> Seq.map (fun child -> child.Depth) |> Seq.min
                                         let newDepth = childrenMinDepth + 1.0
@@ -158,34 +168,33 @@ type NegaMaxTimeLimitedPruningCaching (playerID : int, searchTime : int, maxDept
                                     let children = Array.init node.State.NumberOfPossibleMoves (fun index -> node.State.NthMove index |> getNewNode)
                                     let childMinDepth = children |> Seq.map (fun child -> child.Depth) |> Seq.min
                                     let value = children |> Seq.map (fun child -> -child.Value) |> Seq.max
-                                    {node with Children = Some children; Depth = childMinDepth + 1.0; Value = value}
+                                    {node with MaybeChildren = Some children; Depth = childMinDepth + 1.0; Value = value}
                             if node.Depth >= depth then
                                 node
                             else
-                                match node.DepthAim with
-                                | Some aim when aim >= depth ->
-                                    main node.Alpha node.Beta
-                                | _ ->    
+                                if node <> tree then
                                     match cachedStates.TryGetValue node.State with
                                     | true, attr when attr.Depth >= depth ->
                                         usedCacheCount <- usedCacheCount + 1
                                         match attr.Bound with
                                         | Exact ->
-                                            {node with Value = attr.Value; Depth = attr.Depth}
+                                            {node with Value = attr.Value; Depth = attr.Depth; State = attr.State}
                                         | LowerBound ->
                                             let alpha = Math.Max (node.Alpha, attr.Value)
                                             if alpha >= node.Beta then
-                                                {node with Value = attr.Value; Depth = attr.Depth; Alpha = alpha}
+                                                {node with Value = attr.Value; Depth = depth; Alpha = alpha}
                                             else
                                                 main alpha node.Beta
                                         | UpperBound ->
                                             let beta = Math.Min (node.Beta, attr.Value)
                                             if node.Alpha >= beta then
-                                                {node with Value = attr.Value; Depth = attr.Depth; Beta = beta}
+                                                {node with Value = attr.Value; Depth = depth; Beta = beta}
                                             else
                                                 main node.Alpha beta                       
                                     | _ ->
                                         main node.Alpha node.Beta
+                                else
+                                    main node.Alpha node.Beta
                         tree <- helper searchDepth tree 
                         if tree.Depth >= searchDepth then
                             let message = 
@@ -196,10 +205,31 @@ type NegaMaxTimeLimitedPruningCaching (playerID : int, searchTime : int, maxDept
                             tree <- {tree with Alpha = Double.NegativeInfinity; Beta = Double.PositiveInfinity}
                             if searchDepth > reachedMaxDepth then
                                 reachedMaxDepth <- searchDepth
-                    let chosenMove = 
-                        [0..(game.NumberOfPossibleMoves-1)] |> List.maxBy (fun index -> -tree.Children.Value[index].Value)
+                    if tree.State.Equals game then
+                        Console.WriteLine "Alles ok."
+                    else
+                        Console.WriteLine "?!?!"    
+                    let maxValue = [0..(game.NumberOfPossibleMoves-1)] |> List.map (fun index -> -tree.MaybeChildren.Value[index].Value) |> List.max
+                    let maxMoves = 
+                        [0..(game.NumberOfPossibleMoves-1)] |> List.filter (fun index -> -tree.MaybeChildren.Value[index].Value = maxValue) |> List.toArray
+                    let chosenMove = maxMoves[rnd.Next maxMoves.Length]
+                    maybePermanentTree <- Some tree
                     mutableGame.MakeMove chosenMove
                 }
+            if not registeredMoveMadeEvent then
+                mutableGame.add_MoveMadeEvent (fun move -> 
+                    match maybePermanentTree with
+                    | Some permanentTree -> 
+                        match permanentTree.MaybeChildren with
+                        | Some children ->
+                            maybePermanentTree <- Some children[move]
+                        | None ->
+                            maybePermanentTree <- None     
+                    | None ->
+                        maybePermanentTree <- None
+                )   
+                mutableGame.add_ReInitialized (fun _ _ -> maybePermanentTree <- None)
+                registeredMoveMadeEvent <- true     
             let timer = new Timers.Timer (considerationTime)
             timer.AutoReset <- false
             timer.Elapsed.AddHandler (fun _ _ -> timeLeft <- false)
