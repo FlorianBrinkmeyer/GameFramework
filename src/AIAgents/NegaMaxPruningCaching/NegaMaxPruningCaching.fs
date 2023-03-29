@@ -33,8 +33,8 @@ type Bound = LowerBound | UpperBound | Exact
 
 type GameStateAttr = {Value : float; Depth : float; Bound : Bound; State : ImmutableGame}
 
-let asyncMap mapper items = 
-    items |> Seq.map (fun item -> async {return mapper item}) |> Async.Parallel |> Async.RunSynchronously
+let asyncMap mapper = 
+    Seq.map (fun item -> async {return mapper item}) >> Async.Parallel >> Async.RunSynchronously
 
 type NegaMaxTimeLimitedPruningCaching (player : int, searchTime : int, maxDepth : int, ?usedThreads) =
     let cachedStates, threadsCount = 
@@ -205,10 +205,6 @@ type NegaMaxTimeLimitedPruningCaching (player : int, searchTime : int, maxDepth 
                             tree <- {tree with Alpha = Double.NegativeInfinity; Beta = Double.PositiveInfinity}
                             if searchDepth > reachedMaxDepth then
                                 reachedMaxDepth <- searchDepth
-                    (*if tree.State.Equals game then
-                        Console.WriteLine "Alles ok."
-                    else
-                        Console.WriteLine "?!?!"    *)
                     let maxValue = [0..(game.NumberOfPossibleMoves-1)] |> List.map (fun index -> -tree.MaybeChildren.Value[index].Value) |> List.max
                     let maxMoves = 
                         [0..(game.NumberOfPossibleMoves-1)] |> List.filter (fun index -> -tree.MaybeChildren.Value[index].Value = maxValue) |> List.toArray
@@ -222,19 +218,6 @@ type NegaMaxTimeLimitedPruningCaching (player : int, searchTime : int, maxDepth 
                     | Some permanentTree -> 
                         match permanentTree.MaybeChildren with
                         | Some children ->
-                            if not (mutableGame.Equals children[move].State) then
-                                Console.WriteLine ()
-                                Console.WriteLine "Mutable game:"
-                                Console.WriteLine ()
-                                Console.WriteLine mutableGame
-                                Console.WriteLine ()
-                                Console.WriteLine "Children[move]:"
-                                Console.WriteLine ()
-                                Console.WriteLine children[move].State
-                                Console.WriteLine ()
-                                raise (Exception "Not matching.")
-                            else
-                                Console.WriteLine "Everything fine."    
                             maybePermanentTree <- Some children[move]
                         | None ->
                             maybePermanentTree <- None     
