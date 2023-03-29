@@ -55,7 +55,7 @@ let calculatePossibleMoves<'Board, 'Coords when 'Coords :> IComparable and 'Coor
                 pos, king
             | None ->
                 //Can be used for debugging:
-                let rec writeBoards step maxStep (brd : Option<ImmutableArray<'Coords, IPiece>>) =
+                let rec printBoards step maxStep (brd : Option<ImmutableArray<'Coords, IPiece>>) =
                     if step < maxStep then
                         let previous =
                             match brd with
@@ -63,7 +63,7 @@ let calculatePossibleMoves<'Board, 'Coords when 'Coords :> IComparable and 'Coor
                                 bd.Previous
                             | None ->
                                 None    
-                        writeBoards (step + 1) maxStep previous
+                        printBoards (step + 1) maxStep previous
                         if step % 2 = 0 then
                             let name = (String.replicate step "previous ") + "board:"
                             Console.WriteLine () 
@@ -75,7 +75,7 @@ let calculatePossibleMoves<'Board, 'Coords when 'Coords :> IComparable and 'Coor
                             | None ->
                                 Console.WriteLine "Empty board"
                             Console.WriteLine () 
-                writeBoards 0 8 (board :> ImmutableArray<'Coords, IPiece> |> Some)           
+                printBoards 0 8 (board :> ImmutableArray<'Coords, IPiece> |> Some)           
                 raise (Exception "No king on board: This shouldn't happen")        
         let otherPieces = board.KeyValuePairs |> Seq.filter (fun (_, piece) -> piece.Player <> activePlayer) |> Seq.toList
         let boardWithoutKing = board.GetNext ownKingPos None :?> 'Board

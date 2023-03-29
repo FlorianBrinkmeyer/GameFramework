@@ -85,10 +85,10 @@ type NegaMaxTimeLimitedPruningCaching (player : int, searchTime : int, maxDepth 
             let timeLimitedSearch =
                 async {
                     let mutable tree = 
-                        (*match maybePermanentTree with
+                        match maybePermanentTree with
                         | Some permanentTree ->
                             permanentTree
-                        | None ->    *)
+                        | None ->    
                             let state = game :?> ImmutableGame
                             let children = Array.init state.NumberOfPossibleMoves (fun index -> state.NthMove index |> getNewNode)
                             let childMinDepth = children |> Seq.map (fun child -> child.Depth) |> Seq.min
@@ -205,10 +205,10 @@ type NegaMaxTimeLimitedPruningCaching (player : int, searchTime : int, maxDepth 
                             tree <- {tree with Alpha = Double.NegativeInfinity; Beta = Double.PositiveInfinity}
                             if searchDepth > reachedMaxDepth then
                                 reachedMaxDepth <- searchDepth
-                    if tree.State.Equals game then
+                    (*if tree.State.Equals game then
                         Console.WriteLine "Alles ok."
                     else
-                        Console.WriteLine "?!?!"    
+                        Console.WriteLine "?!?!"    *)
                     let maxValue = [0..(game.NumberOfPossibleMoves-1)] |> List.map (fun index -> -tree.MaybeChildren.Value[index].Value) |> List.max
                     let maxMoves = 
                         [0..(game.NumberOfPossibleMoves-1)] |> List.filter (fun index -> -tree.MaybeChildren.Value[index].Value = maxValue) |> List.toArray
@@ -222,6 +222,19 @@ type NegaMaxTimeLimitedPruningCaching (player : int, searchTime : int, maxDepth 
                     | Some permanentTree -> 
                         match permanentTree.MaybeChildren with
                         | Some children ->
+                            if not (mutableGame.Equals children[move].State) then
+                                Console.WriteLine ()
+                                Console.WriteLine "Mutable game:"
+                                Console.WriteLine ()
+                                Console.WriteLine mutableGame
+                                Console.WriteLine ()
+                                Console.WriteLine "Children[move]:"
+                                Console.WriteLine ()
+                                Console.WriteLine children[move].State
+                                Console.WriteLine ()
+                                raise (Exception "Not matching.")
+                            else
+                                Console.WriteLine "Everything fine."    
                             maybePermanentTree <- Some children[move]
                         | None ->
                             maybePermanentTree <- None     

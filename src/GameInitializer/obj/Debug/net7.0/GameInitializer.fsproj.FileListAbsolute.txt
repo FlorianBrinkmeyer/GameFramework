@@ -58,6 +58,7 @@
 /home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/GameInitializer/bin/Debug/net7.0/PieceInterfacesForBoardAndCompanion.dll
 /home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/GameInitializer/bin/Debug/net7.0/PieceInterfacesForGameClasses.dll
 /home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/GameInitializer/bin/Debug/net7.0/ReadableArrayType.dll
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/GameInitializer/bin/Debug/net7.0/ReInitializableAI.dll
 /home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/GameInitializer/bin/Debug/net7.0/ReversiGtkGUI.dll
 /home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/GameInitializer/bin/Debug/net7.0/ReversiInit.dll
 /home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/GameInitializer/bin/Debug/net7.0/ReversiResultMapper.dll
@@ -89,6 +90,8 @@
 /home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/GameInitializer/bin/Debug/net7.0/TwoDStandardChessPieceFactory.pdb
 /home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/GameInitializer/bin/Debug/net7.0/NegaMaxPruningCaching.pdb
 /home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/GameInitializer/bin/Debug/net7.0/NegaMaxPruningCaching.xml
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/GameInitializer/bin/Debug/net7.0/ReInitializableAI.pdb
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/GameInitializer/bin/Debug/net7.0/ReInitializableAI.xml
 /home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/GameInitializer/bin/Debug/net7.0/AIBaseInterface.pdb
 /home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/GameInitializer/bin/Debug/net7.0/AIBaseInterface.xml
 /home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/GameInitializer/bin/Debug/net7.0/AI_Informer.pdb
@@ -154,6 +157,3 @@
 /home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/GameInitializer/obj/Debug/net7.0/GameInitializer.pdb
 /home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/GameInitializer/obj/Debug/net7.0/GameInitializer.genruntimeconfig.cache
 /home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/GameInitializer/obj/Debug/net7.0/ref/GameInitializer.dll
-/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/GameInitializer/bin/Debug/net7.0/ReInitializableAI.dll
-/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/GameInitializer/bin/Debug/net7.0/ReInitializableAI.pdb
-/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/GameInitializer/bin/Debug/net7.0/ReInitializableAI.xml

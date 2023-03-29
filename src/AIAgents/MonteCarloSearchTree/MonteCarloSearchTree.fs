@@ -26,17 +26,22 @@ type MCTree =
      UntriedMoves : Set<int>}
 
 type MonteCarloTreeSearch (player : int, searchTime : int, countInfinitiesMode, ?usedThreads) =
-    let rnd = Random ()
     let sendMessage = Event<String> ()
-    let threadsCount =
+    let mutable threadsCount =
         match usedThreads with
         | Some threads ->
             threads
         | None ->
             1        
+    let rnd = 
+        if threadsCount = 1 then
+            Random ()
+        else    
+            Random.Shared
     let mutable considerationTime = searchTime
     let mutable registeredMoveMadeEvent = false
     let mutable maybePermanentTree = None
+    let mutable maxSimCount = 0
     interface IReInitializableAI with
         member x.ReInitialize () =
             maybePermanentTree <- None
@@ -95,83 +100,29 @@ type MonteCarloTreeSearch (player : int, searchTime : int, countInfinitiesMode, 
                         let reducedUntriedMoves = tree.UntriedMoves |> Set.remove untriedMove
                         let nextState = tree.State.NthMove untriedMove 
                         let childUntriedMoves = [0..(nextState.NumberOfPossibleMoves-1)] |> Set.ofList
-                        //random rollout
-                        let randomFinalState =
-                            let rec helper (state : ImmutableGame) =
-                                if state.Running then
-                                    let randomMove = rnd.Next state.NumberOfPossibleMoves
-                                    state.NthMove randomMove |> helper
-                                else    
-                                    state
-                            nextState |> helper       
-                        let finalScore = getFinalScore randomFinalState
+                        //random rollout(s)
+                        let randomFinalStatesScores =
+                            let getRandomFinalStateScore st =
+                                let rec helper (state : ImmutableGame) =
+                                    if state.Running then
+                                        let randomMove = rnd.Next state.NumberOfPossibleMoves
+                                        state.NthMove randomMove |> helper
+                                    else    
+                                        state
+                                st |> helper |> getFinalScore      
+                            if threadsCount = 1 then
+                                [|getRandomFinalStateScore nextState|]
+                            else    
+                                async {return getRandomFinalStateScore nextState} |> Array.replicate threadsCount |> Async.Parallel |> Async.RunSynchronously
+                        let summedFinalScore = randomFinalStatesScores |> Array.sum
                         let newChild = 
-                            {State = nextState; NumberOfSimulations = 1; TotalScore = finalScore; UntriedMoves = childUntriedMoves;
+                            {State = nextState; NumberOfSimulations = threadsCount; TotalScore = summedFinalScore; UntriedMoves = childUntriedMoves;
                             Children = Array.zeroCreate nextState.NumberOfPossibleMoves} 
                         tree.Children[untriedMove] <- newChild
                         let updatedTree = 
-                            {tree with NumberOfSimulations = tree.NumberOfSimulations + 1; TotalScore = tree.TotalScore + finalScore;
+                            {tree with NumberOfSimulations = tree.NumberOfSimulations + threadsCount; TotalScore = tree.TotalScore + summedFinalScore;
                                        UntriedMoves = reducedUntriedMoves}      
-                        updatedTree, finalScore  
-            let rec mergeTrees (originalTree : MCTree) (maybeNewTree1 : Option<MCTree>) (maybeNewTree2 : Option<MCTree>) =
-                match maybeNewTree1, maybeNewTree2 with
-                | None, None ->
-                    originalTree
-                | None, Some newTree2 ->
-                    newTree2
-                | Some newTree1, None ->
-                    newTree1
-                | Some newTree1, Some newTree2 ->        
-                    if newTree1.NumberOfSimulations > originalTree.NumberOfSimulations && newTree2.NumberOfSimulations = originalTree.NumberOfSimulations then
-                        newTree1
-                    elif newTree2.NumberOfSimulations > originalTree.NumberOfSimulations && newTree1.NumberOfSimulations = originalTree.NumberOfSimulations then
-                        newTree2
-                    elif newTree1.NumberOfSimulations > originalTree.NumberOfSimulations && newTree2.NumberOfSimulations > originalTree.NumberOfSimulations then
-                        let children = [|0..originalTree.State.NumberOfPossibleMoves-1|] |> Array.map (fun move ->
-                            if not (originalTree.UntriedMoves.Contains move) then
-                                let maybeTree1Child = 
-                                    if newTree1.UntriedMoves.Contains move then
-                                        None
-                                    else
-                                        Some newTree1.Children[move]
-                                let maybeTree2Child = 
-                                    if newTree2.UntriedMoves.Contains move then
-                                        None
-                                    else
-                                        Some newTree2.Children[move]
-                                mergeTrees originalTree.Children[move] maybeTree1Child maybeTree2Child         
-                            elif not (newTree1.UntriedMoves.Contains move) && newTree2.UntriedMoves.Contains move then
-                                newTree1.Children[move]
-                            elif not (newTree2.UntriedMoves.Contains move) && newTree1.UntriedMoves.Contains move then
-                                newTree2.Children[move]
-                            elif not (newTree1.UntriedMoves.Contains move) && not (newTree2.UntriedMoves.Contains move) then
-                                let rec mergeTwo (tree1 : MCTree) (tree2 : MCTree) =
-                                    let children =  [|0..tree1.State.NumberOfPossibleMoves-1|] |> Array.map (fun move ->
-                                        if not (tree1.UntriedMoves.Contains move) && tree2.UntriedMoves.Contains move then
-                                            tree1.Children[move]
-                                        elif not (tree2.UntriedMoves.Contains move) && tree1.UntriedMoves.Contains move then
-                                            tree2.Children[move]
-                                        elif not (tree1.UntriedMoves.Contains move) && not (tree2.UntriedMoves.Contains move) then
-                                            mergeTwo tree1.Children[move] tree2.Children[move]
-                                        else
-                                            tree1.Children[move]    
-                                    )
-                                    {State = tree1.State
-                                     NumberOfSimulations = tree1.NumberOfSimulations + tree2.NumberOfSimulations
-                                     TotalScore = tree1.TotalScore + tree2.TotalScore
-                                     Children = children
-                                     UntriedMoves = Set.intersect tree1.UntriedMoves tree2.UntriedMoves}
-                                mergeTwo newTree1.Children[move] newTree2.Children[move]     
-                            else
-                                originalTree.Children[move]
-                        )
-                        {State = originalTree.State
-                         NumberOfSimulations = newTree1.NumberOfSimulations + newTree2.NumberOfSimulations - originalTree.NumberOfSimulations
-                         TotalScore = newTree1.TotalScore + newTree2.TotalScore - originalTree.TotalScore
-                         Children = children
-                         UntriedMoves = Set.intersect newTree1.UntriedMoves newTree2.UntriedMoves}  
-                    else
-                        originalTree      
+                        updatedTree, summedFinalScore  
             if not registeredMoveMadeEvent then
                 mutableGame.add_MoveMadeEvent (fun move -> 
                     match maybePermanentTree with
@@ -202,19 +153,11 @@ type MonteCarloTreeSearch (player : int, searchTime : int, countInfinitiesMode, 
                         root
                 let mutable simCount = 0
                 while timeLeft do
-                    let nextTrees = 
-                        if threadsCount = 1 then
-                            [|getNextTree tree |> fst|]
-                        else    
-                            async {return getNextTree tree |> fst} |> Array.replicate threadsCount |> Async.Parallel |> Async.RunSynchronously
-                    let mergedTree =
-                        if threadsCount = 1 then
-                            nextTrees[0]
-                        else
-                            nextTrees |> Array.reduce (fun tree1 tree2 -> mergeTrees tree (Some tree1) (Some tree2))    
-                    tree <- mergedTree
-                    simCount <- simCount + threadsCount   
-                    sendMessage.Trigger (sprintf "Number of simulations: %A" simCount)    
+                    tree <- getNextTree tree |> fst
+                    simCount <- simCount + threadsCount
+                    if simCount > maxSimCount then
+                        maxSimCount <- simCount 
+                    sendMessage.Trigger (sprintf "Number of simulations: %A, Maximally reached number of simulations: %A" simCount maxSimCount)    
                 //Apply move most simulations have been performed with.
                 let chosenMove = 
                     tree.Children |> Array.mapi (fun index ch -> index, ch)  |> Seq.maxBy (fun (_, child) -> 

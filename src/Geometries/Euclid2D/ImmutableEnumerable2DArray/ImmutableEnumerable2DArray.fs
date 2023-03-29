@@ -53,7 +53,7 @@ let seqOfSeqOptToMap (seqSeq : seq<seq<Option<'t>>>) =
     )
     Seq.zip dict.Keys dict.Values |> Map.ofSeq
 
-type ImmutableEnumerable2DArray<'t when 't : equality> (xdim, ydim, map : Map<int*int, 't>, ?previous : ImmutableEnumerable2DArray<'t>) =
+type ImmutableEnumerable2DArray<'t when 't : equality> (xdim, ydim, map : Map<int*int, 't>, ?emptyCoords : Set<int*int>, ?previous : ImmutableEnumerable2DArray<'t>) =
     member x.InternalMap = map
     override this.Equals other =
         let castedOther = other :?> ImmutableEnumerable2DArray<'t>
@@ -84,7 +84,19 @@ type ImmutableEnumerable2DArray<'t when 't : equality> (xdim, ydim, map : Map<in
                     map |> Map.add index value
                 | None ->
                     map |> Map.remove index
-            ImmutableEnumerable2DArray<'t> (xdim, ydim, nextMap, this) 
+            let nextEmptyCoords =
+                match emptyCoords with
+                | Some coords ->
+                    match maybeValue with
+                    | Some _ ->
+                        coords |> Set.remove index
+                    | None ->
+                        coords |> Set.add index 
+                | None ->
+                    let allCoords = (this :> IEnumerable2DArray<'t>).AllCoords |> Set.ofSeq
+                    let usedCoords = nextMap.Keys |> Set.ofSeq
+                    allCoords - usedCoords
+            ImmutableEnumerable2DArray<'t> (xdim, ydim, nextMap, nextEmptyCoords, this) 
         member x.Keys = map.Keys
         member x.Values = map.Values
         member x.KeyValuePairs = Seq.zip map.Keys map.Values
@@ -138,7 +150,14 @@ type ImmutableEnumerable2DArray<'t when 't : equality> (xdim, ydim, map : Map<in
                 | None ->
                     Unchecked.defaultof<'t>    
             )
-        member this.AllEmptyCoords = (this :> IEnumerable2DArray<'t>).AllCoords |> Seq.filter (fun (x,y) -> (map.TryFind (x,y)).IsNone)
+        member this.AllEmptyCoords = 
+            match emptyCoords with
+            | Some coords ->
+                coords 
+            | None ->
+                let allCoords = (this :> IEnumerable2DArray<'t>).AllCoords |> Set.ofSeq
+                let usedCoords = map.Keys |> Set.ofSeq
+                allCoords - usedCoords :> seq<int*int>
         member x.AllUsedCoords = map.Keys
         member x.AllEntries = map.Values
         member x.AllEntriesWithCoords = Seq.zip map.Values map.Keys

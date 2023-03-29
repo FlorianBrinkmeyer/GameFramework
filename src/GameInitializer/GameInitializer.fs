@@ -234,14 +234,14 @@ type StartGUI () as this =
         elif game = standardChess then
             let startPositionFileName = Path.Combine [|resourcesFolder; "StandardChessStartPosition.csv"|]
             let pieceFactory = fun kind color -> StandardChess.PieceFactory.InitPiece (kind, color)
-            let gameCompanion, boardCompanion = 
-                Chess.Init.initChess 8 8 1 pieceFactory startPositionFileName Chess.ResultMapper.resultMapper ais
+            let gameCompanion, (boardCompanion) = 
+                Chess.Init.initChess 8 8 1 pieceFactory startPositionFileName Chess.ResultMapper.resultMapper ais 
             let gui = 
                 let imageFolder = Path.Combine [|resourcesFolder; "ChessPieceImages"|]
                 let guiBuilder = Path.Combine [|resourcesFolder; "SimpleTwoDBoardGUI.xml"|]
                 Chess.ChessGtkGUI (800, 830, imageFolder, guiBuilder, boardCompanion, gameCompanion, humanPlayers, aiInformers)
             gui.Quit.AddHandler (fun _ _ -> mainForm.Show ())
-            gameCompanion.Run ()        
+            gameCompanion.Run ()      
         else
             raise (Exception "Game case distinction incomplete.")
 
