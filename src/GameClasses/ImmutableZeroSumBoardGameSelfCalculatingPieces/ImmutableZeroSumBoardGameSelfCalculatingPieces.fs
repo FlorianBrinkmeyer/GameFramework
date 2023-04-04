@@ -20,9 +20,9 @@ namespace GameFramework
 open System
 open GameFramework
 
-///Current board * active player * optional state * new position of last moved piece -> possible moves / game result * board events * new optional state
+///Current board * active player * optional state * new position of last moved piece -> possible moves / game result * board events * new optional state * game state is "unstable"
 type MoveCalcDelegate<'Board, 'Coords, 'MoveCommand, 'BoardEvnt, 'State> = 
-    Func<'Board, int, 'State, Option<'Coords>, MoveCalcResult<'MoveCommand, 'Coords> * seq<'BoardEvnt> * 'State> 
+    Func<'Board, int, 'State, Option<'Coords>, MoveCalcResult<'MoveCommand, 'Coords> * seq<'BoardEvnt> * 'State * bool> 
 
 ///Current board -> zero-sum value
 type ZSValueCalcDelegate<'Board> = Func<'Board, float>
@@ -31,7 +31,7 @@ type ImmutableZeroSumBoardGameSelfCalculatingPieces<'Board, 'Coords, 'MoveComman
     when 'Coords :> IComparable and 'Coords : comparison and 'Board :> ImmutableArray<'Coords, IPiece> and 'Board : equality>
     (board: 'Board, activePlayer, moveCalcResult: MoveCalcResult<'MoveCommand, 'Coords>,
     moveCalc : MoveCalcDelegate<'Board, 'Coords, 'MoveCommand, 'BoardEvnt, 'State>, maybeZsValueCalc : Option<ZSValueCalcDelegate<'Board>>, 
-    state : 'State, ?previous, ?events) =
+    state : 'State, unstableGameState, ?previous, ?events) =
         member x.ActivePlayer = activePlayer
         member x.Board = board
         override x.Equals other =
@@ -39,7 +39,9 @@ type ImmutableZeroSumBoardGameSelfCalculatingPieces<'Board, 'Coords, 'MoveComman
             activePlayer = castedOther.ActivePlayer && board = castedOther.Board
         override x.GetHashCode () = HashCode.Combine (activePlayer, board)                
         override x.ToString () =
-            sprintf "ActivePlayer: %A \n\n%A" activePlayer board
+            let activePlayer = sprintf $"ActivePlayer: {activePlayer} \n"
+            let rest = (board.ToString ()).Split ('\n') |> Seq.filter (not << String.IsNullOrEmpty) |> Seq.rev |> Seq.reduce (fun str1 str2 -> str1 + "\n" + str2)
+            activePlayer + rest
         interface IBoardGameForCompanion<'Board, 'BoardEvnt> with
             member x.get_GameBoard () = board
             member x.BoardEvents = 
@@ -58,17 +60,21 @@ type ImmutableZeroSumBoardGameSelfCalculatingPieces<'Board, 'Coords, 'MoveComman
             member this.NthMove moveIndex =
                 match moveCalcResult with
                 | PossibleMoves possibleMoves ->
-                    let move = possibleMoves[moveIndex]
-                    let piece = (board.Item move.StartField).Value :?> ISelfCalculatingPiece<'Board, 'Coords, 'MoveCommand, 'BoardEvnt>
-                    let nextBoard, movedPieceNewPosition, nextBoardEvents = piece.ApplyMove board move.StartField move.Cmd
-                    let nextPlayer = activePlayer * (-1)
-                    let nextMoveCalcResult, additionalNextBoardEvents, nextState = 
-                        moveCalc.Invoke (nextBoard, nextPlayer, state, Some movedPieceNewPosition)
-                    let allNewBoadEvents = Seq.append nextBoardEvents additionalNextBoardEvents
-                    ImmutableZeroSumBoardGameSelfCalculatingPieces<'Board, 'Coords, 'MoveCommand, 'BoardEvnt, 'State> (nextBoard, nextPlayer,
-                    nextMoveCalcResult, moveCalc, maybeZsValueCalc, nextState, this, allNewBoadEvents)
+                    try
+                        let move = possibleMoves[moveIndex]
+                        let piece = (board.Item move.StartField).Value :?> ISelfCalculatingPiece<'Board, 'Coords, 'MoveCommand, 'BoardEvnt>
+                        let nextBoard, movedPieceNewPosition, nextBoardEvents = piece.ApplyMove board move.StartField move.Cmd
+                        let nextPlayer = activePlayer * (-1)
+                        let nextMoveCalcResult, additionalNextBoardEvents, nextState, gameStateIsUnstable = 
+                            moveCalc.Invoke (nextBoard, nextPlayer, state, Some movedPieceNewPosition)
+                        let allNewBoadEvents = Seq.append nextBoardEvents additionalNextBoardEvents
+                        ImmutableZeroSumBoardGameSelfCalculatingPieces<'Board, 'Coords, 'MoveCommand, 'BoardEvnt, 'State> (nextBoard, nextPlayer,
+                        nextMoveCalcResult, moveCalc, maybeZsValueCalc, nextState, gameStateIsUnstable, this, allNewBoadEvents)
+                    with
+                        | ex ->
+                            raise (InvalidGameStateException (ex.Message, this))
                 | _ ->
-                    raise (Exception "Game has already terminated.")    
+                    raise (InvalidOperationException "Game has already terminated.")    
             member x.Previous = previous |> Option.map (fun p -> p :> ImmutableGame)
             member x.ZSValue = 
                 match moveCalcResult with
@@ -86,4 +92,5 @@ type ImmutableZeroSumBoardGameSelfCalculatingPieces<'Board, 'Coords, 'MoveComman
                 | PossibleMoves possibleMoves ->
                     possibleMoves.Length
                 | _ -> 0    
-            member x.Running = (x :> ImmutableGame).NumberOfPossibleMoves <> 0            
+            member x.Running = (x :> ImmutableGame).NumberOfPossibleMoves <> 0
+            member x.InstableState = unstableGameState      

@@ -22,71 +22,106 @@ using System.Collections.Generic;
 
 public class GameCompanion<GameResult>: IGameMoveMaker, IReversibleGame<GameResult>
 {
-    protected ImmutableGame state;
-    protected Func<ImmutableGame, GameResult> resultMapper;
-    Dictionary<int,AI_Agent>? playerToAIAgent = new Dictionary<int, AI_Agent> ();
-    public GameCompanion (ImmutableGame startState, IEnumerable<AI_Agent> agents, Func<ImmutableGame, GameResult> _resultMapper)
+    protected ImmutableGame State;
+    Func<ImmutableGame, GameResult> resultMapper;
+    Dictionary<int,AI_Agent>? playerToAIAgent;
+    protected bool DebugMode;
+    public event EventHandler? UpdateAIs;
+    public void UpdateAIAgents (IEnumerable<AI_Agent> agents)
     {
-        state = startState;
-        resultMapper = _resultMapper;
+        playerToAIAgent = new Dictionary<int, AI_Agent> ();
         foreach (AI_Agent agent in agents)
-            playerToAIAgent[agent.Player] = agent;
+            playerToAIAgent![agent.Player] = agent;
     }
-    public bool Running => state.Running;
-    public int ActivePlayer => state.ActivePlayer;
+    public GameCompanion (ImmutableGame startState, IEnumerable<AI_Agent> agents, Func<ImmutableGame, GameResult> _resultMapper, bool debugMode)
+    {
+        State = startState;
+        resultMapper = _resultMapper;
+        DebugMode = debugMode;
+        UpdateAIAgents (agents);
+    }
+    bool running = false;
+    public bool Running => running && State.Running;
+    public int ActivePlayer => State.ActivePlayer;
     protected virtual void TriggerTriggerBoardEvents () {}
     public event MoveMadeEvent? MoveMadeEvent;
     public event EventHandler? MoveMade;
-    public event EventHandler? ReInitialized;
-    public void TriggerMoveMade (int moveIndex)
+    public event NextPlayerEvent? NextPlayer;
+    public event GameOverEvent<GameResult>? GameOver;
+    public event EventHandler? Undone;
+    void TriggerMoveMade (int moveIndex)
     {
         MoveMade?.Invoke (this, new EventArgs ());
         MoveMadeEvent?.Invoke (moveIndex);
     }
-    public event NextPlayerEvent? NextPlayer;
-    public void TriggerNextPlayer (int id) => NextPlayer?.Invoke (id);
-    public event GameOverEvent<GameResult>? GameOver;
-    public void TriggerGameOver (GameResult result) => GameOver?.Invoke (result);
-    public event EventHandler? Undone;
+    void TriggerNextPlayer (int id) => NextPlayer?.Invoke (id);
+    void TriggerGameOver (GameResult result) => GameOver?.Invoke (result);
     public virtual void MakeMove (int index)
     {
-        state = state.NthMove (index);
-        TriggerMoveMade (index);
-        TriggerTriggerBoardEvents ();
-        if (state.Running)
+        if (Running)
         {
-            AI_Agent? agent;
-            if ((playerToAIAgent != null) && (playerToAIAgent.TryGetValue (ActivePlayer, out agent)))
+            State = State.NthMove (index);
+            TriggerMoveMade (index);
+            TriggerTriggerBoardEvents ();
+            if (DebugMode)
             {
-                TriggerNextPlayer (ActivePlayer);
-                agent.MakeMove (this, state);
-            } else {
-                TriggerNextPlayer (ActivePlayer);
-            }    
-        }     
-        else
-        {
-            TriggerGameOver (resultMapper (state));
+                Console.WriteLine (State.ToString ());
+                Console.WriteLine ();
+            }
+            if (State.Running)
+            {
+                AI_Agent? agent;
+                if ((playerToAIAgent != null) && (playerToAIAgent.TryGetValue (ActivePlayer, out agent)))
+                {
+                    TriggerNextPlayer (ActivePlayer);
+                    agent.MakeMove (this, State);
+                } else {
+                    TriggerNextPlayer (ActivePlayer);
+                }    
+            }     
+            else
+            {
+                TriggerGameOver (resultMapper (State));
+            }
         }
     }
     public void Run ()
     {
-        ReInitialized?.Invoke (this, new EventArgs ());
+        running = true;
         AI_Agent? agent;
         if ((playerToAIAgent != null) && (playerToAIAgent.TryGetValue (ActivePlayer, out agent)))
         {
             TriggerNextPlayer (ActivePlayer);
-            agent.MakeMove (this, state);
+            agent.MakeMove (this, State);
         } else {
             TriggerNextPlayer (ActivePlayer);
         }    
     }
-    public bool Undoable => state.Previous != null;
+    public void Pause ()
+    {
+        running = false;
+        var stopableAIs = playerToAIAgent!.Values.OfType<StopableAI>();
+        foreach (StopableAI ai in stopableAIs)
+            ai.Stop ();        
+        Thread.Sleep (50);
+    }
+    public void Continue()
+    {
+        if (!running)
+        {
+            UpdateAIs?.Invoke (this, EventArgs.Empty);
+            Run ();
+        }
+    }
+    public void Stop () => Pause ();
+    public bool Undoable => State.Previous != null;
     public void Undo ()
     {
-        if (state.Previous != null)
+        if (State.Previous != null)
         {
-            state = state.Previous.Value;
+            if (running) 
+                Pause();
+            State = State.Previous.Value;
             Undone?.Invoke (this, new EventArgs ());
         }
         else
@@ -97,17 +132,17 @@ public class GameCompanion<GameResult>: IGameMoveMaker, IReversibleGame<GameResu
     public override bool Equals (object? obj)
     {
         if (obj is ImmutableGame)
-            return state.Equals (obj);
+            return State.Equals (obj);
         else
             return base.Equals (obj);
     }
     public override int GetHashCode()
     {
-        return state.GetHashCode ();
+        return State.GetHashCode ();
     }
     public override string ToString()
     {
-        return state.ToString ()!;
+        return State.ToString ()!;
     }
 }
 
@@ -119,8 +154,9 @@ public interface IBoardGameCompanion<out Board, Evnt>
 
 public class BoardGameCompanion<GameResult, Board, Evnt> : GameCompanion<GameResult>, IBoardGameCompanion<Board, Evnt>
 {
-    public BoardGameCompanion (ImmutableGame startState, IEnumerable<AI_Agent> agents, Func<ImmutableGame, GameResult> _resultMapper) : base (startState, agents, _resultMapper) {}
-    public IBoardGameForCompanion<Board, Evnt> Game => (IBoardGameForCompanion<Board, Evnt>) state;
+    public BoardGameCompanion (ImmutableGame startState, IEnumerable<AI_Agent> agents, Func<ImmutableGame, GameResult> resultMapper, bool debugMode) 
+        : base (startState, agents, resultMapper, debugMode) {}
+    public IBoardGameForCompanion<Board, Evnt> Game => (IBoardGameForCompanion<Board, Evnt>) State;
     public event EventHandler? TriggerBoardEvents;
     protected override void TriggerTriggerBoardEvents () => TriggerBoardEvents?.Invoke (this, new EventArgs ());
 }

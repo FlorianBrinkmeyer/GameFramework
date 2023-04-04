@@ -24,5 +24,4 @@ public interface IGameMoveMaker
 {
     void MakeMove (int move);
     event MoveMadeEvent? MoveMadeEvent;
-    event EventHandler? ReInitialized;
 }

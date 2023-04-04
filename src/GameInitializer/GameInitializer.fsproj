@@ -21,7 +21,8 @@
     <ProjectReference Include="..\Games\Chess\ChessResultMapper\ChessResultMapper.fsproj" />
     <ProjectReference Include="..\Games\Chess\Euclid2D\TwoDStandardChessPieceFactory\TwoDStandardChessPieceFactory.csproj" />
     <ProjectReference Include="..\AIAgents\NegaMaxPruningCaching\NegaMaxPruningCaching.fsproj" />
-    <ProjectReference Include="..\AI_Interfaces\AI_InterfacesForInitialization\ReInitializableAI\ReInitializableAI.fsproj" />
+    <ProjectReference Include="..\AI_Interfaces\AI_InterfacesForInitialization\StopableAI\StopableAI.fsproj" />
+    <ProjectReference Include="..\AIAgents\SimpleNegaMaxAgent\SimpleNegaMaxAgent.fsproj" />
   </ItemGroup>
 
 </Project>

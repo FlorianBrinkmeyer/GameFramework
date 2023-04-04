@@ -29,6 +29,6 @@
 /home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/AIAgents/NegaMaxPruningCaching/bin/Debug/net7.0/AI_WithMultiThreading.dll
 /home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/AIAgents/NegaMaxPruningCaching/bin/Debug/net7.0/AI_WithMultiThreading.pdb
 /home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/AIAgents/NegaMaxPruningCaching/bin/Debug/net7.0/AI_WithMultiThreading.xml
-/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/AIAgents/NegaMaxPruningCaching/bin/Debug/net7.0/ReInitializableAI.dll
-/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/AIAgents/NegaMaxPruningCaching/bin/Debug/net7.0/ReInitializableAI.pdb
-/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/AIAgents/NegaMaxPruningCaching/bin/Debug/net7.0/ReInitializableAI.xml
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/AIAgents/NegaMaxPruningCaching/bin/Debug/net7.0/StopableAI.dll
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/AIAgents/NegaMaxPruningCaching/bin/Debug/net7.0/StopableAI.pdb
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/AIAgents/NegaMaxPruningCaching/bin/Debug/net7.0/StopableAI.xml

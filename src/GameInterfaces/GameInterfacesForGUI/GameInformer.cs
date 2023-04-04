@@ -34,5 +34,7 @@ public interface IReversibleGame<GameResult> : IGameInformer<GameResult>
 {
     bool Undoable {get;}
     void Undo ();
+    void Pause ();
+    void Continue();
     event EventHandler Undone;
 }

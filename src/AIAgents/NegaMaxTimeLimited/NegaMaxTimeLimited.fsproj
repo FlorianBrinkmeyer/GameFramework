@@ -13,6 +13,7 @@
     <ProjectReference Include="..\..\AI_Interfaces\AI_InterfacesForGames\AIBaseInterface\AIBaseInterface.fsproj" />
     <ProjectReference Include="..\..\AI_Interfaces\AI_InterfacesForGUI\AI_Informer\AI_Informer.fsproj" />
     <ProjectReference Include="..\..\AI_Interfaces\AI_InterfacesForInitialization\AI_WithConsiderationTime\AI_WithConsiderationTime.fsproj" />
+    <ProjectReference Include="..\..\AI_Interfaces\AI_InterfacesForInitialization\StopableAI\StopableAI.fsproj" />
   </ItemGroup>
 
 </Project>

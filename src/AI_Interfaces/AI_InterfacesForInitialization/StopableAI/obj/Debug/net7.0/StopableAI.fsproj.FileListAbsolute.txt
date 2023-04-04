@@ -1,0 +1,13 @@
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/AI_Interfaces/AI_InterfacesForInitialization/StopableAI/bin/Debug/net7.0/StopableAI.deps.json
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/AI_Interfaces/AI_InterfacesForInitialization/StopableAI/bin/Debug/net7.0/StopableAI.dll
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/AI_Interfaces/AI_InterfacesForInitialization/StopableAI/bin/Debug/net7.0/StopableAI.pdb
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/AI_Interfaces/AI_InterfacesForInitialization/StopableAI/bin/Debug/net7.0/StopableAI.xml
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/AI_Interfaces/AI_InterfacesForInitialization/StopableAI/obj/Debug/net7.0/StopableAI.fsproj.AssemblyReference.cache
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/AI_Interfaces/AI_InterfacesForInitialization/StopableAI/obj/Debug/net7.0/StopableAI.AssemblyInfoInputs.cache
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/AI_Interfaces/AI_InterfacesForInitialization/StopableAI/obj/Debug/net7.0/StopableAI.AssemblyInfo.fs
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/AI_Interfaces/AI_InterfacesForInitialization/StopableAI/obj/Debug/net7.0/StopableAI.fsproj.CoreCompileInputs.cache
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/AI_Interfaces/AI_InterfacesForInitialization/StopableAI/obj/Debug/net7.0/StopableAI.dll
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/AI_Interfaces/AI_InterfacesForInitialization/StopableAI/obj/Debug/net7.0/refint/StopableAI.dll
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/AI_Interfaces/AI_InterfacesForInitialization/StopableAI/obj/Debug/net7.0/StopableAI.xml
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/AI_Interfaces/AI_InterfacesForInitialization/StopableAI/obj/Debug/net7.0/StopableAI.pdb
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/AI_Interfaces/AI_InterfacesForInitialization/StopableAI/obj/Debug/net7.0/ref/StopableAI.dll

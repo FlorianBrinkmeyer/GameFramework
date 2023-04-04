@@ -21,14 +21,25 @@ open System
 type NegaMaxTimeLimited (player : int, searchTime : int, maxDepth : int) =
     let rnd = Random ()
     let sendMessage = Event<String> ()
+    let timer = new Timers.Timer (searchTime)
     let mutable considerationTime = searchTime
     let mutable reachedMaxDepth = 0
+    let mutable timeLeft = false
+    do
+        timer.Elapsed.AddHandler (fun _ _ -> timeLeft <- false)
+        timer.AutoReset <- false
     member val MaximalSearchDepth = maxDepth with get, set
+    interface StopableAI with
+        member x.Stop () =
+            timeLeft <- false
+            timer.Stop ()
     interface AI_WithConsiderationTime with
         member x.Player = player
         member x.ConsiderationTime
             with get () = considerationTime
-            and set (value) = considerationTime <- value
+            and set (value) = 
+                considerationTime <- value
+                timer.Interval <- considerationTime
     interface AI_Informer with
         [<CLIEvent>]
         member x.SendMessage = sendMessage.Publish
@@ -37,10 +48,7 @@ type NegaMaxTimeLimited (player : int, searchTime : int, maxDepth : int) =
         member x.MakeMove mutableGame game =
             let immutableGame = game :?> ImmutableGame
             let mutable chosenMove = 0
-            let mutable timeLeft = true
-            let timer = new Timers.Timer (considerationTime)
-            timer.AutoReset <- false
-            timer.Elapsed.AddHandler (fun _ _ -> timeLeft <- false)
+            timeLeft <- true
             timer.Start ()
             let timeLimitedSearch =
                 async {

@@ -39,3 +39,6 @@
 /home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Geometries/Euclid2D/Boards/TwoDBoardCompanionBase/obj/Debug/net7.0/TwoDBoardCompanionBase.xml
 /home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Geometries/Euclid2D/Boards/TwoDBoardCompanionBase/obj/Debug/net7.0/TwoDBoardCompanionBase.pdb
 /home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Geometries/Euclid2D/Boards/TwoDBoardCompanionBase/obj/Debug/net7.0/ref/TwoDBoardCompanionBase.dll
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Geometries/Euclid2D/Boards/TwoDBoardCompanionBase/bin/Debug/net7.0/StopableAI.dll
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Geometries/Euclid2D/Boards/TwoDBoardCompanionBase/bin/Debug/net7.0/StopableAI.pdb
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Geometries/Euclid2D/Boards/TwoDBoardCompanionBase/bin/Debug/net7.0/StopableAI.xml

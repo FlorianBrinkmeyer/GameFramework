@@ -25,19 +25,19 @@ type TwoDBoardCompanionMovablePieces (companion) =
     interface IBoardMover<int*int> with
         member this.PossibleMoves coords =
             let (x,y) = coords
-            let maybePiece = this.board[x,y]
+            let maybePiece = this.GameBoard[x,y]
             match maybePiece with
             | Some piece ->
-                let game = this.game :?> IBoardGameForPieces<int*int, IMoveCommand<int*int>>
+                let game = this.Game :?> IBoardGameForPieces<int*int, IMoveCommand<int*int>>
                 (piece :?> IMovablePiece<int*int>).PossibleMoves (game, coords)
             | None ->
                 Seq.empty    
         member this.MakeMove ((startX, startY), dest) =
-            let maybePiece = this.board[startX, startY]
+            let maybePiece = this.GameBoard[startX, startY]
             match maybePiece with
             | Some piece ->
-                let game = this.game :?> IBoardGameForPieces<int*int, IMoveCommand<int*int>>
-                let mutableGame = this.gameCompanion :?> IGameMoveMaker
+                let game = this.Game :?> IBoardGameForPieces<int*int, IMoveCommand<int*int>>
+                let mutableGame = this.GameCompanion :?> IGameMoveMaker
                 (piece :?> IMovablePiece<int*int>).MakeMove (mutableGame, game, (startX, startY), dest)
             | None ->
                 raise (Exception "Field is empty: Impossible to make a move from here.")

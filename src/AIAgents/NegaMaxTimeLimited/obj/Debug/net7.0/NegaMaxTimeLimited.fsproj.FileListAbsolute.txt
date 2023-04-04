@@ -51,3 +51,6 @@
 /home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/AIAgents/NegaMaxTimeLimited/bin/Debug/net7.0/AI_WithConsiderationTime.dll
 /home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/AIAgents/NegaMaxTimeLimited/bin/Debug/net7.0/AI_WithConsiderationTime.pdb
 /home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/AIAgents/NegaMaxTimeLimited/bin/Debug/net7.0/AI_WithConsiderationTime.xml
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/AIAgents/NegaMaxTimeLimited/bin/Debug/net7.0/StopableAI.dll
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/AIAgents/NegaMaxTimeLimited/bin/Debug/net7.0/StopableAI.pdb
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/AIAgents/NegaMaxTimeLimited/bin/Debug/net7.0/StopableAI.xml

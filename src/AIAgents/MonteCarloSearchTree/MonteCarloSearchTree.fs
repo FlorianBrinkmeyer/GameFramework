@@ -38,19 +38,27 @@ type MonteCarloTreeSearch (player : int, searchTime : int, countInfinitiesMode, 
             Random ()
         else    
             Random.Shared
+    let timer = new Timers.Timer (searchTime)
     let mutable considerationTime = searchTime
     let mutable registeredMoveMadeEvent = false
     let mutable maybePermanentTree = None
     let mutable maxSimCount = 0
-    interface IReInitializableAI with
-        member x.ReInitialize () =
-            maybePermanentTree <- None
-            registeredMoveMadeEvent <- false
+    let mutable timeLeft = false
+    let mutable invalidStatesOccured = 0      
+    do
+        timer.Elapsed.AddHandler (fun _ _ -> timeLeft <- false)
+        timer.AutoReset <- false
+    interface StopableAI with
+        member x.Stop () =
+            timeLeft <- false
+            timer.Stop ()
     interface AI_WithConsiderationTime with
         member x.Player = player
         member x.ConsiderationTime
             with get () = considerationTime
-            and set (value) = considerationTime <- value
+            and set (value) = 
+                considerationTime <- value
+                timer.Interval <- considerationTime
     interface AI_WithMultiThreading with
         member x.UsedThreads = threadsCount
     interface AI_Informer with
@@ -103,25 +111,36 @@ type MonteCarloTreeSearch (player : int, searchTime : int, countInfinitiesMode, 
                         //random rollout(s)
                         let randomFinalStatesScores =
                             let getRandomFinalStateScore st =
-                                let rec helper (state : ImmutableGame) =
-                                    if state.Running then
-                                        let randomMove = rnd.Next state.NumberOfPossibleMoves
-                                        state.NthMove randomMove |> helper
-                                    else    
-                                        state
-                                st |> helper |> getFinalScore      
+                                try
+                                    let rec helper (state : ImmutableGame) =
+                                        if state.Running then
+                                            let randomMove = rnd.Next state.NumberOfPossibleMoves
+                                            state.NthMove randomMove |> helper
+                                        else    
+                                            state
+                                    st |> helper |> getFinalScore, 1   
+                                with
+                                    | :? InvalidGameStateException as ex ->
+                                        Console.WriteLine ex.Message
+                                        Console.WriteLine "Invalid game state occured during random rollout of Monte Carlo tree seach."
+                                        Console.WriteLine "Game will continue, but this should be fixed."
+                                        printfn "This occured %A times so far." (invalidStatesOccured + 1)
+                                        0.0, 0
                             if threadsCount = 1 then
                                 [|getRandomFinalStateScore nextState|]
                             else    
                                 async {return getRandomFinalStateScore nextState} |> Array.replicate threadsCount |> Async.Parallel |> Async.RunSynchronously
-                        let summedFinalScore = randomFinalStatesScores |> Array.sum
+                        let summedFinalScore, succesfulPlayThroughs = 
+                            randomFinalStatesScores |> Array.map fst |> Array.sum, randomFinalStatesScores |> Array.map snd |> Array.sum
+                        let failedPlayThroughs = threadsCount - succesfulPlayThroughs
+                        invalidStatesOccured <- invalidStatesOccured + failedPlayThroughs
                         let newChild = 
-                            {State = nextState; NumberOfSimulations = threadsCount; TotalScore = summedFinalScore; UntriedMoves = childUntriedMoves;
+                            {State = nextState; NumberOfSimulations = succesfulPlayThroughs; TotalScore = summedFinalScore; UntriedMoves = childUntriedMoves;
                             Children = Array.zeroCreate nextState.NumberOfPossibleMoves} 
                         tree.Children[untriedMove] <- newChild
                         let updatedTree = 
-                            {tree with NumberOfSimulations = tree.NumberOfSimulations + threadsCount; TotalScore = tree.TotalScore + summedFinalScore;
-                                       UntriedMoves = reducedUntriedMoves}      
+                            {tree with NumberOfSimulations = tree.NumberOfSimulations + succesfulPlayThroughs;
+                                       TotalScore = tree.TotalScore + summedFinalScore; UntriedMoves = reducedUntriedMoves}      
                         updatedTree, summedFinalScore  
             if not registeredMoveMadeEvent then
                 mutableGame.add_MoveMadeEvent (fun move -> 
@@ -131,13 +150,8 @@ type MonteCarloTreeSearch (player : int, searchTime : int, countInfinitiesMode, 
                     | _ ->
                         maybePermanentTree <- None
                 )   
-                mutableGame.add_ReInitialized (fun _ _ -> maybePermanentTree <- None)
                 registeredMoveMadeEvent <- true               
-            //Initialize timer.
-            let mutable timeLeft = true
-            let timer = new Timers.Timer (considerationTime)
-            timer.Elapsed.AddHandler (fun _ _ -> timeLeft <- false)
-            timer.AutoReset <- false
+            timeLeft <- true
             timer.Start ()
             //Initialize algorithm and then perform as many simulations as possible.
             let mainRoutine = async {

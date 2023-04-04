@@ -19,15 +19,15 @@ namespace GameFramework;
 
 abstract public class BoardCompanion<Board, Evnt> : IBoardInformer<Evnt>
 {
-    protected IBoardGameCompanion<Board, Evnt> gameCompanion;
-    protected IBoardGameForCompanion<Board, Evnt> game => gameCompanion.Game;
-    protected Board board => game.GameBoard;    
+    protected IBoardGameCompanion<Board, Evnt> GameCompanion;
+    protected IBoardGameForCompanion<Board, Evnt> Game => GameCompanion.Game;
+    protected Board GameBoard => Game.GameBoard;    
     public BoardCompanion (IBoardGameCompanion<Board, Evnt> companion)
     {
-        gameCompanion = companion;
-        gameCompanion.TriggerBoardEvents += (Object? sender, EventArgs args) => 
+        GameCompanion = companion;
+        GameCompanion.TriggerBoardEvents += (Object? sender, EventArgs args) => 
         {
-            foreach (Evnt? boardEvent in game.BoardEvents)
+            foreach (Evnt? boardEvent in Game.BoardEvents)
                 BoardInformerEvent?.Invoke (this, boardEvent);
         };
     }

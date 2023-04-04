@@ -26,31 +26,31 @@ public abstract class TwoDSetBoardGUI<Piece> : TwoDBoardGUI<ITwoDSetBoard<Piece>
     override protected void OnOwnPlayersTurn (int activePlayer)
     {
         base.OnOwnPlayersTurn (activePlayer);
-        foreach (Tuple<int,int> coords in board!.PossibleMoves)
+        foreach (Tuple<int,int> coords in GameBoard!.PossibleMoves)
         {
             var position = Euclid2DCoords.FromTuple (coords);
-            fields![position.X, position.Y].Sensitive = true;
+            Fields![position.X, position.Y].Sensitive = true;
         }
     }
     override protected void OnClick (Object? sender, EventArgs args)
     {
         var button = (DecoratedButton?) sender;
         var position = button!.Position;
-        foreach (Tuple<int,int> entry in board!.AllCoords)
+        foreach (Tuple<int,int> entry in GameBoard!.AllCoords)
         {
-            fields![entry.Item1,entry.Item2].Sensitive = false;
+            Fields![entry.Item1,entry.Item2].Sensitive = false;
         }
-        board!.MakeMove (position.AsTuple);
+        GameBoard!.MakeMove (position.AsTuple);
     }
     protected virtual void OnBoardInformerEvent (object? sender, BoardSetEvent<Tuple<int,int>> evnt)
     {
         var position = Euclid2DCoords.FromTuple (evnt.Field);
-        setFieldToPieceImage (position, board![position]); 
+        SetFieldToPieceImage (position, GameBoard![position]); 
     }
-    override protected void initialize (int windowsWidth, int windowHeight, String pictureFolder, ITwoDSetBoard<Piece> _board, 
-    IGameInformer<String> game, IEnumerable<int> thisGUIusers, IEnumerable<AI_Informer> AIs)
+    override protected void Initialize (int windowsWidth, int windowHeight, String pictureFolder, ITwoDSetBoard<Piece> board, 
+    IGameInformer<String> game, IEnumerable<int> thisGUIusers, IEnumerable<AI_Informer> AIs, bool debugMode)
     {
-        base.initialize (windowsWidth, windowHeight, pictureFolder, _board, game, thisGUIusers, AIs);
-        board!.BoardInformerEvent += OnBoardInformerEvent;
+        base.Initialize (windowsWidth, windowHeight, pictureFolder, board, game, thisGUIusers, AIs, debugMode);
+        GameBoard!.BoardInformerEvent += OnBoardInformerEvent;
     }
 }

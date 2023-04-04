@@ -29,3 +29,20 @@ type ImmutableGame =
     inherit IGame
     abstract NthMove: int -> ImmutableGame
     abstract Previous: Option<ImmutableGame>
+    ///Can be used to signal the AI that the current game state needs special attention. (In order to increase search depth, for instance.)
+    abstract InstableState : bool
+
+type InvalidGameStateException (message, state : ImmutableGame) =
+    inherit InvalidOperationException (message)     
+    do
+        let rec printStates step (state : ImmutableGame) =
+            state.Previous |> Option.iter (fun st ->
+                printStates (step + 1) st
+                let name = (String.replicate step "previous ") + "board:"
+                Console.WriteLine () 
+                Console.WriteLine name
+                Console.WriteLine () 
+                Console.WriteLine st
+                Console.WriteLine () 
+            )    
+        printStates 0 state               

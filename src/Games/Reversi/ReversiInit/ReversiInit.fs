@@ -79,10 +79,10 @@ let getZSValue<'Board when 'Board :> IEnumerable2DArray<int> and 'Board :> Immut
     let blackPiecesCount = board.AllEntriesWithCoords |> Seq.filter (fun (piece, _) -> piece = -1) |> Seq.length    
     (float) (whitePiecesCount - blackPiecesCount)
 
-let initReversi xDim yDim startPlayer withPassing (resultMapper : Func<ImmutableGame,'T>) (agents : seq<AI_Agent>) =
-    let board = ImmutableEnumerable2DArray.ImmutableEnumerable2DArray (xDim, yDim, Map.empty<int*int,int>)
+let initReversi xDim yDim startPlayer withPassing (resultMapper : Func<ImmutableGame,'T>) (agents : seq<AI_Agent>) debugMode =
+    let board = ImmutableEnumerable2DArray.ImmutableEnumerable2DArray (xDim, yDim, Map.empty<int*int,int>, debugMode) 
     let _, firstMoveCalcRes = possibleMoves withPassing false board (startPlayer * (-1)) 0
-    let game = ImmutableBoardSetGame (board, startPlayer, firstMoveCalcRes, makeMove, possibleMoves withPassing false, getZSValue, 0)
-    let gameCompanion = BoardGameCompanion (game, agents, resultMapper)
+    let game = ImmutableBoardSetGame (board, startPlayer, firstMoveCalcRes, makeMove, possibleMoves withPassing false, getZSValue, 0, None)
+    let gameCompanion = BoardGameCompanion (game, agents, resultMapper, debugMode)
     let boardCompanion = TwoDSetBoardCompanion<int> gameCompanion
     gameCompanion, boardCompanion

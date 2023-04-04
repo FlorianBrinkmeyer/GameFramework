@@ -26,7 +26,7 @@ open ImmutableEnumerable2DArray
 open GameFramework.Chess.MoveCalculation
 
 let initChess xDim yDim startPlayer (pieceFactory : Func<String, int, IPiece>) (boardStartConfigurationCsv : String) (resultMapper : Func<ImmutableGame,'GameResult>)
-    (agents : seq<AI_Agent>) =
+    (agents : seq<AI_Agent>) debugMode =
     let boardSeqOfSeq = 
         boardStartConfigurationCsv |> File.ReadAllLines |> Seq.rev |> Seq.map (fun line -> line.Split (',') |> Seq.map (fun entry -> 
             if entry <> String.Empty then
@@ -36,15 +36,15 @@ let initChess xDim yDim startPlayer (pieceFactory : Func<String, int, IPiece>) (
             else
                 None    
         ))
-    let board = ImmutableEnumerable2DArray<IPiece> (xDim, yDim, seqOfSeqOptToMap boardSeqOfSeq)
-    let firstMoveCalcRes, _, _ = calculatePossibleMoves board startPlayer 0 None
+    let board = ImmutableEnumerable2DArray<IPiece> (xDim, yDim, seqOfSeqOptToMap boardSeqOfSeq, debugMode)
+    let firstMoveCalcRes, _, _, _ = calculatePossibleMoves board startPlayer 0 None
     let zsEvaluation (board : ImmutableEnumerable2DArray<IPiece>) = 
         (board :> IEnumerable2DArray<IPiece>).AllEntriesWithCoords |> Seq.map (fun (piece, pos) -> 
             ((piece :?> ISelfEvaluatingPiece<ImmutableEnumerable2DArray<IPiece>, int*int>).Value board pos) * (float) piece.Player
         ) |> Seq.sum
     let game = 
         ImmutableZeroSumBoardGameSelfCalculatingPieces<ImmutableEnumerable2DArray<IPiece>, int*int, IMoveCommand<int*int>, IBoardMoveEvent, int>
-            (board, startPlayer, firstMoveCalcRes, calculatePossibleMoves, Some zsEvaluation, 0)
-    let gameCompanion = BoardGameCompanion<'GameResult, IEnumerable2DArray<IPiece>, IBoardMoveEvent> (game, agents, resultMapper)
+            (board, startPlayer, firstMoveCalcRes, calculatePossibleMoves, Some zsEvaluation, 0, false)
+    let gameCompanion = BoardGameCompanion<'GameResult, IEnumerable2DArray<IPiece>, IBoardMoveEvent> (game, agents, resultMapper, debugMode)
     let boardCompanion = TwoDBoardCompanionMovablePieces gameCompanion    
     gameCompanion, boardCompanion   

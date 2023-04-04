@@ -66,3 +66,6 @@
 /home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Games/Reversi/ReversiInit/obj/Debug/net7.0/ReversiInit.xml
 /home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Games/Reversi/ReversiInit/obj/Debug/net7.0/ReversiInit.pdb
 /home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Games/Reversi/ReversiInit/obj/Debug/net7.0/ref/ReversiInit.dll
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Games/Reversi/ReversiInit/bin/Debug/net7.0/StopableAI.dll
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Games/Reversi/ReversiInit/bin/Debug/net7.0/StopableAI.pdb
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Games/Reversi/ReversiInit/bin/Debug/net7.0/StopableAI.xml

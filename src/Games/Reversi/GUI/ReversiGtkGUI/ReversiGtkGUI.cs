@@ -6,7 +6,7 @@ using Euclid2D;
 
 public class ReversiGtkGUI : TwoDSetBoardGUI<int>
 {
-    override protected Gtk.Builder builder {get;} = new Gtk.Builder ();
+    override protected Gtk.Builder Builder {get;} = new Gtk.Builder ();
     override protected String getImageFileName (int piece)
     {
         if (piece == 1)
@@ -21,15 +21,15 @@ public class ReversiGtkGUI : TwoDSetBoardGUI<int>
         else
             return "Black";    
     }
-    public ReversiGtkGUI (int windowsWidth, int windowHeight, String pictureFolder, String guiFilename, ITwoDSetBoard<int> _board, 
-    IGameInformer<String> _game, IEnumerable<int> thisGUIusers, IEnumerable<AI_Informer> AIs)
+    public ReversiGtkGUI (int windowsWidth, int windowHeight, String pictureFolder, String guiFilename, ITwoDSetBoard<int> board, 
+    IGameInformer<String> game, IEnumerable<int> thisGUIusers, IEnumerable<AI_Informer> AIs, bool debugMode)
     {
         Gtk.Application.Init ();
-        builder.AddFromFile (guiFilename);
-        builder.Autoconnect (this);
-        var mainForm = (Gtk.ApplicationWindow) builder.GetObject ("Window");
+        Builder.AddFromFile (guiFilename);
+        Builder.Autoconnect (this);
+        var mainForm = (Gtk.ApplicationWindow) Builder.GetObject ("Window");
         mainForm.Title = "Reversi";
         mainForm.WindowPosition = Gtk.WindowPosition.Center;
-        initialize (windowsWidth, windowHeight, pictureFolder, _board, _game, thisGUIusers, AIs);
+        Initialize (windowsWidth, windowHeight, pictureFolder, board, game, thisGUIusers, AIs, debugMode);
     }
 }

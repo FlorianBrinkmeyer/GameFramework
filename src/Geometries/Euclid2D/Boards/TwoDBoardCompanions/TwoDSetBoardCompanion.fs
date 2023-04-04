@@ -23,9 +23,9 @@ open GameFramework
 type TwoDSetBoardCompanion<'Piece> (companion) = 
     inherit TwoDBoardCompanion<'Piece, BoardSetEvent<int*int>> (companion)    
     interface IBoardSetter<int*int> with
-        member this.PossibleMoves = (this.game :?> IGameForBoardOrCompanion<int*int>).PossibleMoves
+        member this.PossibleMoves = (this.Game :?> IGameForBoardOrCompanion<int*int>).PossibleMoves
         member this.MakeMove field =
             let possibleMoves = (this :> IBoardSetter<int*int>).PossibleMoves
             let index = possibleMoves |> Seq.findIndex (fun t -> t = field)
-            (this.gameCompanion :?> IGameMoveMaker).MakeMove index
+            (this.GameCompanion :?> IGameMoveMaker).MakeMove index
     interface ITwoDSetBoard<'Piece>

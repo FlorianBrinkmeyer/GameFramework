@@ -34,20 +34,22 @@ type ZSValueCalcDelegate<'Board> = Func<'Board, float>
 type ImmutableBoardSetGame<'Board, 'MoveCommand, 'BoardEvnt, 'State when 'Board : equality>
     (board: 'Board, activePlayer, moveCalcResult : MoveCalcResult<'MoveCommand>, makeMove : MakeMoveDelegate<'Board, 'MoveCommand, 'BoardEvnt, 'State>,
     calculatePossibleMoves : CalculatePossibleMovesDelegate<'Board, 'MoveCommand, 'State>, zsValueCalc : ZSValueCalcDelegate<'Board>,
-    state : 'State, ?previous, ?events) =
+    state : 'State, maybeDeviantingIntermediateEvaluation: Option<ZSValueCalcDelegate<'Board>>, ?previous, ?events) =
         member x.ActivePlayer = activePlayer
         member x.Board = board
         member x.PossibleMoves =
             match moveCalcResult with
             | PossibleMoves moves ->
                 moves
-            | GameOver -> raise (Exception "Making another move impossible: Game has already terminated.")    
+            | GameOver -> raise (InvalidOperationException "Making another move impossible: Game has already terminated.")    
         override x.Equals other =
             let castedOther = other :?> ImmutableBoardSetGame<'Board, 'MoveCommand, 'BoardEvnt, 'State>
             activePlayer = castedOther.ActivePlayer && board = castedOther.Board
         override x.GetHashCode () = HashCode.Combine (activePlayer, board)                
         override x.ToString () =
-            sprintf "ActivePlayer: %A \n\n%A" activePlayer board
+            let activePlayer = sprintf $"ActivePlayer: {activePlayer} \n\n"
+            let rest = (board.ToString ()).Split ('\n') |> Seq.filter (not << String.IsNullOrEmpty) |> Seq.rev |> Seq.reduce (fun str1 str2 -> str1 + "\n" + str2)
+            activePlayer + rest
         interface IBoardGameForCompanion<'Board, 'BoardEvnt> with
             member x.get_GameBoard () = board
             member x.BoardEvents = 
@@ -61,16 +63,25 @@ type ImmutableBoardSetGame<'Board, 'MoveCommand, 'BoardEvnt, 'State when 'Board 
         interface ImmutableGame with
             member this.NthMove moveIndex =
                 if (this :> ImmutableGame).Running then
-                    let move = this.PossibleMoves[moveIndex]
-                    let nextBoard, boardEvents, nextState = makeMove.Invoke (move, board, activePlayer, state)
-                    let nextPlayer, nextMoveCalcResult = calculatePossibleMoves.Invoke (nextBoard, activePlayer, nextState)
-                    ImmutableBoardSetGame<'Board, 'MoveCommand, 'BoardEvnt, 'State> (nextBoard, nextPlayer, nextMoveCalcResult, makeMove,
-                    calculatePossibleMoves, zsValueCalc, nextState, this, boardEvents)
+                    try
+                        let move = this.PossibleMoves[moveIndex]
+                        let nextBoard, boardEvents, nextState = makeMove.Invoke (move, board, activePlayer, state)
+                        let nextPlayer, nextMoveCalcResult = calculatePossibleMoves.Invoke (nextBoard, activePlayer, nextState)
+                        ImmutableBoardSetGame<'Board, 'MoveCommand, 'BoardEvnt, 'State> (nextBoard, nextPlayer, nextMoveCalcResult, makeMove,
+                        calculatePossibleMoves, zsValueCalc, nextState, maybeDeviantingIntermediateEvaluation, this, boardEvents)
+                    with
+                        | ex ->
+                            raise (InvalidGameStateException (ex.Message, this))
                 else
-                    raise (Exception "Game has already terminated.")    
+                    raise (InvalidOperationException "Game has already terminated.")    
             member x.Previous = previous |> Option.map (fun p -> p :> ImmutableGame)
-            member x.ZSValue = (zsValueCalc.Invoke board) * (float) activePlayer
-            member x.Value player = (zsValueCalc.Invoke board) * (float) player
+            member x.ZSValue = 
+                match (x :> ImmutableGame).Running, maybeDeviantingIntermediateEvaluation with
+                | true, Some deviantEval ->
+                    (deviantEval.Invoke board) * (float) activePlayer
+                | _ -> 
+                    (zsValueCalc.Invoke board) * (float) activePlayer
+            member x.Value player = (x :> ImmutableGame).ZSValue * (float) (activePlayer * player)
             member x.ActivePlayer = activePlayer
             member x.NumberOfPossibleMoves = 
                 match moveCalcResult with
@@ -79,3 +90,4 @@ type ImmutableBoardSetGame<'Board, 'MoveCommand, 'BoardEvnt, 'State when 'Board 
                 | GameOver ->
                     0    
             member x.Running = (x :> ImmutableGame).NumberOfPossibleMoves <> 0
+            member x.InstableState = false

@@ -28,12 +28,12 @@ public abstract class TwoDBoardGUIMovablePieces : TwoDBoardGUI<ITwoDBoardMovable
     override protected void OnOwnPlayersTurn (int activePlayer)
     {
         base.OnOwnPlayersTurn (activePlayer);
-        foreach (Tuple<int,int> entry in board!.AllUsedCoords)
+        foreach (Tuple<int,int> entry in GameBoard!.AllUsedCoords)
         {
             var coords = Euclid2DCoords.FromTuple (entry);
-            var possibleMoves = board.PossibleMoves (entry);
+            var possibleMoves = GameBoard.PossibleMoves (entry);
             if (possibleMoves.Any ())
-                fields![coords.X, coords.Y].Sensitive = true;
+                Fields![coords.X, coords.Y].Sensitive = true;
         }
         startFieldAlreadyChosen = false;     
     }
@@ -44,49 +44,46 @@ public abstract class TwoDBoardGUIMovablePieces : TwoDBoardGUI<ITwoDBoardMovable
         if (startFieldAlreadyChosen)
         {
             var destField = position;
-            foreach (Tuple<int,int> entry in board!.AllCoords)
-                fields![entry.Item1,entry.Item2].Sensitive = false;
-            board!.MakeMove (startField!.AsTuple, destField.AsTuple);
+            foreach (Tuple<int,int> entry in GameBoard!.AllCoords)
+                Fields![entry.Item1,entry.Item2].Sensitive = false;
+            GameBoard!.MakeMove (startField!.AsTuple, destField.AsTuple);
         } else {
             startField = position;
             startFieldAlreadyChosen = true;
-            foreach (Tuple<int,int> entry in board!.AllCoords)
-                fields![entry.Item1,entry.Item2].Sensitive = false;
-            foreach (Tuple<int,int> entry in board!.PossibleMoves (startField.AsTuple))
+            foreach (Tuple<int,int> entry in GameBoard!.AllCoords)
+                Fields![entry.Item1,entry.Item2].Sensitive = false;
+            foreach (Tuple<int,int> entry in GameBoard!.PossibleMoves (startField.AsTuple))
             {
-                fields![entry.Item1, entry.Item2].Sensitive = true;
+                Fields![entry.Item1, entry.Item2].Sensitive = true;
             }
         }        
     }
     protected virtual void OnBoardInformerEvent (object? sender, IBoardMoveEvent evnt)
     {
-        if (evnt is BoardMovingEvent<Tuple<int,int>>)
+        if (evnt is BoardMovingEvent<Tuple<int,int>> movingEvent)
         {
-            var movingEvent = evnt as BoardMovingEvent<Tuple<int,int>>;
             var start = Euclid2DCoords.FromTuple (movingEvent!.Start);
             var dest = Euclid2DCoords.FromTuple (movingEvent!.Dest);
-            var destPiece = board![dest];
-            fieldClearImage (start);
-            setFieldToPieceImage (dest, destPiece); 
+            var destPiece = GameBoard![dest];
+            FieldClearImage (start);
+            SetFieldToPieceImage (dest, destPiece); 
         }
-        if (evnt is BoardDestroyedEvent<Tuple<int,int>>)
+        if (evnt is BoardDestroyedEvent<Tuple<int,int>> destroyedEvent)
         {
-            var destroyedEvent = evnt as BoardDestroyedEvent<Tuple<int,int>>;
             var coords = Euclid2DCoords.FromTuple (destroyedEvent!.Field);
-            fieldClearImage (coords);
+            FieldClearImage (coords);
         }
-        if (evnt is BoardTransformedEvent<Tuple<int,int>>)
+        if (evnt is BoardTransformedEvent<Tuple<int,int>> transformedEvent)
         {
-            var transformedEvent = evnt as BoardTransformedEvent<Tuple<int,int>>;
             var coords = Euclid2DCoords.FromTuple (transformedEvent!.Field);
             var transformedTo = transformedEvent.TransformedTo;
-            setFieldToPieceImage (coords, transformedTo);
+            SetFieldToPieceImage (coords, transformedTo);
         }
     }
-    override protected void initialize (int windowsWidth, int windowHeight, String pictureFolder, ITwoDBoardMovablePieces<IPiece> _board, 
-    IGameInformer<String> game, IEnumerable<int> thisGUIusers, IEnumerable<AI_Informer> AIs)
+    override protected void Initialize (int windowsWidth, int windowHeight, String pictureFolder, ITwoDBoardMovablePieces<IPiece> board, 
+    IGameInformer<String> game, IEnumerable<int> thisGUIusers, IEnumerable<AI_Informer> AIs, bool debugMode)
     {
-        base.initialize (windowsWidth, windowHeight, pictureFolder, _board, game, thisGUIusers, AIs);
-        board!.BoardInformerEvent += OnBoardInformerEvent;
+        base.Initialize (windowsWidth, windowHeight, pictureFolder, board, game, thisGUIusers, AIs, debugMode);
+        GameBoard!.BoardInformerEvent += OnBoardInformerEvent;
     }
 }

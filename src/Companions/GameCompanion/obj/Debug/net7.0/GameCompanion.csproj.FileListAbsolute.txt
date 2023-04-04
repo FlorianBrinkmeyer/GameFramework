@@ -48,3 +48,6 @@
 /home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Companions/GameCompanion/obj/Debug/net7.0/refint/GameCompanion.dll
 /home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Companions/GameCompanion/obj/Debug/net7.0/GameCompanion.pdb
 /home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Companions/GameCompanion/obj/Debug/net7.0/ref/GameCompanion.dll
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Companions/GameCompanion/bin/Debug/net7.0/StopableAI.dll
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Companions/GameCompanion/bin/Debug/net7.0/StopableAI.pdb
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Companions/GameCompanion/bin/Debug/net7.0/StopableAI.xml

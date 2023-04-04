@@ -53,7 +53,7 @@ let seqOfSeqOptToMap (seqSeq : seq<seq<Option<'t>>>) =
     )
     Seq.zip dict.Keys dict.Values |> Map.ofSeq
 
-type ImmutableEnumerable2DArray<'t when 't : equality> (xdim, ydim, map : Map<int*int, 't>, ?emptyCoords : Set<int*int>, ?previous : ImmutableEnumerable2DArray<'t>) =
+type ImmutableEnumerable2DArray<'t when 't : equality> (xdim, ydim, map : Map<int*int, 't>, debugMode, ?emptyCoords : Set<int*int>, ?previous : ImmutableEnumerable2DArray<'t>) =
     member x.InternalMap = map
     override this.Equals other =
         let castedOther = other :?> ImmutableEnumerable2DArray<'t>
@@ -78,6 +78,11 @@ type ImmutableEnumerable2DArray<'t when 't : equality> (xdim, ydim, map : Map<in
     interface ImmutableArray<int*int, 't> with
         member x.Item coords = map.TryFind coords
         member this.GetNext index maybeValue =
+            if debugMode then
+                match (this :> IEnumerable2DArray<'t>).CheckCoordsByBoundaries index with
+                | Some _ -> ()
+                | None ->
+                    raise (ArgumentOutOfRangeException ("Requested coordinates outside of the board."))
             let nextMap =
                 match maybeValue with
                 | Some value ->
@@ -96,7 +101,7 @@ type ImmutableEnumerable2DArray<'t when 't : equality> (xdim, ydim, map : Map<in
                     let allCoords = (this :> IEnumerable2DArray<'t>).AllCoords |> Set.ofSeq
                     let usedCoords = nextMap.Keys |> Set.ofSeq
                     allCoords - usedCoords
-            ImmutableEnumerable2DArray<'t> (xdim, ydim, nextMap, nextEmptyCoords, this) 
+            ImmutableEnumerable2DArray<'t> (xdim, ydim, nextMap, debugMode, nextEmptyCoords, this) 
         member x.Keys = map.Keys
         member x.Values = map.Values
         member x.KeyValuePairs = Seq.zip map.Keys map.Values

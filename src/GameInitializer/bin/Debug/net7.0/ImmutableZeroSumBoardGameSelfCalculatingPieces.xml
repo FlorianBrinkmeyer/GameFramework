@@ -9,7 +9,7 @@ Current board -&gt; zero-sum value
 </member>
 <member name="T:GameFramework.MoveCalcDelegate`5">
 <summary>
-Current board * active player * optional state * new position of last moved piece -&gt; possible moves / game result * board events * new optional state
+Current board * active player * optional state * new position of last moved piece -&gt; possible moves / game result * board events * new optional state * game state is &quot;unstable&quot;
 </summary>
 </member>
 </members>

@@ -23,12 +23,12 @@ open GameFramework
 
 let calculatePossibleMoves<'Board, 'Coords when 'Coords :> IComparable and 'Coords : comparison and 'Board :> ImmutableArray<'Coords, IPiece>>
     (board : 'Board) activePlayer nonHitMovesInRow (maybePositionOfLastMovedPiece : Option<'Coords>) =              
+    let lastMoveIsHitMove =
+        match board.Previous, maybePositionOfLastMovedPiece with
+        | Some previousBoard, Some pos ->
+            previousBoard.Item pos |> Option.isSome
+        | _ -> false
     let nextNonHitMovesInRow =
-        let lastMoveIsHitMove =
-            match board.Previous, maybePositionOfLastMovedPiece with
-            | Some previousBoard, Some pos ->
-                previousBoard.Item pos |> Option.isSome
-            | _ -> false
         let pawnMoved =
             match maybePositionOfLastMovedPiece with
             | Some pos ->
@@ -54,29 +54,7 @@ let calculatePossibleMoves<'Board, 'Coords when 'Coords :> IComparable and 'Coor
             | Some (pos, king) ->
                 pos, king
             | None ->
-                //Can be used for debugging:
-                let rec printBoards step maxStep (brd : Option<ImmutableArray<'Coords, IPiece>>) =
-                    if step < maxStep then
-                        let previous =
-                            match brd with
-                            | Some bd ->
-                                bd.Previous
-                            | None ->
-                                None    
-                        printBoards (step + 1) maxStep previous
-                        if step % 2 = 0 then
-                            let name = (String.replicate step "previous ") + "board:"
-                            Console.WriteLine () 
-                            Console.WriteLine name
-                            Console.WriteLine () 
-                            match brd with
-                            | Some bd ->
-                                Console.WriteLine (bd.ToString ())
-                            | None ->
-                                Console.WriteLine "Empty board"
-                            Console.WriteLine () 
-                printBoards 0 8 (board :> ImmutableArray<'Coords, IPiece> |> Some)           
-                raise (Exception "No king on board: This shouldn't happen")        
+                raise (InvalidOperationException "No king on board: This shouldn't happen")        
         let otherPieces = board.KeyValuePairs |> Seq.filter (fun (_, piece) -> piece.Player <> activePlayer) |> Seq.toList
         let boardWithoutKing = board.GetNext ownKingPos None :?> 'Board
         let kingBlackList = 
@@ -103,7 +81,7 @@ let calculatePossibleMoves<'Board, 'Coords when 'Coords :> IComparable and 'Coor
                 castedOtherBlockablePieces
             | Some positionOfLastMovedPiece, Some (:? INonKingChessPiece<'Board, 'Coords> as nonKingPiece) ->     
                 (positionOfLastMovedPiece, nonKingPiece) :: castedOtherBlockablePieces 
-            | _ -> raise (Exception "Non-chess piece on board.")    
+            | _ -> raise (InvalidOperationException "Non-chess piece on board.")    
         let kingThreats =
             let threatsAndNeutralizing = allPotentiallyKingThreateningPieces |> List.choose (fun (pos, piece) -> 
                 match piece.IsThreateningField board pos ownKingPos with
@@ -145,7 +123,7 @@ let calculatePossibleMoves<'Board, 'Coords when 'Coords :> IComparable and 'Coor
                     GameOverZSValue (Double.PositiveInfinity * (float) (activePlayer * (-1)))
                 else
                     PossibleMoves possibleMoves
-            moveCalcResult, seq [additionalEvent], nextNonHitMovesInRow                
+            moveCalcResult, seq [additionalEvent], nextNonHitMovesInRow, true                
         | None ->
             let allNewOwnPieces = 
                 boardWithKingBlackListAndNewlyCheckPreventingWhiteLists.KeyValuePairs |> Seq.filter (fun (_, piece) -> piece.Player = activePlayer)
@@ -161,6 +139,6 @@ let calculatePossibleMoves<'Board, 'Coords when 'Coords :> IComparable and 'Coor
                     GameOverZSValue 0.0
                 else
                     PossibleMoves possibleMoves
-            moveCalcResult, Seq.empty, nextNonHitMovesInRow
+            moveCalcResult, Seq.empty, nextNonHitMovesInRow, lastMoveIsHitMove
     else
-        GameOverZSValue 0.0, Seq.empty, nextNonHitMovesInRow
+        GameOverZSValue 0.0, Seq.empty, nextNonHitMovesInRow, false

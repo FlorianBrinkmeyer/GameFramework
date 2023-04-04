@@ -6,6 +6,7 @@
     <ProjectReference Include="..\..\GameInterfaces\GameInterfacesForAIsAndCompanion\GameInterfacesForAIsAndCompanion.fsproj" />
     <ProjectReference Include="..\..\GameInterfaces\GameInterfacesForCompanion\GameInterfacesForCompanion.csproj" />
     <ProjectReference Include="..\..\AI_Interfaces\AI_InterfacesForGames\AIBaseInterface\AIBaseInterface.fsproj" />
+    <ProjectReference Include="..\..\AI_Interfaces\AI_InterfacesForInitialization\StopableAI\StopableAI.fsproj" />
   </ItemGroup>
 
   <PropertyGroup>

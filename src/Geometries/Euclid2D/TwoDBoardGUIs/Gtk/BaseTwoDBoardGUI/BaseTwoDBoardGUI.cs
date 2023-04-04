@@ -15,6 +15,8 @@ Copyright (C) 2023  Florian Brinkmeyer
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+using System.Runtime.Loader;
+
 namespace Euclid2DGame;
 
 using System;
@@ -34,34 +36,34 @@ public class DecoratedButton : Gtk.Button
 public abstract class TwoDBoardGUI<Board, Piece>
 where Board : Enumerable2DArray.IEnumerable2DArray<Piece> 
 {
-     abstract protected Gtk.Builder builder {get;}     
+     abstract protected Gtk.Builder Builder {get;}     
      abstract protected void OnClick (Object? sender, EventArgs args);
      private Dictionary<String, String> imageNamesToFilenames = new Dictionary<String, String> ();
-     protected DecoratedButton [,]? fields;
+     protected DecoratedButton [,]? Fields;
      protected virtual String getImageFileName (Piece piece)
      {
           var ipiece = (IPiece?) piece;
           return ipiece!.Kind + ipiece.Player.ToString ();
      } 
-     protected void setFieldToPieceImage (Euclid2DCoords coords, Piece piece)
+     protected void SetFieldToPieceImage (Euclid2DCoords coords, Piece piece)
      {
           var imageName = getImageFileName (piece);
           Gtk.Application.Invoke ((sender, args) => {
                var image = new Gtk.Image (imageNamesToFilenames[imageName]);
-               var field = fields![coords.X,coords.Y];
+               var field = Fields![coords.X,coords.Y];
                field.Image = image;
           });        
      }     
-     protected void fieldClearImage (Euclid2DCoords coords)
+     protected void FieldClearImage (Euclid2DCoords coords)
      {
           Gtk.Application.Invoke ((sender, args) => {
-               fields![coords.X,coords.Y].Image = null;          
+               Fields![coords.X,coords.Y].Image = null;          
           });
      }
      protected void SetLabel (int index, String text)
      {
           Gtk.Application.Invoke ((sender, args) => {
-               var label = (Gtk.Label) builder.GetObject ("GameInformLabel" + index.ToString ());
+               var label = (Gtk.Label) Builder.GetObject ("GameInformLabel" + index.ToString ());
                label.Text = text;
           });     
      }
@@ -70,43 +72,64 @@ where Board : Enumerable2DArray.IEnumerable2DArray<Piece>
      protected virtual void OnOwnPlayersTurn (int activePlayer) => SetLabel (1, PlayerToString (activePlayer) + ": It's your turn. Please make a move.");     
      protected virtual void OnAIMessage (Object sender, String message) => SetLabel (2, message);
      protected IEnumerable<int>? ThisGUIusers;
-     protected Board? board;
-     protected IGameInformer<String>? game;
-     protected virtual void initialize (int windowsWidth, int windowHeight, String pictureFolder, Board _board, 
-     IGameInformer<String> _game, IEnumerable<int> thisGUIusers, IEnumerable<AI_Informer> AIs)
+     protected Board? GameBoard;
+     protected IGameInformer<String>? Game;
+     protected bool DebugMode;
+     public void ReInitializeFields()
      {
-          board = _board;
-          game = _game;
-          game.GameOver += OnGameOver;
+          foreach (Tuple<Piece,Tuple<int,int>> entry in GameBoard!.AllEntriesWithCoords)
+          {
+               var pos = Euclid2DCoords.FromTuple (entry.Item2);
+               var piece = entry.Item1;
+               SetFieldToPieceImage (pos, piece);
+          }
+          foreach (Tuple<int, int> entry in GameBoard.AllEmptyCoords)
+          {
+               var pos = Euclid2DCoords.FromTuple(entry);
+               FieldClearImage (pos);
+          }
+     }
+     public void ReInitializeAIs(IEnumerable<int> thisGUIusers, IEnumerable<AI_Informer> AIs)
+     {
+          foreach (AI_Informer ai in AIs)
+               ai.SendMessage += OnAIMessage;
           ThisGUIusers = thisGUIusers;
+     }
+     protected virtual void Initialize (int windowsWidth, int windowHeight, String pictureFolder, Board board, 
+     IGameInformer<String> game, IEnumerable<int> thisGUIusers, IEnumerable<AI_Informer> AIs, bool debugMode)
+     {
+          DebugMode = debugMode;
+          GameBoard = board;
+          Game = game;
+          Game.GameOver += OnGameOver;
           var imageFileNames = Directory.GetFiles (pictureFolder);
           foreach (String name in imageFileNames)
           {
                var rawName = Path.GetFileNameWithoutExtension (name);
                imageNamesToFilenames[rawName] = name;
           }
-          var form = (Gtk.ApplicationWindow) builder.GetObject ("Window");
+          var form = (Gtk.ApplicationWindow) Builder.GetObject ("Window");
           form.WidthRequest = windowsWidth;
           form.HeightRequest = windowHeight;
-          fields = new DecoratedButton [board.xDim, board.yDim];
-          var grid = (Gtk.Grid) builder.GetObject ("FieldsGrid");
-          for (int x = 0; x < board.xDim; x++)
+          Fields = new DecoratedButton [GameBoard.xDim, GameBoard.yDim];
+          var grid = (Gtk.Grid) Builder.GetObject ("FieldsGrid");
+          for (int x = 0; x < GameBoard.xDim; x++)
           {
-               for (int y = 0; y < board.yDim; y++)
+               for (int y = 0; y < GameBoard.yDim; y++)
                {
                     var button = new DecoratedButton (new Euclid2DCoords (x,y));
                     button.Visible = true;
                     button.Sensitive = false;
                     button.Clicked += OnClick;
                     grid.Attach (button, x, board.yDim - y - 1, 1, 1);
-                    fields[x,y] = button;   
+                    Fields[x,y] = button;   
                } 
           }
-          foreach (Tuple<Piece,Tuple<int,int>> entry in board.AllEntriesWithCoords)
+          foreach (Tuple<Piece,Tuple<int,int>> entry in GameBoard.AllEntriesWithCoords)
           {
                var pos = Euclid2DCoords.FromTuple (entry.Item2);
                var piece = entry.Item1;
-               setFieldToPieceImage (pos, piece);
+               SetFieldToPieceImage (pos, piece);
           }
           game.NextPlayer += (activePlayer) => {
                if (ThisGUIusers!.Any (player => player == activePlayer))
@@ -116,13 +139,64 @@ where Board : Enumerable2DArray.IEnumerable2DArray<Piece>
                else 
                     SetLabel (1, PlayerToString (activePlayer) + " is planning the next move.");
           };
-          foreach (AI_Informer ai in AIs)
-               ai.SendMessage += OnAIMessage;
+          if (game is IReversibleGame<String> reversibleGame)
+               reversibleGame.Undone += (sender, args) => ReInitializeFields ();
+          ReInitializeAIs (thisGUIusers, AIs);
+     }
+     void pauseGUI ()
+     {
+          var pauseImage = (Gtk.Image) Builder.GetObject("PlayImage");
+          var pausePlayButton = (Gtk.Button)Builder.GetObject("PausePlayButton");
+          pausePlayButton.Image = pauseImage;
+          for (int x = 0; x < GameBoard!.xDim; x++)
+          {
+               for (int y = 0; y < GameBoard.yDim; y++)
+               {
+                    Fields![x,y].Sensitive = false;   
+               } 
+          }
+     }
+     void OnPausePlayClicked (Object sender, EventArgs args)
+     {
+          if (Game is IReversibleGame<String> reversibleGame)
+          {
+               if (!reversibleGame.Running)
+               {
+                    var playImage = (Gtk.Image)Builder.GetObject("PauseImage");
+                    (sender as Gtk.Button)!.Image = playImage;
+                    reversibleGame.Continue ();
+               } else
+               {
+                    pauseGUI();
+                    reversibleGame.Pause ();
+               }
+          }
+     }
+     void OnPreviousClicked (Object sender, EventArgs args)
+     {
+          if ((Game is IReversibleGame<String> reversibleGame) && (reversibleGame.Undoable))
+          {
+               pauseGUI();
+               reversibleGame.Undo();
+               SetLabel (1, $"{PlayerToString(reversibleGame.ActivePlayer)}'s turn.");
+          }
+     }
+     void OnPreviousPlayerClicked(Object sender, EventArgs args)
+     {
+          if (Game is IReversibleGame<String> reversibleGame)
+          {
+               pauseGUI();
+               while (!(ThisGUIusers!.Any(user => user == reversibleGame.ActivePlayer)) && reversibleGame.Undoable)
+               {
+                    reversibleGame.Undo();
+                    SetLabel (1, $"{PlayerToString(reversibleGame.ActivePlayer)}'s turn.");
+               }
+          }
      }
      public event EventHandler? Quit;
      void OnQuit (Object sender, EventArgs args)
      {
-          var mainForm = (Gtk.ApplicationWindow) builder.GetObject ("Window");
+          var mainForm = (Gtk.ApplicationWindow) Builder.GetObject ("Window");
           mainForm.Dispose ();
           Quit?.Invoke (this, new EventArgs ());
      }     
