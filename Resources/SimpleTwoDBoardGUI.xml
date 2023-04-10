@@ -5,22 +5,27 @@
   <object class="GtkImage" id="PauseImage">
     <property name="visible">True</property>
     <property name="can-focus">False</property>
-    <property name="stock">gtk-media-pause</property>
+    <property name="icon-name">media-playback-pause</property>
   </object>
   <object class="GtkImage" id="PlayImage">
     <property name="visible">True</property>
     <property name="can-focus">False</property>
-    <property name="stock">gtk-media-play</property>
+    <property name="icon-name">media-playback-start</property>
+  </object>
+  <object class="GtkImage" id="image1">
+    <property name="visible">True</property>
+    <property name="can-focus">False</property>
+    <property name="stock">gtk-go-forward</property>
   </object>
   <object class="GtkImage" id="image2">
     <property name="visible">True</property>
     <property name="can-focus">False</property>
-    <property name="stock">gtk-go-back</property>
+    <property name="icon-name">go-previous</property>
   </object>
   <object class="GtkImage" id="image3">
     <property name="visible">True</property>
     <property name="can-focus">False</property>
-    <property name="stock">gtk-media-previous</property>
+    <property name="icon-name">media-skip-backward</property>
   </object>
   <object class="GtkApplicationWindow" id="Window">
     <property name="visible">True</property>
@@ -184,6 +189,7 @@
             <child>
               <object class="GtkButton" id="PreviousPlayerButton">
                 <property name="visible">True</property>
+                <property name="sensitive">False</property>
                 <property name="can-focus">True</property>
                 <property name="receives-default">True</property>
                 <property name="image">image3</property>
@@ -198,6 +204,7 @@
             <child>
               <object class="GtkButton" id="PreviousButton">
                 <property name="visible">True</property>
+                <property name="sensitive">False</property>
                 <property name="can-focus">True</property>
                 <property name="receives-default">True</property>
                 <property name="image">image2</property>
@@ -224,7 +231,19 @@
               </packing>
             </child>
             <child>
-              <placeholder/>
+              <object class="GtkButton" id="SingleStepButton">
+                <property name="visible">True</property>
+                <property name="sensitive">False</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">True</property>
+                <property name="image">image1</property>
+                <signal name="clicked" handler="OnSingleStepClicked" swapped="no"/>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">4</property>
+              </packing>
             </child>
             <child>
               <placeholder/>

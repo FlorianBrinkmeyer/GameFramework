@@ -36,7 +36,7 @@ let asyncMap mapper =
     Seq.map (fun item -> async {return mapper item}) >> Async.Parallel >> Async.RunSynchronously
 
 let allowDebugMode = true
-let debugDepth = 2    
+let debugDepth = 3
 
 type NegaMaxTimeLimitedPruningCaching (player : int, searchTime : int, maxDepth : int, increaseDepthForInstableState, debugMode, ?usedThreads) =
     let cachedStates, threadsCount = 
@@ -191,8 +191,12 @@ type NegaMaxTimeLimitedPruningCaching (player : int, searchTime : int, maxDepth 
                         | None ->    
                             let state = game :?> ImmutableGame
                             getNewNode false Double.NegativeInfinity Double.PositiveInfinity state
-                    let mutable searchDepth = 1.0
-                    while (searchDepth <= maxDepth && timeLeft && not debugMode) || (allowDebugMode && searchDepth <= debugDepth) do
+                    let mutable searchDepth = tree.Depth
+                    let message = 
+                        String.Format ("Reached search depth: {0:0}, Cached states: {1}, Used cache {2} times, Maximally reached depth: {3:0}",
+                            searchDepth, cachedStates.Count, usedCacheCount, reachedMaxDepth)
+                    sendMessage.Trigger message
+                    while timeLeft && ((searchDepth <= maxDepth && not debugMode) || (allowDebugMode && searchDepth <= debugDepth)) do
                         let increaseDepth = increaseDepthForInstableState && searchDepth > 2
                         tree <- getNextTree searchDepth increaseDepth tree
                         if tree.Depth >= searchDepth then
@@ -200,12 +204,12 @@ type NegaMaxTimeLimitedPruningCaching (player : int, searchTime : int, maxDepth 
                                 String.Format ("Reached search depth: {0:0}, Cached states: {1}, Used cache {2} times, Maximally reached depth: {3:0}",
                                     searchDepth, cachedStates.Count, usedCacheCount, reachedMaxDepth)
                             sendMessage.Trigger message
+                            if searchDepth > reachedMaxDepth then
+                                reachedMaxDepth <- searchDepth
                             searchDepth <- tree.Depth + 1.0
                             let reinitializedTree = {tree with Alpha = Double.NegativeInfinity; Beta = Double.PositiveInfinity; Depth = 0.0}
                             let nextTree = resetNode reinitializedTree
                             tree <- nextTree 
-                            if searchDepth > reachedMaxDepth then
-                                reachedMaxDepth <- searchDepth
                     let maxValue = tree.Children.Values |> Seq.map (fun child -> -child.Value) |> Seq.max
                     let maxValueMoves = 
                         Seq.zip tree.Children.Keys tree.Children.Values |> Seq.filter (fun (_, child) -> -child.Value = maxValue)
@@ -232,5 +236,6 @@ type NegaMaxTimeLimitedPruningCaching (player : int, searchTime : int, maxDepth 
                 )   
                 registeredMoveMadeEvent <- true     
             timeLeft <- true
-            timer.Start ()
+            if not debugMode || not allowDebugMode then
+                timer.Start ()               
             timeLimitedSearch |> Async.Start

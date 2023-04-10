@@ -20,28 +20,48 @@ namespace GameFramework;
 using System;
 using System.Collections.Generic;
 
+public enum RunState
+{
+    Running,
+    PausingPreserveNextMove,
+    PausingIgnoreNextMove,
+    Terminated
+}
+
+public delegate void UpdateAIEvent (bool forceUpdate);
+
 public class GameCompanion<GameResult>: IGameMoveMaker, IReversibleGame<GameResult>
 {
     protected ImmutableGame State;
     Func<ImmutableGame, GameResult> resultMapper;
     Dictionary<int,AI_Agent>? playerToAIAgent;
     protected bool DebugMode;
-    public event EventHandler? UpdateAIs;
+    public event UpdateAIEvent? UpdateAIs;
+    protected RunState runState = RunState.PausingIgnoreNextMove;
     public void UpdateAIAgents (IEnumerable<AI_Agent> agents)
     {
+        var stopableAIs = playerToAIAgent?.Values.OfType<StopableAI>();
+        if (stopableAIs != null)
+        {
+            foreach (StopableAI ai in stopableAIs)
+                ai.Stop ();        
+            Thread.Sleep (50);
+        }
         playerToAIAgent = new Dictionary<int, AI_Agent> ();
         foreach (AI_Agent agent in agents)
             playerToAIAgent![agent.Player] = agent;
+        runState = RunState.PausingIgnoreNextMove;
     }
     public GameCompanion (ImmutableGame startState, IEnumerable<AI_Agent> agents, Func<ImmutableGame, GameResult> _resultMapper, bool debugMode)
     {
         State = startState;
         resultMapper = _resultMapper;
         DebugMode = debugMode;
-        UpdateAIAgents (agents);
+        playerToAIAgent = new Dictionary<int, AI_Agent> ();
+        foreach (AI_Agent agent in agents)
+            playerToAIAgent![agent.Player] = agent;
     }
-    bool running = false;
-    public bool Running => running && State.Running;
+    public bool Running => State.Running && runState == RunState.Running;
     public int ActivePlayer => State.ActivePlayer;
     protected virtual void TriggerTriggerBoardEvents () {}
     public event MoveMadeEvent? MoveMadeEvent;
@@ -56,71 +76,106 @@ public class GameCompanion<GameResult>: IGameMoveMaker, IReversibleGame<GameResu
     }
     void TriggerNextPlayer (int id) => NextPlayer?.Invoke (id);
     void TriggerGameOver (GameResult result) => GameOver?.Invoke (result);
-    public virtual void MakeMove (int index)
+    protected virtual void InternalMakeMove(int index)
     {
-        if (Running)
+        State = State.NthMove (index);
+        TriggerMoveMade (index);
+        TriggerTriggerBoardEvents ();
+        if (DebugMode)
         {
-            State = State.NthMove (index);
-            TriggerMoveMade (index);
-            TriggerTriggerBoardEvents ();
-            if (DebugMode)
+            Console.WriteLine (State.ToString ());
+            Console.WriteLine ();
+        }
+        if (!State.Running)
+        {
+            TriggerGameOver (resultMapper (State));
+        } else {
+            AI_Agent? agent;
+            if ((playerToAIAgent != null) && (playerToAIAgent.TryGetValue (ActivePlayer, out agent)))
             {
-                Console.WriteLine (State.ToString ());
-                Console.WriteLine ();
-            }
-            if (State.Running)
-            {
-                AI_Agent? agent;
-                if ((playerToAIAgent != null) && (playerToAIAgent.TryGetValue (ActivePlayer, out agent)))
-                {
-                    TriggerNextPlayer (ActivePlayer);
-                    agent.MakeMove (this, State);
-                } else {
-                    TriggerNextPlayer (ActivePlayer);
-                }    
-            }     
-            else
-            {
-                TriggerGameOver (resultMapper (State));
-            }
+                TriggerNextPlayer (ActivePlayer);
+                agent.MakeMove (this, State);
+            } else {
+                TriggerNextPlayer (ActivePlayer);
+            }    
+        }
+    }
+    private int? chosenMove = null;
+    public event EventHandler? PauseMoveDelivered;
+    public virtual void MakeMove(int index)
+    {
+        if (runState == RunState.PausingPreserveNextMove)
+        {
+            chosenMove = index;
+            PauseMoveDelivered?.Invoke (this, EventArgs.Empty);
+        } 
+        else if (runState == RunState.Running)
+        {
+            InternalMakeMove (index);
         }
     }
     public void Run ()
     {
-        running = true;
-        AI_Agent? agent;
-        if ((playerToAIAgent != null) && (playerToAIAgent.TryGetValue (ActivePlayer, out agent)))
+        if (runState == RunState.PausingPreserveNextMove)
         {
-            TriggerNextPlayer (ActivePlayer);
-            agent.MakeMove (this, State);
-        } else {
-            TriggerNextPlayer (ActivePlayer);
-        }    
+            if (chosenMove != null)
+            {
+                runState = RunState.Running;
+                InternalMakeMove(chosenMove.Value);
+                chosenMove = null;
+            }
+        }
+        else
+        {
+            runState = RunState.Running;
+            AI_Agent? agent;
+            if ((playerToAIAgent != null) && (playerToAIAgent.TryGetValue(ActivePlayer, out agent)))
+            {
+                TriggerNextPlayer(ActivePlayer);
+                agent.MakeMove(this, State);
+            } else {
+                TriggerNextPlayer (ActivePlayer);
+            }
+        }
     }
     public void Pause ()
     {
-        running = false;
+        runState = RunState.PausingPreserveNextMove;
+        UpdateAIs?.Invoke (false);
+    }
+    public void Continue()
+    {
+        UpdateAIs?.Invoke (runState == RunState.PausingIgnoreNextMove);
+        if (runState == RunState.PausingPreserveNextMove && chosenMove == null)
+        {
+            runState = RunState.Running;
+        }
+        else {
+            Run ();
+        }
+    }
+    public void Stop ()
+    {
+        runState = RunState.Terminated;
         var stopableAIs = playerToAIAgent!.Values.OfType<StopableAI>();
         foreach (StopableAI ai in stopableAIs)
             ai.Stop ();        
         Thread.Sleep (50);
     }
-    public void Continue()
+    public void SingleStep()
     {
-        if (!running)
+        if (runState == RunState.PausingPreserveNextMove && chosenMove != null)
         {
-            UpdateAIs?.Invoke (this, EventArgs.Empty);
-            Run ();
+            InternalMakeMove(chosenMove.Value);
+            chosenMove = null;
         }
     }
-    public void Stop () => Pause ();
     public bool Undoable => State.Previous != null;
     public void Undo ()
     {
         if (State.Previous != null)
         {
-            if (running) 
-                Pause();
+            UpdateAIs?.Invoke (true);
             State = State.Previous.Value;
             Undone?.Invoke (this, new EventArgs ());
         }
@@ -145,13 +200,11 @@ public class GameCompanion<GameResult>: IGameMoveMaker, IReversibleGame<GameResu
         return State.ToString ()!;
     }
 }
-
 public interface IBoardGameCompanion<out Board, Evnt>
 {
     IBoardGameForCompanion<Board, Evnt> Game {get;}
     public event EventHandler? TriggerBoardEvents;    
 }
-
 public class BoardGameCompanion<GameResult, Board, Evnt> : GameCompanion<GameResult>, IBoardGameCompanion<Board, Evnt>
 {
     public BoardGameCompanion (ImmutableGame startState, IEnumerable<AI_Agent> agents, Func<ImmutableGame, GameResult> resultMapper, bool debugMode) 

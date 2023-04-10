@@ -139,6 +139,21 @@ where Board : Enumerable2DArray.IEnumerable2DArray<Piece>
                else 
                     SetLabel (1, PlayerToString (activePlayer) + " is planning the next move.");
           };
+          if (game is IPausableGame<String> pausableGame)
+          {
+               pausableGame.PauseMoveDelivered += (sender, args) =>
+               {
+                    Gtk.Application.Invoke((sender, args) =>
+                    {
+                         var singleStepButton = (Gtk.Button) Builder.GetObject("SingleStepButton");
+                         singleStepButton.Sensitive = true;
+                         var previousButton = (Gtk.Button) Builder.GetObject("PreviousButton");
+                         previousButton.Sensitive = true;
+                         var previousPlayerButton = (Gtk.Button) Builder.GetObject("PreviousPlayerButton");
+                         previousPlayerButton.Sensitive = true;
+                    });
+               };
+          }
           if (game is IReversibleGame<String> reversibleGame)
                reversibleGame.Undone += (sender, args) => ReInitializeFields ();
           ReInitializeAIs (thisGUIusers, AIs);
@@ -158,17 +173,22 @@ where Board : Enumerable2DArray.IEnumerable2DArray<Piece>
      }
      void OnPausePlayClicked (Object sender, EventArgs args)
      {
-          if (Game is IReversibleGame<String> reversibleGame)
+          if (Game is IPausableGame<String> reversibleGame)
           {
-               if (!reversibleGame.Running)
-               {
-                    var playImage = (Gtk.Image)Builder.GetObject("PauseImage");
-                    (sender as Gtk.Button)!.Image = playImage;
-                    reversibleGame.Continue ();
-               } else
+               if (reversibleGame.Running)
                {
                     pauseGUI();
                     reversibleGame.Pause ();
+               } else {
+                    var playImage = (Gtk.Image)Builder.GetObject("PauseImage");
+                    (sender as Gtk.Button)!.Image = playImage;
+                    var singleStepButton = (Gtk.Button) Builder.GetObject("SingleStepButton");
+                    singleStepButton.Sensitive = false;                         
+                    var previousButton = (Gtk.Button) Builder.GetObject("PreviousButton");
+                    previousButton.Sensitive = false;
+                    var previousPlayerButton = (Gtk.Button) Builder.GetObject("PreviousPlayerButton");
+                    previousPlayerButton.Sensitive = false;
+                    reversibleGame.Continue ();
                }
           }
      }
@@ -191,6 +211,20 @@ where Board : Enumerable2DArray.IEnumerable2DArray<Piece>
                     reversibleGame.Undo();
                     SetLabel (1, $"{PlayerToString(reversibleGame.ActivePlayer)}'s turn.");
                }
+          }
+     }
+     void OnSingleStepClicked(Object sender, EventArgs args)
+     {
+          if (Game is IPausableGame<String> pausableGame)
+          {
+               pausableGame.SingleStep ();
+               (sender as Gtk.Button)!.Sensitive = false;
+               var singleStepButton = (Gtk.Button) Builder.GetObject("SingleStepButton");
+               singleStepButton.Sensitive = false;
+               var previousButton = (Gtk.Button) Builder.GetObject("PreviousButton");
+               previousButton.Sensitive = false;
+               var previousPlayerButton = (Gtk.Button) Builder.GetObject("PreviousPlayerButton");
+               previousPlayerButton.Sensitive = false;
           }
      }
      public event EventHandler? Quit;

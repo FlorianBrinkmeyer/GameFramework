@@ -30,11 +30,17 @@ public interface IGameInformer<GameResult>
     event GameOverEvent<GameResult>? GameOver; 
 }
 
-public interface IReversibleGame<GameResult> : IGameInformer<GameResult>
+public interface IPausableGame<GameResult> : IGameInformer<GameResult>
+{
+    void Pause ();
+    void Continue ();
+    void SingleStep ();
+    event EventHandler? PauseMoveDelivered;
+}
+
+public interface IReversibleGame<GameResult> : IPausableGame<GameResult>
 {
     bool Undoable {get;}
     void Undo ();
-    void Pause ();
-    void Continue();
-    event EventHandler Undone;
+    event EventHandler? Undone;
 }

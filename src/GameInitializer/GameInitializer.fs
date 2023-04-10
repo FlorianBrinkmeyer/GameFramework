@@ -23,12 +23,14 @@ open System.IO
 open System.Collections
 
 let debugMode = true
-let debugSearchDepth = 2
+let debugSearchDepth = 3
+
+let negaMaxIncreaseSearchDepth = false
 
 let resourcesFolder = "../../Resources"
 let GUI = "StartGUI.xml"
-let standardAIConsiderationTime = 10000
-let standardUsedThreadsByAI = 4
+let standardAIConsiderationTime = 5000
+let standardUsedThreadsByAI = 2
 
 type AIInfo =
     {Label : String;
@@ -89,27 +91,37 @@ type StartGUI () as this =
         combo.Clear ()
     let getActive (name : String) = 
         (builder.GetObject name :?> Gtk.ComboBoxText).ActiveText
+    let mutable aiInfosHaveChanged = false
     let maybeCreateNewAIInfo () =
         maybeChosenPlayer |> Option.iter (fun chosenPlayer -> 
             let chosenAI = "ChosenAILabel" |> getLabel
-            if not (String.IsNullOrEmpty chosenAI) && "AssignAIToPlayer" |> getIfChecked then
-                let considerationTime =
-                    let text = "ConsiderationTimeEntry" |> getText
-                    if String.IsNullOrEmpty text then
-                        standardAIConsiderationTime
-                    else
-                        text |> Int32.Parse
-                let maybeUsedThreads =
-                    if aisWithMultiThreading |> List.exists (fun name -> name = chosenAI) then
-                        let text = "UsedThreadsEntry" |> getText
+            if not (String.IsNullOrEmpty chosenAI) then
+                if "AssignAIToPlayer" |> getIfChecked then
+                    let considerationTime =
+                        let text = "ConsiderationTimeEntry" |> getText
                         if String.IsNullOrEmpty text then
-                            standardAIConsiderationTime |> Some
+                            standardAIConsiderationTime
                         else
-                            text |> Int32.Parse |> Some
-                    else
-                        None        
-                let newAIInfo = {Label = chosenAI; Player = chosenPlayer; ConsiderationTime = considerationTime; MaybeUsedThreads = maybeUsedThreads}
-                AIagents[chosenPlayer] <- newAIInfo                                       
+                            text |> Int32.Parse
+                    let maybeUsedThreads =
+                        if aisWithMultiThreading |> List.exists (fun name -> name = chosenAI) then
+                            let text = "UsedThreadsEntry" |> getText
+                            if String.IsNullOrEmpty text then
+                                standardAIConsiderationTime |> Some
+                            else
+                                text |> Int32.Parse |> Some
+                        else
+                            None        
+                    let newAIInfo = {Label = chosenAI; Player = chosenPlayer; ConsiderationTime = considerationTime; MaybeUsedThreads = maybeUsedThreads}
+                    aiInfosHaveChanged <-
+                        match AIagents.TryGetValue chosenPlayer with
+                        | true, value when value = newAIInfo ->
+                            aiInfosHaveChanged
+                        | _ -> true    
+                    AIagents[chosenPlayer] <- newAIInfo
+                else
+                    let found, _ = AIagents.TryGetValue chosenPlayer
+                    aiInfosHaveChanged <- found
         )
     let getAIsFromInfos gameUsedInfiniteValues =
         AIagents.Values |> Seq.toArray |> Array.map (fun info ->
@@ -121,7 +133,7 @@ type StartGUI () as this =
                else
                    NegaMaxTimeLimited (info.Player, info.ConsiderationTime, 100)
             elif info.Label = negaMaxPruningCaching then
-                Negamax.NegaMaxTimeLimitedPruningCaching (info.Player, info.ConsiderationTime, 100, false, debugMode, info.MaybeUsedThreads.Value)    
+                Negamax.NegaMaxTimeLimitedPruningCaching (info.Player, info.ConsiderationTime, 100, negaMaxIncreaseSearchDepth, debugMode, info.MaybeUsedThreads.Value)    
             else    
                 raise (Exception "AI case distinction incomplete.")
         )       
@@ -229,6 +241,7 @@ type StartGUI () as this =
             let aiPlayers = ais |> Seq.map (fun ai -> ai.Player) |> Set.ofSeq
             let allPlayers = game.PlayerIDsAndTitles |> List.map fst |> Set.ofList
             let humanPlayers = allPlayers - aiPlayers
+            aiInfosHaveChanged <- false
             ais, aiInformers, humanPlayers
         let ais, aiInformers, humanPlayers = getAIsAndHumans ()
         if game = reversiWithPassing then
@@ -237,11 +250,12 @@ type StartGUI () as this =
                 let imageFolder = Path.Combine [|resourcesFolder; "ReversiPieceImages"|]
                 let guiBuilder = Path.Combine [|resourcesFolder; "SimpleTwoDBoardGUI.xml"|]
                 Reversi.ReversiGtkGUI (800, 880, imageFolder, guiBuilder, boardCompanion, gameCompanion, humanPlayers, aiInformers, debugMode)
-            gameCompanion.UpdateAIs.AddHandler (fun _ _ ->
+            gameCompanion.add_UpdateAIs (fun forceUpdate ->
                 maybeCreateNewAIInfo ()
-                let ais, aiInformers, humanPlayers = getAIsAndHumans ()
-                gameCompanion.UpdateAIAgents ais
-                gui.ReInitializeAIs (humanPlayers, aiInformers)
+                if aiInfosHaveChanged || forceUpdate then
+                    let ais, aiInformers, humanPlayers = getAIsAndHumans ()
+                    gameCompanion.UpdateAIAgents ais
+                    gui.ReInitializeAIs (humanPlayers, aiInformers)
             )
             gui.Quit.AddHandler (fun _ _ -> 
                 gameCompanion.Stop ()
@@ -255,11 +269,12 @@ type StartGUI () as this =
                 let imageFolder = Path.Combine [|resourcesFolder; "ReversiPieceImages"|]
                 let guiBuilder = Path.Combine [|resourcesFolder; "SimpleTwoDBoardGUI.xml"|]
                 Reversi.ReversiGtkGUI (800, 880, imageFolder, guiBuilder, boardCompanion, gameCompanion, humanPlayers, aiInformers, debugMode)
-            gameCompanion.UpdateAIs.AddHandler (fun _ _ ->
+            gameCompanion.add_UpdateAIs (fun forceUpdate ->
                 maybeCreateNewAIInfo ()
-                let ais, aiInformers, humanPlayers = getAIsAndHumans ()
-                gameCompanion.UpdateAIAgents ais
-                gui.ReInitializeAIs (humanPlayers, aiInformers)
+                if aiInfosHaveChanged || forceUpdate then
+                    let ais, aiInformers, humanPlayers = getAIsAndHumans ()
+                    gameCompanion.UpdateAIAgents ais
+                    gui.ReInitializeAIs (humanPlayers, aiInformers)
             )
             gui.Quit.AddHandler (fun _ _ -> 
                 gameCompanion.Stop ()
@@ -276,11 +291,12 @@ type StartGUI () as this =
                 let imageFolder = Path.Combine [|resourcesFolder; "ChessPieceImages"|]
                 let guiBuilder = Path.Combine [|resourcesFolder; "SimpleTwoDBoardGUI.xml"|]
                 Chess.ChessGtkGUI (800, 880, imageFolder, guiBuilder, boardCompanion, gameCompanion, humanPlayers, aiInformers, debugMode)
-            gameCompanion.UpdateAIs.AddHandler (fun _ _ ->
+            gameCompanion.add_UpdateAIs (fun forceUpdate ->
                 maybeCreateNewAIInfo ()
-                let ais, aiInformers, humanPlayers = getAIsAndHumans ()
-                gameCompanion.UpdateAIAgents ais
-                gui.ReInitializeAIs (humanPlayers, aiInformers)
+                if aiInfosHaveChanged || forceUpdate then
+                    let ais, aiInformers, humanPlayers = getAIsAndHumans ()
+                    gameCompanion.UpdateAIAgents ais
+                    gui.ReInitializeAIs (humanPlayers, aiInformers)
             )
             gui.Quit.AddHandler (fun _ _ -> 
                 gameCompanion.Stop ()
