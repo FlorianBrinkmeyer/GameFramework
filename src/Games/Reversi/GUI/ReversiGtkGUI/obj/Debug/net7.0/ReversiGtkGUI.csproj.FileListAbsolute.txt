@@ -33,3 +33,5 @@
 /home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Games/Reversi/GUI/ReversiGtkGUI/obj/Debug/net7.0/refint/ReversiGtkGUI.dll
 /home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Games/Reversi/GUI/ReversiGtkGUI/obj/Debug/net7.0/ReversiGtkGUI.pdb
 /home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Games/Reversi/GUI/ReversiGtkGUI/obj/Debug/net7.0/ref/ReversiGtkGUI.dll
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Games/Reversi/GUI/ReversiGtkGUI/bin/Debug/net7.0/GuiInterfaceForInit.dll
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Games/Reversi/GUI/ReversiGtkGUI/bin/Debug/net7.0/GuiInterfaceForInit.pdb

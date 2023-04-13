@@ -40,5 +40,5 @@ type TwoDBoardCompanionMovablePieces (companion) =
                 let mutableGame = this.GameCompanion :?> IGameMoveMaker
                 (piece :?> IMovablePiece<int*int>).MakeMove (mutableGame, game, (startX, startY), dest)
             | None ->
-                raise (Exception "Field is empty: Impossible to make a move from here.")
+                raise (InvalidOperationException "Field is empty: Impossible to make a move from here.")
     interface ITwoDBoardMovablePieces<IPiece>

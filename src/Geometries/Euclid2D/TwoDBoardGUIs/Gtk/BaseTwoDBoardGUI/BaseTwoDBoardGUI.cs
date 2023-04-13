@@ -33,7 +33,7 @@ public class DecoratedButton : Gtk.Button
      }    
 }
 
-public abstract class TwoDBoardGUI<Board, Piece>
+public abstract class TwoDBoardGUI<Board, Piece> : IGui
 where Board : Enumerable2DArray.IEnumerable2DArray<Piece> 
 {
      abstract protected Gtk.Builder Builder {get;}     
@@ -75,7 +75,7 @@ where Board : Enumerable2DArray.IEnumerable2DArray<Piece>
      protected Board? GameBoard;
      protected IGameInformer<String>? Game;
      protected bool DebugMode;
-     public void ReInitializeFields()
+     protected void ReInitializeFields()
      {
           foreach (Tuple<Piece,Tuple<int,int>> entry in GameBoard!.AllEntriesWithCoords)
           {
@@ -89,7 +89,9 @@ where Board : Enumerable2DArray.IEnumerable2DArray<Piece>
                FieldClearImage (pos);
           }
      }
-     public void ReInitializeAIs(IEnumerable<int> thisGUIusers, IEnumerable<AI_Informer> AIs)
+     Gtk.Button? previousPlayerButton = null;
+     public bool NextMoveLoaded {get => previousPlayerButton != null ? previousPlayerButton.Sensitive : false;}
+     public void ReInitializeAIs (IEnumerable<int> thisGUIusers, IEnumerable<AI_Informer> AIs)
      {
           foreach (AI_Informer ai in AIs)
                ai.SendMessage += OnAIMessage;
@@ -149,13 +151,13 @@ where Board : Enumerable2DArray.IEnumerable2DArray<Piece>
                          singleStepButton.Sensitive = true;
                          var previousButton = (Gtk.Button) Builder.GetObject("PreviousButton");
                          previousButton.Sensitive = true;
-                         var previousPlayerButton = (Gtk.Button) Builder.GetObject("PreviousPlayerButton");
-                         previousPlayerButton.Sensitive = true;
+                         previousPlayerButton!.Sensitive = true;
                     });
                };
           }
           if (game is IReversibleGame<String> reversibleGame)
                reversibleGame.Undone += (sender, args) => ReInitializeFields ();
+          previousPlayerButton = (Gtk.Button) Builder.GetObject("PreviousPlayerButton");
           ReInitializeAIs (thisGUIusers, AIs);
      }
      void pauseGUI ()
@@ -186,8 +188,7 @@ where Board : Enumerable2DArray.IEnumerable2DArray<Piece>
                     singleStepButton.Sensitive = false;                         
                     var previousButton = (Gtk.Button) Builder.GetObject("PreviousButton");
                     previousButton.Sensitive = false;
-                    var previousPlayerButton = (Gtk.Button) Builder.GetObject("PreviousPlayerButton");
-                    previousPlayerButton.Sensitive = false;
+                    previousPlayerButton!.Sensitive = false;
                     reversibleGame.Continue ();
                }
           }
@@ -223,8 +224,7 @@ where Board : Enumerable2DArray.IEnumerable2DArray<Piece>
                singleStepButton.Sensitive = false;
                var previousButton = (Gtk.Button) Builder.GetObject("PreviousButton");
                previousButton.Sensitive = false;
-               var previousPlayerButton = (Gtk.Button) Builder.GetObject("PreviousPlayerButton");
-               previousPlayerButton.Sensitive = false;
+               previousPlayerButton!.Sensitive = false;
           }
      }
      public event EventHandler? Quit;

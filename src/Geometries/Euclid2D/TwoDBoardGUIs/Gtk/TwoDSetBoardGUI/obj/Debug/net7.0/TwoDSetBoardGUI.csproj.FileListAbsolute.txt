@@ -31,3 +31,5 @@
 /home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Geometries/Euclid2D/TwoDBoardGUIs/Gtk/TwoDSetBoardGUI/obj/Debug/net7.0/refint/TwoDSetBoardGUI.dll
 /home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Geometries/Euclid2D/TwoDBoardGUIs/Gtk/TwoDSetBoardGUI/obj/Debug/net7.0/TwoDSetBoardGUI.pdb
 /home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Geometries/Euclid2D/TwoDBoardGUIs/Gtk/TwoDSetBoardGUI/obj/Debug/net7.0/ref/TwoDSetBoardGUI.dll
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Geometries/Euclid2D/TwoDBoardGUIs/Gtk/TwoDSetBoardGUI/bin/Debug/net7.0/GuiInterfaceForInit.dll
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Geometries/Euclid2D/TwoDBoardGUIs/Gtk/TwoDSetBoardGUI/bin/Debug/net7.0/GuiInterfaceForInit.pdb

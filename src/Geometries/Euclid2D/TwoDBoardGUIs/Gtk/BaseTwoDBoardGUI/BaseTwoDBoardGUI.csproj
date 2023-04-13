@@ -15,6 +15,7 @@
     <ProjectReference Include="..\..\..\..\..\Geometries\Euclid2D\Enumerable2DArray\Enumerable2DArray.fsproj" />
     <ProjectReference Include="..\..\..\..\..\PieceInterfaces\PieceBase\PieceBase.csproj" />
     <ProjectReference Include="..\..\..\..\..\AI_Interfaces\AI_InterfacesForGUI\AI_Informer\AI_Informer.fsproj" />
+    <ProjectReference Include="..\..\..\..\..\GuiInterfaceForInit\GuiInterfaceForInit.csproj" />
   </ItemGroup>
 
 </Project>

@@ -22,7 +22,6 @@ type NegaMaxTimeLimited (player : int, searchTime : int, maxDepth : int) =
     let rnd = Random ()
     let sendMessage = Event<String> ()
     let timer = new Timers.Timer (searchTime)
-    let mutable considerationTime = searchTime
     let mutable reachedMaxDepth = 0
     let mutable timeLeft = false
     do
@@ -36,10 +35,8 @@ type NegaMaxTimeLimited (player : int, searchTime : int, maxDepth : int) =
     interface AI_WithConsiderationTime with
         member x.Player = player
         member x.ConsiderationTime
-            with get () = considerationTime
-            and set (value) = 
-                considerationTime <- value
-                timer.Interval <- considerationTime
+            with get () = (int) timer.Interval
+            and set (value) = timer.Interval <- value
     interface AI_Informer with
         [<CLIEvent>]
         member x.SendMessage = sendMessage.Publish

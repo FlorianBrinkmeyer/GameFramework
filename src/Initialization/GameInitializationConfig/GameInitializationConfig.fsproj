@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="GameInitializationConfig.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Games\Reversi\GUI\ReversiGtkGUI\ReversiGtkGUI.csproj" />
+    <ProjectReference Include="..\..\Games\Reversi\ReversiInit\ReversiInit.fsproj" />
+    <ProjectReference Include="..\..\Games\Reversi\ReversiResultMapper\ReversiResultMapper.fsproj" />
+    <ProjectReference Include="..\..\Games\Chess\Euclid2D\ChessGUIs\Gtk\ChessGtkGUI\ChessGtkGUI.csproj" />
+    <ProjectReference Include="..\..\Games\Chess\Euclid2D\TwoDChessInit\TwoDChessInit.fsproj" />
+    <ProjectReference Include="..\..\Games\Chess\ChessResultMapper\ChessResultMapper.fsproj" />
+    <ProjectReference Include="..\..\Games\Chess\Euclid2D\TwoDStandardChessPieceFactory\TwoDStandardChessPieceFactory.csproj" />
+    <ProjectReference Include="..\InitializationHelperTypes\InitializationHelperTypes.fsproj" />
+    <ProjectReference Include="..\..\AI_Interfaces\AI_InterfacesForGames\AIBaseInterface\AIBaseInterface.fsproj" />
+    <ProjectReference Include="..\..\GuiInterfaceForInit\GuiInterfaceForInit.csproj" />   
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,16 @@
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/GuiInterfaceForInit/obj/Debug/net7.0/GuiInterfaceForInit.csproj.AssemblyReference.cache
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/GuiInterfaceForInit/obj/Debug/net7.0/GuiInterfaceForInit.GeneratedMSBuildEditorConfig.editorconfig
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/GuiInterfaceForInit/obj/Debug/net7.0/GuiInterfaceForInit.AssemblyInfoInputs.cache
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/GuiInterfaceForInit/obj/Debug/net7.0/GuiInterfaceForInit.AssemblyInfo.cs
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/GuiInterfaceForInit/obj/Debug/net7.0/GuiInterfaceForInit.csproj.CoreCompileInputs.cache
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/GuiInterfaceForInit/bin/Debug/net7.0/GuiInterfaceForInit.deps.json
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/GuiInterfaceForInit/bin/Debug/net7.0/GuiInterfaceForInit.dll
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/GuiInterfaceForInit/bin/Debug/net7.0/GuiInterfaceForInit.pdb
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/GuiInterfaceForInit/bin/Debug/net7.0/AI_Informer.dll
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/GuiInterfaceForInit/bin/Debug/net7.0/AI_Informer.pdb
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/GuiInterfaceForInit/bin/Debug/net7.0/AI_Informer.xml
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/GuiInterfaceForInit/obj/Debug/net7.0/GuiInterfaceForInit.csproj.CopyComplete
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/GuiInterfaceForInit/obj/Debug/net7.0/GuiInterfaceForInit.dll
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/GuiInterfaceForInit/obj/Debug/net7.0/refint/GuiInterfaceForInit.dll
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/GuiInterfaceForInit/obj/Debug/net7.0/GuiInterfaceForInit.pdb
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/GuiInterfaceForInit/obj/Debug/net7.0/ref/GuiInterfaceForInit.dll

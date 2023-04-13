@@ -28,15 +28,23 @@ public enum RunState
     Terminated
 }
 
-public delegate void UpdateAIEvent (bool forceUpdate);
+public delegate void UpdateAIsEvent (bool forceUpdate);
 
-public class GameCompanion<GameResult>: IGameMoveMaker, IReversibleGame<GameResult>
+public interface IGameCompanion
+{
+    event UpdateAIsEvent? UpdateAIs;
+    void UpdateAIAgents (IEnumerable<AI_Agent> agents);
+    void Run ();
+    void Stop ();
+}
+
+public class GameCompanion<GameResult>: IGameMoveMaker, IReversibleGame<GameResult>, IGameCompanion
 {
     protected ImmutableGame State;
     Func<ImmutableGame, GameResult> resultMapper;
     Dictionary<int,AI_Agent>? playerToAIAgent;
     protected bool DebugMode;
-    public event UpdateAIEvent? UpdateAIs;
+    public event UpdateAIsEvent? UpdateAIs;
     protected RunState runState = RunState.PausingIgnoreNextMove;
     public void UpdateAIAgents (IEnumerable<AI_Agent> agents)
     {
@@ -121,8 +129,9 @@ public class GameCompanion<GameResult>: IGameMoveMaker, IReversibleGame<GameResu
             if (chosenMove != null)
             {
                 runState = RunState.Running;
-                InternalMakeMove(chosenMove.Value);
+                var value = chosenMove.Value;
                 chosenMove = null;
+                InternalMakeMove (value);
             }
         }
         else
@@ -181,7 +190,7 @@ public class GameCompanion<GameResult>: IGameMoveMaker, IReversibleGame<GameResu
         }
         else
         {
-            throw new Exception ("Undo impossible: No previous state.");
+            throw new InvalidOperationException ("Undo impossible: No previous state.");
         }
     }
     public override bool Equals (object? obj)

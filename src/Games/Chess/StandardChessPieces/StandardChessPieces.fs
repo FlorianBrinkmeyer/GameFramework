@@ -286,7 +286,7 @@ type King<'Board, 'Coords when 'Coords :> IComparable and 'Coords : comparison a
                 standardMoves.Invoke (board, coords) |> Seq.length
             let castling =
                 let infos = castlingInfos |> Seq.filter (fun info -> 
-                    let rookNotMovedYet = 
+                    let rookNotMovedYet () = 
                         match board.Item info.RookStartPos with
                         | Some (:? BlockablePiece<'Board, 'Coords> as posRook) ->
                             match posRook.MaybeNotMovedYet with
@@ -295,7 +295,7 @@ type King<'Board, 'Coords when 'Coords :> IComparable and 'Coords : comparison a
                             | _ ->
                                 false    
                         | _ -> false    
-                    notMovedYet && rookNotMovedYet
+                    notMovedYet && rookNotMovedYet ()
                 )
                 infos |> Seq.length
             let mobility = (float) (standard + castling) * 0.1
@@ -307,7 +307,7 @@ type King<'Board, 'Coords when 'Coords :> IComparable and 'Coords : comparison a
                 moves |> x.ApplyWhiteAndBlackList |> Seq.map (fun move -> MoveCommand move :> IMoveCommand<'Coords>)
             let castling =
                 let infos = castlingInfos |> Seq.filter (fun info -> 
-                    let rookNotMovedYet = 
+                    let rookNotMovedYet () = 
                         match board.Item info.RookStartPos with
                         | Some (:? BlockablePiece<'Board, 'Coords> as posRook) ->
                             match posRook.MaybeNotMovedYet with
@@ -316,11 +316,12 @@ type King<'Board, 'Coords when 'Coords :> IComparable and 'Coords : comparison a
                             | _ ->
                                 false    
                         | _ -> false    
-                    let fieldsAreEmpty = 
+                    let fieldsAreEmpty () = 
                         Seq.concat [info.AditionallyUnthreatenedFields; info.AditionallyEmptyFields;] |> Seq.forall (fun coords -> (board.Item coords).IsNone)
-                    let couldBeThreatened = Seq.append info.AditionallyUnthreatenedFields [coords] |> Set.ofSeq
-                    let noThreats = Set.intersect couldBeThreatened blacklist |> Set.isEmpty
-                    fieldsAreEmpty && notMovedYet && rookNotMovedYet && noThreats
+                    let noThreats () =
+                        let couldBeThreatened = Seq.append info.AditionallyUnthreatenedFields [coords] |> Set.ofSeq
+                        Set.intersect couldBeThreatened blacklist |> Set.isEmpty
+                    notMovedYet && fieldsAreEmpty () && rookNotMovedYet () && noThreats ()
                 )
                 infos |> Seq.map (fun info -> CastlingCommand info :> IMoveCommand<'Coords>)
             Seq.append standard castling

@@ -64,3 +64,5 @@
 /home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Geometries/Euclid2D/TwoDBoardGUIs/Gtk/TwoDBoardGUIMovablePieces/obj/Debug/net7.0/refint/TwoDBoardGUIMovablePieces.dll
 /home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Geometries/Euclid2D/TwoDBoardGUIs/Gtk/TwoDBoardGUIMovablePieces/obj/Debug/net7.0/TwoDBoardGUIMovablePieces.pdb
 /home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Geometries/Euclid2D/TwoDBoardGUIs/Gtk/TwoDBoardGUIMovablePieces/obj/Debug/net7.0/ref/TwoDBoardGUIMovablePieces.dll
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Geometries/Euclid2D/TwoDBoardGUIs/Gtk/TwoDBoardGUIMovablePieces/bin/Debug/net7.0/GuiInterfaceForInit.dll
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Geometries/Euclid2D/TwoDBoardGUIs/Gtk/TwoDBoardGUIMovablePieces/bin/Debug/net7.0/GuiInterfaceForInit.pdb

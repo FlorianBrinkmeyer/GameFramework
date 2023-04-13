@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net7.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="GameInitializer.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\AIAgents\MonteCarloSearchTree\MonteCarloSearchTree.fsproj" />
+    <ProjectReference Include="..\..\AIAgents\NegaMaxTimeLimited\NegaMaxTimeLimited.fsproj" />
+    <ProjectReference Include="..\..\AIAgents\NegaMaxPruningCaching\NegaMaxPruningCaching.fsproj" />
+    <ProjectReference Include="..\..\AIAgents\SimpleNegaMaxAgent\SimpleNegaMaxAgent.fsproj" />
+    <ProjectReference Include="..\GameInitializationConfig\GameInitializationConfig.fsproj" />
+  </ItemGroup>
+
+</Project>

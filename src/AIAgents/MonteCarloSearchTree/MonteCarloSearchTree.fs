@@ -27,7 +27,7 @@ type MCTree =
 
 type MonteCarloTreeSearch (player : int, searchTime : int, countInfinitiesMode, ?usedThreads) =
     let sendMessage = Event<String> ()
-    let mutable threadsCount =
+    let threadsCount =
         match usedThreads with
         | Some threads ->
             threads
@@ -39,7 +39,6 @@ type MonteCarloTreeSearch (player : int, searchTime : int, countInfinitiesMode, 
         else    
             Random.Shared
     let timer = new Timers.Timer (searchTime)
-    let mutable considerationTime = searchTime
     let mutable registeredMoveMadeEvent = false
     let mutable maybePermanentTree = None
     let mutable maxSimCount = 0
@@ -55,10 +54,8 @@ type MonteCarloTreeSearch (player : int, searchTime : int, countInfinitiesMode, 
     interface AI_WithConsiderationTime with
         member x.Player = player
         member x.ConsiderationTime
-            with get () = considerationTime
-            and set (value) = 
-                considerationTime <- value
-                timer.Interval <- considerationTime
+            with get () = (int) timer.Interval 
+            and set (value) = timer.Interval <- value
     interface AI_WithMultiThreading with
         member x.UsedThreads = threadsCount
     interface AI_Informer with
@@ -104,7 +101,7 @@ type MonteCarloTreeSearch (player : int, searchTime : int, countInfinitiesMode, 
                     else
                         //Expand next child.   
                         let index = rnd.Next tree.UntriedMoves.Count
-                        let untriedMove = (tree.UntriedMoves |> Seq.toArray).[index]
+                        let untriedMove = (tree.UntriedMoves |> Seq.toArray)[index]
                         let reducedUntriedMoves = tree.UntriedMoves |> Set.remove untriedMove
                         let nextState = tree.State.NthMove untriedMove 
                         let childUntriedMoves = [0..(nextState.NumberOfPossibleMoves-1)] |> Set.ofList

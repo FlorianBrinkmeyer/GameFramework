@@ -53,7 +53,6 @@ type NegaMaxTimeLimitedPruningCaching (player : int, searchTime : int, maxDepth 
     let mutable maybePermanentTree = None
     let mutable usedCacheCount = 0
     let mutable reachedMaxDepth = 0.0
-    let mutable considerationTime = searchTime
     let mutable timeLeft = false
     do
         timer.Elapsed.AddHandler (fun _ _ -> timeLeft <- false)
@@ -65,10 +64,8 @@ type NegaMaxTimeLimitedPruningCaching (player : int, searchTime : int, maxDepth 
     interface AI_WithConsiderationTime with
         member x.Player = player
         member x.ConsiderationTime 
-            with get () = considerationTime
-            and set (value) = 
-                considerationTime <- value
-                timer.Interval <- considerationTime
+            with get () = (int) timer.Interval
+            and set (value) = timer.Interval <- value
     interface AI_WithMultiThreading with
         member x.UsedThreads = threadsCount
     interface AI_Informer with
@@ -155,7 +152,7 @@ type NegaMaxTimeLimitedPruningCaching (player : int, searchTime : int, maxDepth 
                     | true, attr when attr.Depth > depth ->
                         ()
                     | _ -> 
-                        cachedStates[node.State] <- {Node = node; Depth = depth}   
+                        cachedStates[node.State] <- {Node = node |> resetNode; Depth = depth}   
                 if newChildrenCount = node.State.NumberOfPossibleMoves 
                   && newChildren.Values |> Seq.forall (fun child -> child.Depth >= depth - 1.0) then
                     let childrenMinDepth = newChildren.Values |> Seq.map (fun child -> child.Depth) |> Seq.min
@@ -177,7 +174,7 @@ type NegaMaxTimeLimitedPruningCaching (player : int, searchTime : int, maxDepth 
                     match cachedStates.TryGetValue node.State with
                     | true, attr ->
                         usedCacheCount <- usedCacheCount + 1
-                        attr.Node |> resetNode |> main depth increaseDepth
+                        attr.Node |> main depth increaseDepth
                     | _ ->
                         main depth increaseDepth node
                 else
@@ -200,16 +197,15 @@ type NegaMaxTimeLimitedPruningCaching (player : int, searchTime : int, maxDepth 
                         let increaseDepth = increaseDepthForInstableState && searchDepth > 2
                         tree <- getNextTree searchDepth increaseDepth tree
                         if tree.Depth >= searchDepth then
+                            if searchDepth > reachedMaxDepth then
+                                reachedMaxDepth <- searchDepth
                             let message = 
                                 String.Format ("Reached search depth: {0:0}, Cached states: {1}, Used cache {2} times, Maximally reached depth: {3:0}",
                                     searchDepth, cachedStates.Count, usedCacheCount, reachedMaxDepth)
                             sendMessage.Trigger message
-                            if searchDepth > reachedMaxDepth then
-                                reachedMaxDepth <- searchDepth
                             searchDepth <- tree.Depth + 1.0
-                            let reinitializedTree = {tree with Alpha = Double.NegativeInfinity; Beta = Double.PositiveInfinity; Depth = 0.0}
-                            let nextTree = resetNode reinitializedTree
-                            tree <- nextTree 
+                            let reinitializedTree = resetNode {tree with Alpha = Double.NegativeInfinity; Beta = Double.PositiveInfinity; Depth = 0.0}
+                            tree <- reinitializedTree 
                     let maxValue = tree.Children.Values |> Seq.map (fun child -> -child.Value) |> Seq.max
                     let maxValueMoves = 
                         Seq.zip tree.Children.Keys tree.Children.Values |> Seq.filter (fun (_, child) -> -child.Value = maxValue)

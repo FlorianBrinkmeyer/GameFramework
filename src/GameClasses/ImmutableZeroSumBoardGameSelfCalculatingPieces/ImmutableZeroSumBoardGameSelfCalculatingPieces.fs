@@ -84,7 +84,7 @@ type ImmutableZeroSumBoardGameSelfCalculatingPieces<'Board, 'Coords, 'MoveComman
                     match maybeZsValueCalc with
                     | Some zsValueCalc ->
                         (zsValueCalc.Invoke board) * (float) activePlayer
-                    | None -> raise (Exception "Intermediate evaluation of game state impossible: No evaluation function assigned.")    
+                    | None -> raise (InvalidOperationException "Intermediate evaluation of game state impossible: No evaluation function assigned.")    
             member x.Value player = (x :> ImmutableGame).ZSValue * (float) (activePlayer * player)
             member x.ActivePlayer = activePlayer
             member x.NumberOfPossibleMoves = 
