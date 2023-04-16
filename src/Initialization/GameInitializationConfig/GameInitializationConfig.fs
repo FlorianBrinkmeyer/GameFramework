@@ -11,11 +11,10 @@ open GameFramework.GameInit.HelperTypes
 let debugMode = false
 let debugSearchDepth = 3
 
-let negaMaxIncreaseSearchDepth = false
+let negaMaxIncreaseSearchDepthIfStateUnstable = false
 
 let resourcesFolder = "../../../Resources"
-let GUI = "StartGUI.xml"
-let standardAIConsiderationTime = 5000
+let standardAIConsiderationTime = 10000
 let standardUsedThreadsByAI = 2
 
 let monteCarloSearchTree = "Monte Carlo tree search with multi-threading"
@@ -44,29 +43,44 @@ let standardChess =
 
 let games = [reversiWithPassing; reversiNoPassing; standardChess]
 
-let initGame (game : GameInfo) (ais : AI_Agent []) (aiInformers : AI_Informer []) (humanPlayers : Generic.IEnumerable<int>) =
+let initAIs gameUsedInfiniteValues (aiInfos : AIInfo []) =
+    aiInfos |> Array.map (fun info ->
+        if info.Label = monteCarloSearchTree then
+            MonteCarloTreeSearch (info.Player, info.ConsiderationTime, gameUsedInfiniteValues, info.MaybeUsedThreads.Value) :> AI_Agent
+        elif info.Label = negaMaxTimeLimited then
+           (*if debugMode then
+               NegaMax (info.Player, debugSearchDepth)
+           else*)
+               NegaMaxTimeLimited (info.Player, info.ConsiderationTime, 100)
+        elif info.Label = negaMaxPruningCaching then
+            Negamax.NegaMaxTimeLimitedPruningCaching (info.Player, info.ConsiderationTime, 100, negaMaxIncreaseSearchDepthIfStateUnstable, debugMode, info.MaybeUsedThreads.Value)    
+        else    
+            raise (Exception "AI case distinction incomplete.")
+    )       
+
+let initGame (game : GameInfo) (aisAsAgents : Generic.IEnumerable<AI_Agent>) (aisAsInformers : Generic.IEnumerable<AI_Informer>) (humanPlayers : Generic.IEnumerable<int>) =
     if game = reversiWithPassing then
-        let gameCompanion, boardCompanion = Reversi.Init.initReversi 8 8 (-1) true Reversi.ResultMapper.resultMapper ais debugMode
+        let gameCompanion, boardCompanion = Reversi.Init.initReversi 8 8 (-1) true Reversi.ResultMapper.resultMapper aisAsAgents debugMode
         let gui = 
             let imageFolder = Path.Combine [|resourcesFolder; "ReversiPieceImages"|]
             let guiBuilder = Path.Combine [|resourcesFolder; "SimpleTwoDBoardGUI.xml"|]
-            Reversi.ReversiGtkGUI (800, 880, imageFolder, guiBuilder, boardCompanion, gameCompanion, humanPlayers, aiInformers, debugMode)
-        gui :> IGui, gameCompanion :> IGameCompanion
+            Reversi.ReversiGtkGUI (800, 880, imageFolder, guiBuilder, boardCompanion, gameCompanion, humanPlayers, aisAsInformers, debugMode)
+        gui :> IGui, gameCompanion :> IInitGame
     elif game = reversiNoPassing then
-        let gameCompanion, boardCompanion = Reversi.Init.initReversi 8 8 (-1) false Reversi.ResultMapper.resultMapper ais debugMode
+        let gameCompanion, boardCompanion = Reversi.Init.initReversi 8 8 (-1) false Reversi.ResultMapper.resultMapper aisAsAgents debugMode
         let gui = 
             let imageFolder = Path.Combine [|resourcesFolder; "ReversiPieceImages"|]
             let guiBuilder = Path.Combine [|resourcesFolder; "SimpleTwoDBoardGUI.xml"|]
-            Reversi.ReversiGtkGUI (800, 880, imageFolder, guiBuilder, boardCompanion, gameCompanion, humanPlayers, aiInformers, debugMode)
+            Reversi.ReversiGtkGUI (800, 880, imageFolder, guiBuilder, boardCompanion, gameCompanion, humanPlayers, aisAsInformers, debugMode)
         gui, gameCompanion
     elif game = standardChess then
         let startPositionFileName = Path.Combine [|resourcesFolder; "StandardChessStartPosition.csv"|]
         let pieceFactory = fun kind color -> StandardChess.PieceFactory.InitPiece (kind, color)
-        let gameCompanion, boardCompanion = Chess.Init.initChess 8 8 1 pieceFactory startPositionFileName Chess.ResultMapper.resultMapper ais debugMode
+        let gameCompanion, boardCompanion = Chess.Init.initChess 8 8 1 pieceFactory startPositionFileName Chess.ResultMapper.resultMapper aisAsAgents debugMode
         let gui = 
             let imageFolder = Path.Combine [|resourcesFolder; "ChessPieceImages"|]
             let guiBuilder = Path.Combine [|resourcesFolder; "SimpleTwoDBoardGUI.xml"|]
-            Chess.ChessGtkGUI (800, 880, imageFolder, guiBuilder, boardCompanion, gameCompanion, humanPlayers, aiInformers, debugMode)
+            Chess.ChessGtkGUI (800, 880, imageFolder, guiBuilder, boardCompanion, gameCompanion, humanPlayers, aisAsInformers, debugMode)
         gui, gameCompanion
     else
         raise (Exception "Game case distinction incomplete.")

@@ -118,7 +118,7 @@ type NegaMaxTimeLimitedPruningCaching (player : int, searchTime : int, maxDepth 
                 )
                 let incompleteChildren = initializedChildren |> Seq.filter (fun (_, child) -> child.Depth < depth - 1.0) 
                 let orderedChildren = incompleteChildren |> Seq.sortBy (fun (_, child) -> child.Value) |> Seq.toArray
-                let childrenToDevelop, newChildrenCount =
+                let childrenToDevelop, newDevChildrenCount =
                     if orderedChildren.Length >= maxInParallel then
                         orderedChildren |> Array.take maxInParallel, node.DevelopedChildren
                     else
@@ -128,8 +128,8 @@ type NegaMaxTimeLimitedPruningCaching (player : int, searchTime : int, maxDepth 
                             [|node.DevelopedChildren..(node.DevelopedChildren+additionalChildrenCount-1)|] 
                                 |> Array.map (fun index -> index, node.State.NthMove index |> getNewNode increaseDepth -node.Beta -node.Alpha)
                         Array.append orderedChildren additionalChildren, node.DevelopedChildren + additionalChildrenCount
-                let newChildrenPairs = 
-                    if childrenToDevelop.Length <= 1 || (debugMode && allowDebugMode) then
+                let newIndChildrenPairs = 
+                    if childrenToDevelop.Length <= 1 then //|| (debugMode && allowDebugMode) then
                         childrenToDevelop |> Array.map (fun (index, child) -> index, (getNextTree (depth - 1.0) increaseDepth child))
                     else
                         multiThreadingInUse <- true
@@ -137,11 +137,11 @@ type NegaMaxTimeLimitedPruningCaching (player : int, searchTime : int, maxDepth 
                         multiThreadingInUse <- false
                         res
                 let newChildren = 
-                    newChildrenPairs |> Seq.fold (fun (acc : Map<int,Node>) (index, child) -> acc.Add (index, child)) node.Children
-                let nodeWithUpdatedChildren = {node with Children = newChildren; DevelopedChildren = newChildrenCount}
+                    newIndChildrenPairs |> Seq.fold (fun (acc : Map<int,Node>) (index, child) -> acc.Add (index, child)) node.Children
+                let nodeWithUpdatedChildren = {node with Children = newChildren; DevelopedChildren = newDevChildrenCount}
                 let newAlpha = 
                     let childrenValues = 
-                        newChildrenPairs |> Seq.map snd |> Seq.filter (fun child -> child.Depth >= depth - 1.0) |> Seq.map (fun child -> -child.Value)
+                        newIndChildrenPairs |> Seq.map snd |> Seq.filter (fun child -> child.Depth >= depth - 1.0) |> Seq.map (fun child -> -child.Value)
                     if childrenValues |> Seq.isEmpty then
                         node.Alpha
                     else
@@ -149,11 +149,11 @@ type NegaMaxTimeLimitedPruningCaching (player : int, searchTime : int, maxDepth 
                         Math.Max (node.Alpha, childrenAlpha)
                 let maybeCacheState depth (node : Node) =
                     match cachedStates.TryGetValue node.State with
-                    | true, attr when attr.Depth > depth ->
+                    | true, attr when attr.Depth >= depth ->
                         ()
                     | _ -> 
                         cachedStates[node.State] <- {Node = node |> resetNode; Depth = depth}   
-                if newChildrenCount = node.State.NumberOfPossibleMoves 
+                if newDevChildrenCount = node.State.NumberOfPossibleMoves 
                   && newChildren.Values |> Seq.forall (fun child -> child.Depth >= depth - 1.0) then
                     let childrenMinDepth = newChildren.Values |> Seq.map (fun child -> child.Depth) |> Seq.min
                     let newDepth = childrenMinDepth + 1.0
@@ -161,7 +161,7 @@ type NegaMaxTimeLimitedPruningCaching (player : int, searchTime : int, maxDepth 
                     let res = {nodeWithUpdatedChildren with Value = newValue; Depth = newDepth}
                     maybeCacheState newDepth res           
                     res
-                elif newAlpha >= node.Beta then
+                elif newAlpha > node.Beta then
                     let res = {nodeWithUpdatedChildren with Depth = depth; Value = newAlpha}         
                     maybeCacheState depth res
                     res
@@ -181,22 +181,26 @@ type NegaMaxTimeLimitedPruningCaching (player : int, searchTime : int, maxDepth 
                     main depth increaseDepth node      
             let timeLimitedSearch =
                 async {
-                    let mutable tree = 
+                    let mutable tree, completeTree = 
                         match maybePermanentTree with
                         | Some permanentTree ->
-                            resetNode permanentTree
+                            let completeTr = {permanentTree with Alpha = Double.NegativeInfinity; Beta = Double.PositiveInfinity}
+                            let tr = resetNode completeTr
+                            tr, completeTr
                         | None ->    
                             let state = game :?> ImmutableGame
-                            getNewNode false Double.NegativeInfinity Double.PositiveInfinity state
-                    let mutable searchDepth = tree.Depth
+                            let tr = getNewNode false Double.NegativeInfinity Double.PositiveInfinity state
+                            tr, tr
+                    let mutable searchDepth = Math.Max (tree.Depth, 1.0)
                     let message = 
                         String.Format ("Reached search depth: {0:0}, Cached states: {1}, Used cache {2} times, Maximally reached depth: {3:0}",
-                            searchDepth, cachedStates.Count, usedCacheCount, reachedMaxDepth)
+                            (searchDepth - 1.0), cachedStates.Count, usedCacheCount, reachedMaxDepth)
                     sendMessage.Trigger message
                     while timeLeft && ((searchDepth <= maxDepth && not debugMode) || (allowDebugMode && searchDepth <= debugDepth)) do
                         let increaseDepth = increaseDepthForInstableState && searchDepth > 2
                         tree <- getNextTree searchDepth increaseDepth tree
                         if tree.Depth >= searchDepth then
+                            completeTree <- tree
                             if searchDepth > reachedMaxDepth then
                                 reachedMaxDepth <- searchDepth
                             let message = 
@@ -206,16 +210,14 @@ type NegaMaxTimeLimitedPruningCaching (player : int, searchTime : int, maxDepth 
                             searchDepth <- tree.Depth + 1.0
                             let reinitializedTree = resetNode {tree with Alpha = Double.NegativeInfinity; Beta = Double.PositiveInfinity; Depth = 0.0}
                             tree <- reinitializedTree 
-                    let maxValue = tree.Children.Values |> Seq.map (fun child -> -child.Value) |> Seq.max
+                    let maxValue = completeTree.Children.Values |> Seq.map (fun child -> -child.Value) |> Seq.max
                     let maxValueMoves = 
-                        Seq.zip tree.Children.Keys tree.Children.Values |> Seq.filter (fun (_, child) -> -child.Value = maxValue)
-                    let maxDepth = maxValueMoves |> Seq.map (fun (_, child) -> child.Depth) |> Seq.max 
-                    let maxValueMaxDepthMoves = maxValueMoves |> Seq.filter (fun (_, child) -> child.Depth = maxDepth) |> Seq.toArray
+                        Seq.zip completeTree.Children.Keys completeTree.Children.Values |> Seq.filter (fun (_, child) -> -child.Value = maxValue) |> Seq.toArray
                     let chosenMove = 
                         if debugMode && allowDebugMode then
-                            maxValueMaxDepthMoves[0] |> fst
+                            maxValueMoves[0] |> fst
                         else    
-                            maxValueMaxDepthMoves[rnd.Next maxValueMaxDepthMoves.Length] |> fst
+                            maxValueMoves[rnd.Next maxValueMoves.Length] |> fst
                     maybePermanentTree <- Some tree
                     mutableGame.MakeMove chosenMove
                 }        

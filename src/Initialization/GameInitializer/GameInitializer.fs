@@ -24,6 +24,8 @@ open System
 open System.IO
 open System.Collections
 
+let GUI = "StartGUI.xml"
+
 type StartGUI () as this =
     let mutable AIagents = Generic.Dictionary<int, AIInfo> ()
     let mutable maybeChosenPlayer : Option<int> = None
@@ -77,20 +79,6 @@ type StartGUI () as this =
                     aiInfosHaveChanged <- found
                     AIagents.Remove chosenPlayer |> ignore
         )
-    let getAIsFromInfos gameUsedInfiniteValues =
-        AIagents.Values |> Seq.toArray |> Array.map (fun info ->
-            if info.Label = monteCarloSearchTree then
-                MonteCarloTreeSearch (info.Player, info.ConsiderationTime, gameUsedInfiniteValues, info.MaybeUsedThreads.Value) :> AI_Agent
-            elif info.Label = negaMaxTimeLimited then
-               if debugMode then
-                   NegaMax (info.Player, debugSearchDepth)
-               else
-                   NegaMaxTimeLimited (info.Player, info.ConsiderationTime, 100)
-            elif info.Label = negaMaxPruningCaching then
-                Negamax.NegaMaxTimeLimitedPruningCaching (info.Player, info.ConsiderationTime, 100, negaMaxIncreaseSearchDepth, debugMode, info.MaybeUsedThreads.Value)    
-            else    
-                raise (Exception "AI case distinction incomplete.")
-        )       
     let deactivateAllAIWidgets () =
         "AIChooser" |> setSensitive false
         "ConsiderationTimeEntry" |> setSensitive false
@@ -185,7 +173,7 @@ type StartGUI () as this =
         let game = games |> List.find (fun gm -> gm.Name = ("GameChooser" |> getActive))
         maybeCreateNewAIInfo ()           
         let getAIsAndHumans () =
-            let ais = getAIsFromInfos game.UsesInfiniteValues
+            let ais = initAIs game.UsesInfiniteValues (AIagents.Values |> Seq.toArray)
             let aiInformers = ais |> Array.choose (fun ai ->
                 match ai with
                 | :? AI_Informer as informer ->
@@ -198,20 +186,20 @@ type StartGUI () as this =
             aiInfosHaveChanged <- false
             ais, aiInformers, humanPlayers
         let ais, aiInformers, humanPlayers = getAIsAndHumans ()
-        let gui, gameCompanion = initGame game ais aiInformers humanPlayers
-        gameCompanion.add_UpdateAIs (fun forceUpdate ->
+        let gui, game = initGame game ais aiInformers humanPlayers
+        game.add_UpdateAIs (fun forceUpdate ->
             maybeCreateNewAIInfo ()
             if (aiInfosHaveChanged && gui.NextMoveLoaded) || forceUpdate then
                 let ais, aiInformers, humanPlayers = getAIsAndHumans ()
-                gameCompanion.UpdateAIAgents ais
+                game.UpdateAIAgents ais
                 gui.ReInitializeAIs (humanPlayers, aiInformers)
         )
         gui.Quit.AddHandler (fun _ _ -> 
-            gameCompanion.Stop ()
+            game.Stop ()
             startButton.Sensitive <- true
             gameChooser.Sensitive <- true
         )
-        gameCompanion.Run ()      
+        game.Run ()      
 
 [<EntryPoint>]
 let main argv =

@@ -3,6 +3,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\GameInterfaces\GameInterfacesForGUI\GameInterfacesForGUI.csproj" />
     <ProjectReference Include="..\..\GameInterfaces\GameMoveMaker\GameMoveMaker.csproj" />
+    <ProjectReference Include="..\..\GameInterfaces\GameInterfacesForInit\GameInterfacesForInit.csproj" />
     <ProjectReference Include="..\..\GameInterfaces\GameInterfacesForAIsAndCompanion\GameInterfacesForAIsAndCompanion.fsproj" />
     <ProjectReference Include="..\..\GameInterfaces\GameInterfacesForCompanion\GameInterfacesForCompanion.csproj" />
     <ProjectReference Include="..\..\AI_Interfaces\AI_InterfacesForGames\AIBaseInterface\AIBaseInterface.fsproj" />

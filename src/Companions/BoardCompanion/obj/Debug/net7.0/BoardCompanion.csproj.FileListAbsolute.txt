@@ -37,3 +37,5 @@
 /home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Companions/BoardCompanion/bin/Debug/net7.0/StopableAI.dll
 /home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Companions/BoardCompanion/bin/Debug/net7.0/StopableAI.pdb
 /home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Companions/BoardCompanion/bin/Debug/net7.0/StopableAI.xml
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Companions/BoardCompanion/bin/Debug/net7.0/GameInterfacesForInit.dll
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Companions/BoardCompanion/bin/Debug/net7.0/GameInterfacesForInit.pdb

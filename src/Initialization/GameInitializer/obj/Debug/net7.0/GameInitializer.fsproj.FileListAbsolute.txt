@@ -335,3 +335,5 @@
 /home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Initialization/GameInitializer/obj/Debug/net7.0/GameInitializer.fsproj.CopyComplete
 /home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Initialization/GameInitializer/obj/Debug/net7.0/GameInitializer.genruntimeconfig.cache
 /home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Initialization/GameInitializer/obj/Debug/net7.0/ref/GameInitializer.dll
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Initialization/GameInitializer/bin/Debug/net7.0/GameInterfacesForInit.dll
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Initialization/GameInitializer/bin/Debug/net7.0/GameInterfacesForInit.pdb

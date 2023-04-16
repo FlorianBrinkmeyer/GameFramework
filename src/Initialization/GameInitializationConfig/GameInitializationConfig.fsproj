@@ -19,7 +19,12 @@
     <ProjectReference Include="..\..\Games\Chess\Euclid2D\TwoDStandardChessPieceFactory\TwoDStandardChessPieceFactory.csproj" />
     <ProjectReference Include="..\InitializationHelperTypes\InitializationHelperTypes.fsproj" />
     <ProjectReference Include="..\..\AI_Interfaces\AI_InterfacesForGames\AIBaseInterface\AIBaseInterface.fsproj" />
-    <ProjectReference Include="..\..\GuiInterfaceForInit\GuiInterfaceForInit.csproj" />   
+    <ProjectReference Include="..\..\GuiInterfaceForInit\GuiInterfaceForInit.csproj" />
+    <ProjectReference Include="..\..\GameInterfaces\GameInterfacesForInit\GameInterfacesForInit.csproj" />
+    <ProjectReference Include="..\..\AIAgents\MonteCarloSearchTree\MonteCarloSearchTree.fsproj" />
+    <ProjectReference Include="..\..\AIAgents\NegaMaxTimeLimited\NegaMaxTimeLimited.fsproj" />
+    <ProjectReference Include="..\..\AIAgents\NegaMaxPruningCaching\NegaMaxPruningCaching.fsproj" />
+    <ProjectReference Include="..\..\AIAgents\SimpleNegaMaxAgent\SimpleNegaMaxAgent.fsproj" />   
   </ItemGroup>
 
 </Project>

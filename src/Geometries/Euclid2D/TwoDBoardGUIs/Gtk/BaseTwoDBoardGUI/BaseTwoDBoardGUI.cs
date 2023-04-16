@@ -68,7 +68,6 @@ where Board : Enumerable2DArray.IEnumerable2DArray<Piece>
           });     
      }
      protected virtual String PlayerToString (int id) => "Player " + id.ToString ();
-     protected virtual void OnGameOver (string result) => SetLabel (1, result);
      protected virtual void OnOwnPlayersTurn (int activePlayer) => SetLabel (1, PlayerToString (activePlayer) + ": It's your turn. Please make a move.");     
      protected virtual void OnAIMessage (Object sender, String message) => SetLabel (2, message);
      protected IEnumerable<int>? ThisGUIusers;
@@ -89,8 +88,8 @@ where Board : Enumerable2DArray.IEnumerable2DArray<Piece>
                FieldClearImage (pos);
           }
      }
-     Gtk.Button? previousPlayerButton = null;
-     public bool NextMoveLoaded {get => previousPlayerButton != null ? previousPlayerButton.Sensitive : false;}
+     Gtk.Button? previousButton = null;
+     public bool NextMoveLoaded {get => previousButton != null ? previousButton.Sensitive : false;}
      public void ReInitializeAIs (IEnumerable<int> thisGUIusers, IEnumerable<AI_Informer> AIs)
      {
           foreach (AI_Informer ai in AIs)
@@ -145,19 +144,19 @@ where Board : Enumerable2DArray.IEnumerable2DArray<Piece>
           {
                pausableGame.PauseMoveDelivered += (sender, args) =>
                {
-                    Gtk.Application.Invoke((sender, args) =>
+                    Gtk.Application.Invoke ((sender, args) =>
                     {
                          var singleStepButton = (Gtk.Button) Builder.GetObject("SingleStepButton");
                          singleStepButton.Sensitive = true;
-                         var previousButton = (Gtk.Button) Builder.GetObject("PreviousButton");
-                         previousButton.Sensitive = true;
-                         previousPlayerButton!.Sensitive = true;
+                         previousButton!.Sensitive = true;
+                         var previousPlayerButton = (Gtk.Button) Builder.GetObject("PreviousPlayerButton");
+                         previousPlayerButton.Sensitive = true;
                     });
                };
           }
           if (game is IReversibleGame<String> reversibleGame)
                reversibleGame.Undone += (sender, args) => ReInitializeFields ();
-          previousPlayerButton = (Gtk.Button) Builder.GetObject("PreviousPlayerButton");
+          previousButton = (Gtk.Button) Builder.GetObject("PreviousButton");
           ReInitializeAIs (thisGUIusers, AIs);
      }
      void pauseGUI ()
@@ -165,6 +164,11 @@ where Board : Enumerable2DArray.IEnumerable2DArray<Piece>
           var pauseImage = (Gtk.Image) Builder.GetObject("PlayImage");
           var pausePlayButton = (Gtk.Button)Builder.GetObject("PausePlayButton");
           pausePlayButton.Image = pauseImage;
+          var singleStepButton = (Gtk.Button) Builder.GetObject("SingleStepButton");
+          singleStepButton.Sensitive = false;                         
+          previousButton!.Sensitive = false;
+          var previousPlayerButton = (Gtk.Button) Builder.GetObject("PreviousPlayerButton");
+          previousPlayerButton.Sensitive = false;
           for (int x = 0; x < GameBoard!.xDim; x++)
           {
                for (int y = 0; y < GameBoard.yDim; y++)
@@ -173,22 +177,39 @@ where Board : Enumerable2DArray.IEnumerable2DArray<Piece>
                } 
           }
      }
+     protected bool GameOver = false;
+     protected virtual void OnGameOver (string result)  
+     {
+          SetLabel (1, result);
+          Gtk.Application.Invoke ((sender, args) => 
+          {         
+               var pauseImage = (Gtk.Image) Builder.GetObject("PlayImage");
+               var pausePlayButton = (Gtk.Button)Builder.GetObject("PausePlayButton");
+               pausePlayButton.Image = pauseImage;
+               previousButton!.Sensitive = true;
+               var previousPlayerButton = (Gtk.Button) Builder.GetObject("PreviousPlayerButton");
+               previousPlayerButton.Sensitive = true;
+               GameOver = true;
+          });
+     }
      void OnPausePlayClicked (Object sender, EventArgs args)
      {
-          if (Game is IPausableGame<String> reversibleGame)
+          if (!GameOver && Game is IPausableGame<String> reversibleGame)
           {
                if (reversibleGame.Running)
                {
-                    pauseGUI();
+                    pauseGUI ();
                     reversibleGame.Pause ();
-               } else {
-                    var playImage = (Gtk.Image)Builder.GetObject("PauseImage");
-                    (sender as Gtk.Button)!.Image = playImage;
+               } 
+               else 
+               {
                     var singleStepButton = (Gtk.Button) Builder.GetObject("SingleStepButton");
                     singleStepButton.Sensitive = false;                         
-                    var previousButton = (Gtk.Button) Builder.GetObject("PreviousButton");
-                    previousButton.Sensitive = false;
-                    previousPlayerButton!.Sensitive = false;
+                    previousButton!.Sensitive = false;
+                    var previousPlayerButton = (Gtk.Button) Builder.GetObject("PreviousPlayerButton");
+                    previousPlayerButton.Sensitive = false;
+                    var playImage = (Gtk.Image)Builder.GetObject("PauseImage");
+                    (sender as Gtk.Button)!.Image = playImage;
                     reversibleGame.Continue ();
                }
           }
@@ -197,35 +218,45 @@ where Board : Enumerable2DArray.IEnumerable2DArray<Piece>
      {
           if ((Game is IReversibleGame<String> reversibleGame) && (reversibleGame.Undoable))
           {
-               pauseGUI();
+               var singleStepButton = (Gtk.Button) Builder.GetObject("SingleStepButton");
+               singleStepButton.Sensitive = false;                         
                reversibleGame.Undo();
                SetLabel (1, $"{PlayerToString(reversibleGame.ActivePlayer)}'s turn.");
+               GameOver = false;
           }
      }
-     void OnPreviousPlayerClicked(Object sender, EventArgs args)
+     void OnPreviousPlayerClicked (Object sender, EventArgs args)
      {
           if (Game is IReversibleGame<String> reversibleGame)
           {
-               pauseGUI();
+               var singleStepButton = (Gtk.Button) Builder.GetObject("SingleStepButton");
+               singleStepButton.Sensitive = false;                         
+               GameOver = false;
                while (!(ThisGUIusers!.Any(user => user == reversibleGame.ActivePlayer)) && reversibleGame.Undoable)
                {
-                    reversibleGame.Undo();
+                    reversibleGame.Undo ();
                     SetLabel (1, $"{PlayerToString(reversibleGame.ActivePlayer)}'s turn.");
                }
           }
      }
-     void OnSingleStepClicked(Object sender, EventArgs args)
+     void OnSingleStepClicked (Object sender, EventArgs args)
      {
           if (Game is IPausableGame<String> pausableGame)
           {
+               pauseGUI();
                pausableGame.SingleStep ();
                (sender as Gtk.Button)!.Sensitive = false;
-               var singleStepButton = (Gtk.Button) Builder.GetObject("SingleStepButton");
-               singleStepButton.Sensitive = false;
-               var previousButton = (Gtk.Button) Builder.GetObject("PreviousButton");
-               previousButton.Sensitive = false;
-               previousPlayerButton!.Sensitive = false;
           }
+     }
+     void OnInfoClicked(Object sender, EventArgs args)
+     {
+          var about = new Gtk.AboutDialog ();
+          about.ProgramName = "(Board) Game Framework";
+          about.Version = "0.9";
+          about.Copyright = "(c) 2023 Florian Brinkmeyer";
+          about.Website = "https://github.com/FlorianBrinkmeyer/GameFramework";
+          about.Run();
+          about.Destroy();
      }
      public event EventHandler? Quit;
      void OnQuit (Object sender, EventArgs args)

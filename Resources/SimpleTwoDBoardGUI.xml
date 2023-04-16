@@ -120,8 +120,9 @@
                       <object class="GtkMenuItem">
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
-                        <property name="label" translatable="yes">_Info</property>
+                        <property name="label" translatable="yes">_About</property>
                         <property name="use-underline">True</property>
+                        <signal name="activate" handler="OnInfoClicked" swapped="no"/>
                       </object>
                     </child>
                   </object>

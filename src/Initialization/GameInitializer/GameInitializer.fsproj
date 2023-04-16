@@ -10,10 +10,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\AIAgents\MonteCarloSearchTree\MonteCarloSearchTree.fsproj" />
-    <ProjectReference Include="..\..\AIAgents\NegaMaxTimeLimited\NegaMaxTimeLimited.fsproj" />
-    <ProjectReference Include="..\..\AIAgents\NegaMaxPruningCaching\NegaMaxPruningCaching.fsproj" />
-    <ProjectReference Include="..\..\AIAgents\SimpleNegaMaxAgent\SimpleNegaMaxAgent.fsproj" />
     <ProjectReference Include="..\GameInitializationConfig\GameInitializationConfig.fsproj" />
   </ItemGroup>
 
