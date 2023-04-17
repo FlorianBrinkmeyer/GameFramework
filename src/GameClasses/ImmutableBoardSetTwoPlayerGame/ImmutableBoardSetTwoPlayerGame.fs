@@ -35,6 +35,7 @@ type ImmutableBoardSetGame<'Board, 'MoveCommand, 'BoardEvnt, 'State when 'Board 
     (board: 'Board, activePlayer, moveCalcResult : MoveCalcResult<'MoveCommand>, makeMove : MakeMoveDelegate<'Board, 'MoveCommand, 'BoardEvnt, 'State>,
     calculatePossibleMoves : CalculatePossibleMovesDelegate<'Board, 'MoveCommand, 'State>, zsValueCalc : ZSValueCalcDelegate<'Board>,
     state : 'State, maybeDeviantingIntermediateEvaluation: Option<ZSValueCalcDelegate<'Board>>, ?previous, ?events) =
+        let mutable maybeCachedValue = None
         member x.ActivePlayer = activePlayer
         member x.Board = board
         member x.PossibleMoves =
@@ -76,11 +77,18 @@ type ImmutableBoardSetGame<'Board, 'MoveCommand, 'BoardEvnt, 'State when 'Board 
                     raise (InvalidOperationException "Game has already terminated.")    
             member x.Previous = previous |> Option.map (fun p -> p :> ImmutableGame)
             member x.ZSValue = 
-                match (x :> ImmutableGame).Running, maybeDeviantingIntermediateEvaluation with
-                | true, Some deviantEval ->
-                    (deviantEval.Invoke board) * (float) activePlayer
-                | _ -> 
-                    (zsValueCalc.Invoke board) * (float) activePlayer
+                match maybeCachedValue with
+                | Some value ->
+                    value
+                | None ->    
+                    let result =
+                        match (x :> ImmutableGame).Running, maybeDeviantingIntermediateEvaluation with
+                        | true, Some deviantEval ->
+                            (deviantEval.Invoke board) * (float) activePlayer
+                        | _ -> 
+                            (zsValueCalc.Invoke board) * (float) activePlayer
+                    maybeCachedValue <- Some result
+                    result
             member x.Value player = (x :> ImmutableGame).ZSValue * (float) (activePlayer * player)
             member x.ActivePlayer = activePlayer
             member x.NumberOfPossibleMoves = 

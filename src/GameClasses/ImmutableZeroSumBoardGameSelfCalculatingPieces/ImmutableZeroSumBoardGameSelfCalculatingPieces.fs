@@ -32,6 +32,7 @@ type ImmutableZeroSumBoardGameSelfCalculatingPieces<'Board, 'Coords, 'MoveComman
     (board: 'Board, activePlayer, moveCalcResult: MoveCalcResult<'MoveCommand, 'Coords>,
     moveCalc : MoveCalcDelegate<'Board, 'Coords, 'MoveCommand, 'BoardEvnt, 'State>, maybeZsValueCalc : Option<ZSValueCalcDelegate<'Board>>, 
     state : 'State, unstableGameState, ?previous, ?events) =
+        let mutable maybeCachedValue = None
         member x.ActivePlayer = activePlayer
         member x.Board = board
         override x.Equals other =
@@ -77,14 +78,21 @@ type ImmutableZeroSumBoardGameSelfCalculatingPieces<'Board, 'Coords, 'MoveComman
                     raise (InvalidOperationException "Game has already terminated.")    
             member x.Previous = previous |> Option.map (fun p -> p :> ImmutableGame)
             member x.ZSValue = 
-                match moveCalcResult with
-                | GameOverZSValue value ->
-                    value * (float) activePlayer
-                | _ ->    
-                    match maybeZsValueCalc with
-                    | Some zsValueCalc ->
-                        (zsValueCalc.Invoke board) * (float) activePlayer
-                    | None -> raise (InvalidOperationException "Intermediate evaluation of game state impossible: No evaluation function assigned.")    
+                match maybeCachedValue with
+                | Some value ->
+                    value
+                | None ->    
+                    let result =
+                        match moveCalcResult with
+                        | GameOverZSValue value ->
+                            value * (float) activePlayer
+                        | _ ->    
+                            match maybeZsValueCalc with
+                            | Some zsValueCalc ->
+                                (zsValueCalc.Invoke board) * (float) activePlayer
+                            | None -> raise (InvalidOperationException "Intermediate evaluation of game state impossible: No evaluation function assigned.")    
+                    maybeCachedValue <- Some result
+                    result
             member x.Value player = (x :> ImmutableGame).ZSValue * (float) (activePlayer * player)
             member x.ActivePlayer = activePlayer
             member x.NumberOfPossibleMoves = 

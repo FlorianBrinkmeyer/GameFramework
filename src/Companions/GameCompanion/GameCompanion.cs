@@ -59,7 +59,7 @@ public class GameCompanion<GameResult>: IGameMoveMaker, IReversibleGame<GameResu
         foreach (AI_Agent agent in agents)
             playerToAIAgent![agent.Player] = agent;
     }
-    public bool Running => State.Running && runState == RunState.Running;
+    public bool Running => State.Running;
     public int ActivePlayer => State.ActivePlayer;
     protected virtual void TriggerTriggerBoardEvents () {}
     public event MoveMadeEvent? MoveMadeEvent;
@@ -144,6 +144,7 @@ public class GameCompanion<GameResult>: IGameMoveMaker, IReversibleGame<GameResu
             TriggerNextPlayer ();
         }
     }
+    public bool Paused => runState == RunState.PausingPreserveNextMove || runState == RunState.PausingIgnoreNextMove;
     public void Continue()
     {
         UpdateAIs?.Invoke (false);

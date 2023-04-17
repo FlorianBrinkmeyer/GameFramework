@@ -33,6 +33,7 @@ public interface IGameInformer<GameResult>
 public interface IPausableGame<GameResult> : IGameInformer<GameResult>
 {
     void Pause ();
+    bool Paused { get;}
     void Continue ();
     void SingleStep ();
     event EventHandler? PauseMoveDelivered;

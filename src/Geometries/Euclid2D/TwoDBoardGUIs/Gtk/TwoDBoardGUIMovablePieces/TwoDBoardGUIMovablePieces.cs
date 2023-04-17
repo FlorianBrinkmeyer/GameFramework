@@ -15,6 +15,8 @@ Copyright (C) 2023  Florian Brinkmeyer
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+using System.Timers;
+
 namespace Euclid2DGame;
 
 using System;
@@ -66,7 +68,32 @@ public abstract class TwoDBoardGUIMovablePieces : TwoDBoardGUI<ITwoDBoardMovable
             var dest = Euclid2DCoords.FromTuple (movingEvent!.Dest);
             var destPiece = GameBoard![dest];
             FieldClearImage (start);
-            SetFieldToPieceImage (dest, destPiece); 
+            SetFieldToPieceImage (dest, destPiece);
+            if (ThisGUIusers!.All(player => player != destPiece.Player))
+            {
+                var timer = new System.Timers.Timer(700);
+                timer.AutoReset = false;
+                timer.Elapsed += (sender, args) =>
+                {
+                    var shown = true;
+                    var count = 0;
+                    var timer2 = new System.Timers.Timer(70);
+                    timer2.AutoReset = true;
+                    timer2.Elapsed += (sender, args) =>
+                    {
+                        if (!shown)
+                            SetFieldToPieceImage(dest, destPiece);
+                        else
+                            FieldClearImage(dest);
+                        shown = !shown;
+                        count++;
+                        if (count == 4)
+                            timer2.Stop();
+                    };
+                    timer2.Start();
+                };
+                timer.Start();
+            }
         }
         if (evnt is BoardDestroyedEvent<Tuple<int,int>> destroyedEvent)
         {

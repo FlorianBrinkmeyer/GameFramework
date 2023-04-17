@@ -105,16 +105,20 @@ type NegaMaxTimeLimitedPruningCaching (player : int, searchTime : int, maxDepth 
                     if child.Initialized then
                         index, child
                     else
-                        let depth =
-                            if child.State.NumberOfPossibleMoves = 0 then
-                                Double.PositiveInfinity
-                            elif child.State.InstableState && increaseDepth then
-                                Double.NegativeInfinity
-                            elif child.DevelopedChildren = 0 then
-                                0.0
-                            else    
-                                Double.NegativeInfinity       
-                        index, {child with Alpha = -node.Beta; Beta = -node.Alpha; Depth = depth; Initialized = true}    
+                        let rec getDepthAndValue (nd : Node) =                           
+                            if nd.State.NumberOfPossibleMoves = 0 then
+                                Double.PositiveInfinity, nd.State.ZSValue
+                            elif nd.State.InstableState && increaseDepth then
+                                Double.NegativeInfinity, nd.State.ZSValue
+                            elif nd.DevelopedChildren = nd.State.NumberOfPossibleMoves then
+                                let childrenDepthsAndValues = nd.Children.Values |> Seq.toArray |> Array.map getDepthAndValue 
+                                let depth = (childrenDepthsAndValues |> Array.map fst |> Array.min) + 1.0
+                                let value = childrenDepthsAndValues |> Array.map (fun (_, v) -> -v) |> Array.max
+                                depth, value
+                            else 
+                                0.0, nd.State.ZSValue
+                        let depth, value = getDepthAndValue child
+                        index, {child with Alpha = -node.Beta; Beta = -node.Alpha; Depth = depth; Value = value; Initialized = true}    
                 )
                 let incompleteChildren = initializedChildren |> Seq.filter (fun (_, child) -> child.Depth < depth - 1.0) 
                 let orderedChildren = incompleteChildren |> Seq.sortBy (fun (_, child) -> child.Value) |> Seq.toArray
@@ -155,8 +159,8 @@ type NegaMaxTimeLimitedPruningCaching (player : int, searchTime : int, maxDepth 
                         cachedStates[node.State] <- {Node = node |> resetNode; Depth = depth}   
                 if newDevChildrenCount = node.State.NumberOfPossibleMoves 
                   && newChildren.Values |> Seq.forall (fun child -> child.Depth >= depth - 1.0) then
-                    let childrenMinDepth = newChildren.Values |> Seq.map (fun child -> child.Depth) |> Seq.min
-                    let newDepth = childrenMinDepth + 1.0
+                    let newChildrenMinDepth = newChildren.Values |> Seq.map (fun child -> child.Depth) |> Seq.min
+                    let newDepth = newChildrenMinDepth + 1.0
                     let newValue = newChildren.Values |> Seq.map (fun child -> -child.Value) |> Seq.max    
                     let res = {nodeWithUpdatedChildren with Value = newValue; Depth = newDepth}
                     maybeCacheState newDepth res           

@@ -177,7 +177,6 @@ where Board : Enumerable2DArray.IEnumerable2DArray<Piece>
                } 
           }
      }
-     protected bool GameOver = false;
      protected virtual void OnGameOver (string result)  
      {
           SetLabel (1, result);
@@ -189,19 +188,13 @@ where Board : Enumerable2DArray.IEnumerable2DArray<Piece>
                previousButton!.Sensitive = true;
                var previousPlayerButton = (Gtk.Button) Builder.GetObject("PreviousPlayerButton");
                previousPlayerButton.Sensitive = true;
-               GameOver = true;
           });
      }
      void OnPausePlayClicked (Object sender, EventArgs args)
      {
-          if (!GameOver && Game is IPausableGame<String> reversibleGame)
+          if (Game!.Running && Game is IPausableGame<String> reversibleGame)
           {
-               if (reversibleGame.Running)
-               {
-                    pauseGUI ();
-                    reversibleGame.Pause ();
-               } 
-               else 
+               if (reversibleGame.Paused)
                {
                     var singleStepButton = (Gtk.Button) Builder.GetObject("SingleStepButton");
                     singleStepButton.Sensitive = false;                         
@@ -211,6 +204,11 @@ where Board : Enumerable2DArray.IEnumerable2DArray<Piece>
                     var playImage = (Gtk.Image)Builder.GetObject("PauseImage");
                     (sender as Gtk.Button)!.Image = playImage;
                     reversibleGame.Continue ();
+               } 
+               else 
+               {
+                    pauseGUI ();
+                    reversibleGame.Pause ();
                }
           }
      }
@@ -222,7 +220,6 @@ where Board : Enumerable2DArray.IEnumerable2DArray<Piece>
                singleStepButton.Sensitive = false;                         
                reversibleGame.Undo();
                SetLabel (1, $"{PlayerToString(reversibleGame.ActivePlayer)}'s turn.");
-               GameOver = false;
           }
      }
      void OnPreviousPlayerClicked (Object sender, EventArgs args)
@@ -231,7 +228,6 @@ where Board : Enumerable2DArray.IEnumerable2DArray<Piece>
           {
                var singleStepButton = (Gtk.Button) Builder.GetObject("SingleStepButton");
                singleStepButton.Sensitive = false;                         
-               GameOver = false;
                while (!(ThisGUIusers!.Any(user => user == reversibleGame.ActivePlayer)) && reversibleGame.Undoable)
                {
                     reversibleGame.Undo ();
