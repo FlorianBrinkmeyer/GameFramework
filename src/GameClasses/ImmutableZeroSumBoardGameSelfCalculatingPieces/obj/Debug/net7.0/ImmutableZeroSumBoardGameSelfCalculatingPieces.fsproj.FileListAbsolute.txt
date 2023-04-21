@@ -64,3 +64,5 @@
 /home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/GameClasses/ImmutableZeroSumBoardGameSelfCalculatingPieces/bin/Debug/net7.0/BoardGameMovingPiecesHelper.dll
 /home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/GameClasses/ImmutableZeroSumBoardGameSelfCalculatingPieces/bin/Debug/net7.0/BoardGameMovingPiecesHelper.pdb
 /home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/GameClasses/ImmutableZeroSumBoardGameSelfCalculatingPieces/bin/Debug/net7.0/BoardGameMovingPiecesHelper.xml
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/GameClasses/ImmutableZeroSumBoardGameSelfCalculatingPieces/bin/Debug/net7.0/GameInterfacesForResultCalculation.dll
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/GameClasses/ImmutableZeroSumBoardGameSelfCalculatingPieces/bin/Debug/net7.0/GameInterfacesForResultCalculation.pdb

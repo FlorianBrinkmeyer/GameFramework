@@ -83,3 +83,5 @@
 /home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Games/Chess/Euclid2D/TwoDChessInit/bin/Debug/net7.0/StopableAI.xml
 /home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Games/Chess/Euclid2D/TwoDChessInit/bin/Debug/net7.0/GameInterfacesForInit.dll
 /home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Games/Chess/Euclid2D/TwoDChessInit/bin/Debug/net7.0/GameInterfacesForInit.pdb
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Games/Chess/Euclid2D/TwoDChessInit/bin/Debug/net7.0/GameInterfacesForResultCalculation.dll
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Games/Chess/Euclid2D/TwoDChessInit/bin/Debug/net7.0/GameInterfacesForResultCalculation.pdb

@@ -173,7 +173,7 @@ type StartGUI () as this =
         let game = games |> List.find (fun gm -> gm.Name = ("GameChooser" |> getActive))
         maybeCreateNewAIInfo ()           
         let getAIsAndHumans () =
-            let ais = initAIs game.UsesInfiniteValues (AIagents.Values |> Seq.toArray)
+            let ais = initAIs game (AIagents.Values |> Seq.toArray)
             let aiInformers = ais |> Array.choose (fun ai ->
                 match ai with
                 | :? AI_Informer as informer ->

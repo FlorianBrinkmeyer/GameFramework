@@ -16,6 +16,7 @@
     <ProjectReference Include="..\..\ImmutableArray\ImmutableArray.fsproj" />
     <ProjectReference Include="..\..\PieceInterfaces\PieceBase\PieceBase.csproj" />
     <ProjectReference Include="..\..\HelperTypes\BoardGameMovingPiecesHelper\BoardGameMovingPiecesHelper.fsproj" />
+    <ProjectReference Include="..\..\GameInterfaces\GameInterfacesForResultCalculation\GameInterfacesForResultCalculation.csproj" />
   </ItemGroup>
 
 </Project>

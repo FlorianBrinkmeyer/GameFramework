@@ -53,7 +53,7 @@ let seqOfSeqOptToMap (seqSeq : seq<seq<Option<'t>>>) =
     )
     Seq.zip dict.Keys dict.Values |> Map.ofSeq
 
-type ImmutableEnumerable2DArray<'t when 't : equality> (xdim, ydim, map : Map<int*int, 't>, debugMode, ?emptyCoords : Set<int*int>, ?previous : ImmutableEnumerable2DArray<'t>) =
+type ImmutableEnumerable2DArray<'t when 't : equality and 't : comparison> (xdim, ydim, map : Map<int*int, 't>, debugMode, ?emptyCoords : Set<int*int>, ?previous : ImmutableEnumerable2DArray<'t>) =
     member x.InternalMap = map
     override this.Equals other =
         let castedOther = other :?> ImmutableEnumerable2DArray<'t>
@@ -166,3 +166,12 @@ type ImmutableEnumerable2DArray<'t when 't : equality> (xdim, ydim, map : Map<in
         member x.AllUsedCoords = map.Keys
         member x.AllEntries = map.Values
         member x.AllEntriesWithCoords = Seq.zip map.Values map.Keys
+    interface IComparable with
+        member this.CompareTo other =
+            let otherMap = (other :?> ImmutableEnumerable2DArray<'t>).InternalMap
+            if map < otherMap then
+                -1
+            elif map > otherMap then
+                1
+            else
+                0

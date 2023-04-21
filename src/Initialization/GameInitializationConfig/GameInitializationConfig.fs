@@ -43,17 +43,22 @@ let standardChess =
 
 let games = [reversiWithPassing; reversiNoPassing; standardChess]
 
-let initAIs gameUsedInfiniteValues (aiInfos : AIInfo []) =
+let initAIs (game : GameInfo) (aiInfos : AIInfo []) =
     aiInfos |> Array.map (fun info ->
         if info.Label = monteCarloSearchTree then
-            MonteCarloTreeSearch (info.Player, info.ConsiderationTime, gameUsedInfiniteValues, info.MaybeUsedThreads.Value) :> AI_Agent
+            MonteCarloTreeSearch (info.Player, info.ConsiderationTime, game.UsesInfiniteValues, info.MaybeUsedThreads.Value) :> AI_Agent
         elif info.Label = negaMaxTimeLimited then
            (*if debugMode then
                NegaMax (info.Player, debugSearchDepth)
            else*)
                NegaMaxTimeLimited (info.Player, info.ConsiderationTime, 100)
         elif info.Label = negaMaxPruningCaching then
-            Negamax.NegaMaxTimeLimitedPruningCaching (info.Player, info.ConsiderationTime, 100, negaMaxIncreaseSearchDepthIfStateUnstable, debugMode, info.MaybeUsedThreads.Value)    
+            let maybeMaxCachedStates =
+                if game.Name = "Chess" then
+                    Some 20000
+                else
+                    None
+            Negamax.NegaMaxTimeLimitedPruningCaching (info.Player, info.ConsiderationTime, 100, negaMaxIncreaseSearchDepthIfStateUnstable, debugMode, maybeMaxCachedStates, info.MaybeUsedThreads.Value)    
         else    
             raise (Exception "AI case distinction incomplete.")
     )       
@@ -75,7 +80,8 @@ let initGame (game : GameInfo) (aisAsAgents : Generic.IEnumerable<AI_Agent>) (ai
         gui, gameCompanion
     elif game = standardChess then
         let startPositionFileName = Path.Combine [|resourcesFolder; "StandardChessStartPosition.csv"|]
-        let pieceFactory = fun kind color -> StandardChess.PieceFactory.InitPiece (kind, color)
+        let piecePool = Concurrent.ConcurrentDictionary<String * int * Object, Object> ()
+        let pieceFactory = fun kind color -> StandardChess.PieceFactory.InitPiece (piecePool, kind, color)
         let gameCompanion, boardCompanion = Chess.Init.initChess 8 8 1 pieceFactory startPositionFileName Chess.ResultMapper.resultMapper aisAsAgents debugMode
         let gui = 
             let imageFolder = Path.Combine [|resourcesFolder; "ChessPieceImages"|]

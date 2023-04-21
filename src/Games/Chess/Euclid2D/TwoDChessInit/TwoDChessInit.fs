@@ -37,14 +37,14 @@ let initChess xDim yDim startPlayer (pieceFactory : Func<String, int, IPiece>) (
                 None    
         ))
     let board = ImmutableEnumerable2DArray<IPiece> (xDim, yDim, seqOfSeqOptToMap boardSeqOfSeq, debugMode)
-    let firstMoveCalcRes, _, _, _ = calculatePossibleMoves board startPlayer 0 None
+    let firstMoveCalcRes, _, state, _ = calculatePossibleMoves board startPlayer (0, Map.empty<int * ImmutableEnumerable2DArray<IPiece>, int>) None
     let zsEvaluation (board : ImmutableEnumerable2DArray<IPiece>) = 
         (board :> IEnumerable2DArray<IPiece>).AllEntriesWithCoords |> Seq.map (fun (piece, pos) -> 
             ((piece :?> ISelfEvaluatingPiece<ImmutableEnumerable2DArray<IPiece>, int*int>).Value board pos) * (float) piece.Player
         ) |> Seq.sum
     let game = 
-        ImmutableZeroSumBoardGameSelfCalculatingPieces<ImmutableEnumerable2DArray<IPiece>, int*int, IMoveCommand<int*int>, IBoardMoveEvent, int>
-            (board, startPlayer, firstMoveCalcRes, calculatePossibleMoves, Some zsEvaluation, 0, false)
+        ImmutableZeroSumBoardGameSelfCalculatingPieces<ImmutableEnumerable2DArray<IPiece>, int*int, IMoveCommand<int*int>, IBoardMoveEvent, GameFinishReason, int * Map<int * ImmutableEnumerable2DArray<IPiece>, int>>
+            (board, startPlayer, firstMoveCalcRes, calculatePossibleMoves, Some zsEvaluation, state, false)
     let gameCompanion = BoardGameCompanion<'GameResult, IEnumerable2DArray<IPiece>, IBoardMoveEvent> (game, agents, resultMapper, debugMode)
     let boardCompanion = TwoDBoardCompanionMovablePieces gameCompanion    
     gameCompanion, boardCompanion   

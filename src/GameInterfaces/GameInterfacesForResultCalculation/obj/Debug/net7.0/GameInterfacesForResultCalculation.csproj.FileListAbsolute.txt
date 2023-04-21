@@ -1,0 +1,12 @@
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/GameInterfaces/GameInterfacesForResultCalculation/bin/Debug/net7.0/GameInterfacesForResultCalculation.deps.json
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/GameInterfaces/GameInterfacesForResultCalculation/bin/Debug/net7.0/GameInterfacesForResultCalculation.dll
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/GameInterfaces/GameInterfacesForResultCalculation/bin/Debug/net7.0/GameInterfacesForResultCalculation.pdb
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/GameInterfaces/GameInterfacesForResultCalculation/obj/Debug/net7.0/GameInterfacesForResultCalculation.csproj.AssemblyReference.cache
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/GameInterfaces/GameInterfacesForResultCalculation/obj/Debug/net7.0/GameInterfacesForResultCalculation.GeneratedMSBuildEditorConfig.editorconfig
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/GameInterfaces/GameInterfacesForResultCalculation/obj/Debug/net7.0/GameInterfacesForResultCalculation.AssemblyInfoInputs.cache
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/GameInterfaces/GameInterfacesForResultCalculation/obj/Debug/net7.0/GameInterfacesForResultCalculation.AssemblyInfo.cs
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/GameInterfaces/GameInterfacesForResultCalculation/obj/Debug/net7.0/GameInterfacesForResultCalculation.csproj.CoreCompileInputs.cache
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/GameInterfaces/GameInterfacesForResultCalculation/obj/Debug/net7.0/GameInterfacesForResultCalculation.dll
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/GameInterfaces/GameInterfacesForResultCalculation/obj/Debug/net7.0/refint/GameInterfacesForResultCalculation.dll
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/GameInterfaces/GameInterfacesForResultCalculation/obj/Debug/net7.0/GameInterfacesForResultCalculation.pdb
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/GameInterfaces/GameInterfacesForResultCalculation/obj/Debug/net7.0/ref/GameInterfacesForResultCalculation.dll

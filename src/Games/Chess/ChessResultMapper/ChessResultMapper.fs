@@ -20,13 +20,18 @@ module Chess.ResultMapper
 open GameFramework
 open System
 
-let resultMapper (game : ImmutableGame) =
+let resultMapper (game : ImmutableGame) =    
+    let informer = game :?> IGameResultTypeInformer<GameFinishReason>
     if game.Value 1 = Double.PositiveInfinity then
         "White has checkmated black: White wins."
     elif game.Value -1 = Double.PositiveInfinity then
         "Black has checkmated white: Black wins."
     else
-        if game.ActivePlayer = 1 then
-            "White isn't checked, but unable to make a legal move: Tie."
+        if informer.ResType = DrawByThreeFoldRepetition then
+            "The exact same game position has occured for the third time: Draw."
+        elif informer.ResType = DrawBy50MovesRule then
+            "For 50 moves no capture made and no pawn moved: Draw."    
+        elif game.ActivePlayer = 1 then
+            "White isn't checked, but unable to make a legal move: Draw."
         else
-            "Black isn't checked, but unable to make a legal move: Tie."
+            "Black isn't checked, but unable to make a legal move: Draw."

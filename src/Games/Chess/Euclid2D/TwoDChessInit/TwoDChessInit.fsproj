@@ -16,6 +16,7 @@
     <ProjectReference Include="..\..\..\..\AI_Interfaces\AI_InterfacesForGames\AIBaseInterface\AIBaseInterface.fsproj" />
     <ProjectReference Include="..\..\..\..\PieceInterfaces\PieceInterfacesForGameClasses\PieceInterfacesForGameClasses.fsproj" />
     <ProjectReference Include="..\..\..\..\Geometries\Euclid2D\Boards\TwoDBoardCompanions\TwoDBoardCompanions.fsproj" />
+    <ProjectReference Include="..\..\ChessHelperTypes\ChessHelperTypes.fsproj" />
   </ItemGroup>
 
 </Project>

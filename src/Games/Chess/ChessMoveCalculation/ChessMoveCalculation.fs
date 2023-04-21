@@ -21,8 +21,9 @@ open System
 open Chess
 open GameFramework
 
-let calculatePossibleMoves<'Board, 'Coords when 'Coords :> IComparable and 'Coords : comparison and 'Board :> ImmutableArray<'Coords, IPiece>>
-    (board : 'Board) activePlayer nonHitMovesInRow (maybePositionOfLastMovedPiece : Option<'Coords>) =              
+let calculatePossibleMoves<'Board, 'Coords
+    when 'Coords :> IComparable and 'Coords : comparison and 'Board :> ImmutableArray<'Coords, IPiece> and 'Board :> IComparable and 'Board : comparison>
+    (board : 'Board) activePlayer (nonHitMovesInRow, boardMap : Map<int * 'Board, int>) (maybePositionOfLastMovedPiece : Option<'Coords>) =              
     let lastMoveIsHitMove =
         match board.Previous, maybePositionOfLastMovedPiece with
         | Some previousBoard, Some pos ->
@@ -41,7 +42,14 @@ let calculatePossibleMoves<'Board, 'Coords when 'Coords :> IComparable and 'Coor
             0
         else
             nonHitMovesInRow + 1        
-    if nextNonHitMovesInRow < 50 then
+    let nextBoardMap, threeFoldRepetition =
+        let key = activePlayer, board
+        match boardMap.TryFind key with
+        | Some value ->
+            boardMap.Add (key, value + 1), value + 1 >= 3
+        | None ->
+            boardMap.Add (key, 1), false                  
+    if nextNonHitMovesInRow < 50 && not threeFoldRepetition then
         let ownKingPos, ownKing = 
             let maybePosAndKing=
                 board.KeyValuePairs |> Seq.tryPick (fun (pos, piece) -> 
@@ -120,10 +128,10 @@ let calculatePossibleMoves<'Board, 'Coords when 'Coords :> IComparable and 'Coor
             let additionalEvent = {CheckedPlayer = activePlayer; KingPos = ownKingPos; CheckedBy = kingThreatCoords} :> IBoardMoveEvent
             let moveCalcResult =
                 if possibleMoves.Length = 0 then
-                    GameOverZSValue (Double.PositiveInfinity * (float) (activePlayer * (-1)))
+                    GameOverZSValue (Double.PositiveInfinity * (float) (activePlayer * (-1)), CheckMate)
                 else
                     PossibleMoves possibleMoves
-            moveCalcResult, seq [additionalEvent], nextNonHitMovesInRow, true                
+            moveCalcResult, seq [additionalEvent], (nextNonHitMovesInRow, nextBoardMap), true                
         | None ->
             let allNewOwnPieces = 
                 boardWithKingBlackListAndNewlyCheckPreventingWhiteLists.KeyValuePairs |> Seq.filter (fun (_, piece) -> piece.Player = activePlayer)
@@ -136,9 +144,14 @@ let calculatePossibleMoves<'Board, 'Coords when 'Coords :> IComparable and 'Coor
                 commands |> Seq.mapi (fun index (pos, moveCom) -> {Index = index; StartField = pos; Cmd = moveCom}) |> Seq.toArray
             let moveCalcResult =
                 if possibleMoves.Length = 0 then
-                    GameOverZSValue 0.0
+                    GameOverZSValue (0.0, DrawByNoLegalMoves)
                 else
                     PossibleMoves possibleMoves
-            moveCalcResult, Seq.empty, nextNonHitMovesInRow, lastMoveIsHitMove
+            moveCalcResult, Seq.empty, (nextNonHitMovesInRow, nextBoardMap), lastMoveIsHitMove
     else
-        GameOverZSValue 0.0, Seq.empty, nextNonHitMovesInRow, false
+        let finishReason =
+            if threeFoldRepetition then
+                DrawByThreeFoldRepetition
+            else
+                DrawBy50MovesRule
+        GameOverZSValue (0.0, finishReason), Seq.empty, (nextNonHitMovesInRow, nextBoardMap), false

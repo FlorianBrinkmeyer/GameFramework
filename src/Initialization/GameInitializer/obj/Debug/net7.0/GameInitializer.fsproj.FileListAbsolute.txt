@@ -337,3 +337,5 @@
 /home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Initialization/GameInitializer/obj/Debug/net7.0/ref/GameInitializer.dll
 /home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Initialization/GameInitializer/bin/Debug/net7.0/GameInterfacesForInit.dll
 /home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Initialization/GameInitializer/bin/Debug/net7.0/GameInterfacesForInit.pdb
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Initialization/GameInitializer/bin/Debug/net7.0/GameInterfacesForResultCalculation.dll
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Initialization/GameInitializer/bin/Debug/net7.0/GameInterfacesForResultCalculation.pdb

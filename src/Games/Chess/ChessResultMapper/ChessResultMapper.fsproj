@@ -11,6 +11,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\GameInterfaces\GameInterfacesForAIsAndCompanion\GameInterfacesForAIsAndCompanion.fsproj" />
+    <ProjectReference Include="..\ChessHelperTypes\ChessHelperTypes.fsproj" />
+    <ProjectReference Include="..\..\..\GameInterfaces\GameInterfacesForResultCalculation\GameInterfacesForResultCalculation.csproj" />
   </ItemGroup>
 
 </Project>

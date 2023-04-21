@@ -21,22 +21,22 @@ open System
 open GameFramework
 
 ///Current board * active player * optional state * new position of last moved piece -> possible moves / game result * board events * new optional state * game state is "unstable"
-type MoveCalcDelegate<'Board, 'Coords, 'MoveCommand, 'BoardEvnt, 'State> = 
-    Func<'Board, int, 'State, Option<'Coords>, MoveCalcResult<'MoveCommand, 'Coords> * seq<'BoardEvnt> * 'State * bool> 
+type MoveCalcDelegate<'Board, 'Coords, 'MoveCommand, 'BoardEvnt, 'ResultType, 'State> = 
+    Func<'Board, int, 'State, Option<'Coords>, MoveCalcResult<'MoveCommand, 'Coords, 'ResultType> * seq<'BoardEvnt> * 'State * bool> 
 
 ///Current board -> zero-sum value
 type ZSValueCalcDelegate<'Board> = Func<'Board, float>
 
-type ImmutableZeroSumBoardGameSelfCalculatingPieces<'Board, 'Coords, 'MoveCommand, 'BoardEvnt, 'State
+type ImmutableZeroSumBoardGameSelfCalculatingPieces<'Board, 'Coords, 'MoveCommand, 'BoardEvnt, 'ResultType, 'State
     when 'Coords :> IComparable and 'Coords : comparison and 'Board :> ImmutableArray<'Coords, IPiece> and 'Board : equality>
-    (board: 'Board, activePlayer, moveCalcResult: MoveCalcResult<'MoveCommand, 'Coords>,
-    moveCalc : MoveCalcDelegate<'Board, 'Coords, 'MoveCommand, 'BoardEvnt, 'State>, maybeZsValueCalc : Option<ZSValueCalcDelegate<'Board>>, 
+    (board: 'Board, activePlayer, moveCalcResult: MoveCalcResult<'MoveCommand, 'Coords, 'ResultType>,
+    moveCalc : MoveCalcDelegate<'Board, 'Coords, 'MoveCommand, 'BoardEvnt, 'ResultType, 'State>, maybeZsValueCalc : Option<ZSValueCalcDelegate<'Board>>, 
     state : 'State, unstableGameState, ?previous, ?events) =
         let mutable maybeCachedValue = None
         member x.ActivePlayer = activePlayer
         member x.Board = board
         override x.Equals other =
-            let castedOther = other :?> ImmutableZeroSumBoardGameSelfCalculatingPieces<'Board, 'Coords, 'MoveCommand, 'BoardEvnt, 'State>
+            let castedOther = other :?> ImmutableZeroSumBoardGameSelfCalculatingPieces<'Board, 'Coords, 'MoveCommand, 'BoardEvnt, 'ResultType, 'State>
             activePlayer = castedOther.ActivePlayer && board = castedOther.Board
         override x.GetHashCode () = HashCode.Combine (activePlayer, board)                
         override x.ToString () =
@@ -57,6 +57,12 @@ type ImmutableZeroSumBoardGameSelfCalculatingPieces<'Board, 'Coords, 'MoveComman
                 | PossibleMoves possibleMoves -> 
                     possibleMoves |> Seq.filter (fun move -> move.StartField = coords)
                 | _ -> Seq.empty    
+        interface IGameResultTypeInformer<'ResultType> with
+            member x.ResType =
+                match moveCalcResult with
+                | GameOverZSValue (_, result) ->
+                    result
+                | _ -> raise (InvalidOperationException "Game has not yet terminated.")      
         interface ImmutableGame with
             member this.NthMove moveIndex =
                 match moveCalcResult with
@@ -69,7 +75,7 @@ type ImmutableZeroSumBoardGameSelfCalculatingPieces<'Board, 'Coords, 'MoveComman
                         let nextMoveCalcResult, additionalNextBoardEvents, nextState, gameStateIsUnstable = 
                             moveCalc.Invoke (nextBoard, nextPlayer, state, Some movedPieceNewPosition)
                         let allNewBoadEvents = Seq.append nextBoardEvents additionalNextBoardEvents
-                        ImmutableZeroSumBoardGameSelfCalculatingPieces<'Board, 'Coords, 'MoveCommand, 'BoardEvnt, 'State> (nextBoard, nextPlayer,
+                        ImmutableZeroSumBoardGameSelfCalculatingPieces<'Board, 'Coords, 'MoveCommand, 'BoardEvnt, 'ResultType, 'State> (nextBoard, nextPlayer,
                         nextMoveCalcResult, moveCalc, maybeZsValueCalc, nextState, gameStateIsUnstable, this, allNewBoadEvents)
                     with
                         | ex ->
@@ -84,7 +90,7 @@ type ImmutableZeroSumBoardGameSelfCalculatingPieces<'Board, 'Coords, 'MoveComman
                 | None ->    
                     let result =
                         match moveCalcResult with
-                        | GameOverZSValue value ->
+                        | GameOverZSValue (value, _) ->
                             value * (float) activePlayer
                         | _ ->    
                             match maybeZsValueCalc with

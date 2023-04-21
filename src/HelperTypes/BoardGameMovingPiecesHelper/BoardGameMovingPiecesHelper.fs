@@ -17,4 +17,4 @@ Copyright (C) 2023  Florian Brinkmeyer
 
 namespace GameFramework
 
-type MoveCalcResult<'MoveCommand, 'Coords> = PossibleMoves of IndexedMoveCommandWithStartField<'MoveCommand, 'Coords> [] | GameOverZSValue of float
+type MoveCalcResult<'MoveCommand, 'Coords, 'ResultType> = PossibleMoves of IndexedMoveCommandWithStartField<'MoveCommand, 'Coords> [] | GameOverZSValue of float * 'ResultType

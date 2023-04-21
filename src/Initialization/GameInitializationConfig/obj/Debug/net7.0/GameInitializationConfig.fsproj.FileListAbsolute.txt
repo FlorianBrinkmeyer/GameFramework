@@ -158,3 +158,5 @@
 /home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Initialization/GameInitializationConfig/bin/Debug/net7.0/AI_WithConsiderationTime.xml
 /home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Initialization/GameInitializationConfig/bin/Debug/net7.0/AI_WithMultiThreading.pdb
 /home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Initialization/GameInitializationConfig/bin/Debug/net7.0/AI_WithMultiThreading.xml
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Initialization/GameInitializationConfig/bin/Debug/net7.0/GameInterfacesForResultCalculation.dll
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Initialization/GameInitializationConfig/bin/Debug/net7.0/GameInterfacesForResultCalculation.pdb
