@@ -11,17 +11,18 @@ open GameFramework.GameInit.HelperTypes
 let debugMode = false
 let debugSearchDepth = 3
 
-let negaMaxIncreaseSearchDepthIfStateUnstable = false
-
 let resourcesFolder = "../../../Resources"
-let standardAIConsiderationTime = 10000
-let standardUsedThreadsByAI = 2
+//let resourcesFolder = "./Resources"
+let standardAIConsiderationTime = 20000
+let standardUsedThreadsByAI = 4
 
 let monteCarloSearchTree = "Monte Carlo tree search with multi-threading"
 let negaMaxPruningCaching = "NegaMax time-limited with alpha-beta pruning, caching and multi-threading"
 let negaMaxTimeLimited = "NegaMax time-limited"
 
 let aisWithMultiThreading = [monteCarloSearchTree; negaMaxPruningCaching]
+
+let negaMaxIncreasedSearchDepthIfStateUnstable = 1.0
 
 let reversiWithPassing = 
     {Name = "Reversi"; 
@@ -58,7 +59,7 @@ let initAIs (game : GameInfo) (aiInfos : AIInfo []) =
                     Some 20000
                 else
                     None
-            Negamax.NegaMaxTimeLimitedPruningCaching (info.Player, info.ConsiderationTime, 100, negaMaxIncreaseSearchDepthIfStateUnstable, debugMode, maybeMaxCachedStates, info.MaybeUsedThreads.Value)    
+            Negamax.NegaMaxTimeLimitedPruningCaching (info.Player, info.ConsiderationTime, 100, debugMode, maybeMaxCachedStates, info.MaybeUsedThreads.Value, negaMaxIncreasedSearchDepthIfStateUnstable)    
         else    
             raise (Exception "AI case distinction incomplete.")
     )       
@@ -69,14 +70,14 @@ let initGame (game : GameInfo) (aisAsAgents : Generic.IEnumerable<AI_Agent>) (ai
         let gui = 
             let imageFolder = Path.Combine [|resourcesFolder; "ReversiPieceImages"|]
             let guiBuilder = Path.Combine [|resourcesFolder; "SimpleTwoDBoardGUI.xml"|]
-            Reversi.ReversiGtkGUI (800, 880, imageFolder, guiBuilder, boardCompanion, gameCompanion, humanPlayers, aisAsInformers, debugMode)
+            Reversi.ReversiGtkGUI (800, 850, imageFolder, guiBuilder, boardCompanion, gameCompanion, humanPlayers, aisAsInformers, debugMode)
         gui :> IGui, gameCompanion :> IInitGame
     elif game = reversiNoPassing then
         let gameCompanion, boardCompanion = Reversi.Init.initReversi 8 8 (-1) false Reversi.ResultMapper.resultMapper aisAsAgents debugMode
         let gui = 
             let imageFolder = Path.Combine [|resourcesFolder; "ReversiPieceImages"|]
             let guiBuilder = Path.Combine [|resourcesFolder; "SimpleTwoDBoardGUI.xml"|]
-            Reversi.ReversiGtkGUI (800, 880, imageFolder, guiBuilder, boardCompanion, gameCompanion, humanPlayers, aisAsInformers, debugMode)
+            Reversi.ReversiGtkGUI (800, 850, imageFolder, guiBuilder, boardCompanion, gameCompanion, humanPlayers, aisAsInformers, debugMode)
         gui, gameCompanion
     elif game = standardChess then
         let startPositionFileName = Path.Combine [|resourcesFolder; "StandardChessStartPosition.csv"|]
@@ -86,7 +87,7 @@ let initGame (game : GameInfo) (aisAsAgents : Generic.IEnumerable<AI_Agent>) (ai
         let gui = 
             let imageFolder = Path.Combine [|resourcesFolder; "ChessPieceImages"|]
             let guiBuilder = Path.Combine [|resourcesFolder; "SimpleTwoDBoardGUI.xml"|]
-            Chess.ChessGtkGUI (800, 880, imageFolder, guiBuilder, boardCompanion, gameCompanion, humanPlayers, aisAsInformers, debugMode)
+            Chess.ChessGtkGUI (800, 850, imageFolder, guiBuilder, boardCompanion, gameCompanion, humanPlayers, aisAsInformers, debugMode)
         gui, gameCompanion
     else
         raise (Exception "Game case distinction incomplete.")

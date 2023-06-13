@@ -184,6 +184,10 @@ public class GameCompanion<GameResult>: IGameMoveMaker, IReversibleGame<GameResu
             State = State.Previous.Value;
             Undone?.Invoke (this, new EventArgs ());
             UpdateAIs?.Invoke (true);
+            if ((playerToAIAgent == null) || (!playerToAIAgent!.ContainsKey(ActivePlayer)))
+            {
+                runState = RunState.PausingPreserveNextMove;
+            }
         }
         else
         {

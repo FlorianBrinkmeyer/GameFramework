@@ -27,17 +27,27 @@ public abstract class TwoDBoardGUIMovablePieces : TwoDBoardGUI<ITwoDBoardMovable
 {
     bool startFieldAlreadyChosen = false;
     Euclid2DCoords? startField;
+    protected override void UpdateGUI (bool keepPreviousButtons)
+    {          
+        base.UpdateGUI (keepPreviousButtons);
+        var guiPlayer = ThisGUIusers!.Any (player => player == Game!.ActivePlayer);
+        if (guiPlayer)
+            OnOwnPlayersTurn (Game!.ActivePlayer);
+    }
     override protected void OnOwnPlayersTurn (int activePlayer)
     {
         base.OnOwnPlayersTurn (activePlayer);
-        foreach (Tuple<int,int> entry in GameBoard!.AllUsedCoords)
+        Gtk.Application.Invoke ((sender, args) =>
         {
-            var coords = Euclid2DCoords.FromTuple (entry);
-            var possibleMoves = GameBoard.PossibleMoves (entry);
-            if (possibleMoves.Any ())
-                Fields![coords.X, coords.Y].Sensitive = true;
-        }
-        startFieldAlreadyChosen = false;     
+            foreach (Tuple<int,int> entry in GameBoard!.AllUsedCoords)
+            {
+                var coords = Euclid2DCoords.FromTuple (entry);
+                var possibleMoves = GameBoard.PossibleMoves (entry);
+                if (possibleMoves.Any ())
+                    Fields![coords.X, coords.Y].Sensitive = true;
+            }
+            startFieldAlreadyChosen = false;     
+        });
     }
     override protected void OnClick (Object? sender, EventArgs args)
     {
@@ -49,7 +59,14 @@ public abstract class TwoDBoardGUIMovablePieces : TwoDBoardGUI<ITwoDBoardMovable
             foreach (Tuple<int,int> entry in GameBoard!.AllCoords)
                 Fields![entry.Item1,entry.Item2].Sensitive = false;
             GameBoard!.MakeMove (startField!.AsTuple, destField.AsTuple);
-        } else {
+            if (Game is IPausableGame<String> pausableGame)
+            {
+                if (pausableGame.Paused)
+                    pausableGame.SingleStep ();
+            }
+        } 
+        else 
+        {
             startField = position;
             startFieldAlreadyChosen = true;
             foreach (Tuple<int,int> entry in GameBoard!.AllCoords)

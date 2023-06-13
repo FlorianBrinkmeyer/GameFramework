@@ -19,7 +19,7 @@ namespace GameFramework;
 
 using System;
 
-public interface IPiece
+public interface IPiece : IComparable
 {
     String Kind {get;}
     int Player {get;}

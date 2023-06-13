@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doc>
+<assembly><name>GameInterfacesForAIsAndCompanion</name></assembly>
+<members>
+<member name="P:GameFramework.ImmutableGame.InstableState">
+<summary>
+Can be used to signal the AI that the current game state needs special attention. (In order to increase search depth, for instance.)
+</summary>
+</member>
+</members>
+</doc>

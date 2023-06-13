@@ -1,0 +1,12 @@
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/ReadableArrayType/bin/Release/net7.0/ReadableArrayType.deps.json
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/ReadableArrayType/bin/Release/net7.0/ReadableArrayType.dll
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/ReadableArrayType/bin/Release/net7.0/ReadableArrayType.pdb
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/ReadableArrayType/obj/Release/net7.0/ReadableArrayType.csproj.AssemblyReference.cache
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/ReadableArrayType/obj/Release/net7.0/ReadableArrayType.GeneratedMSBuildEditorConfig.editorconfig
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/ReadableArrayType/obj/Release/net7.0/ReadableArrayType.AssemblyInfoInputs.cache
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/ReadableArrayType/obj/Release/net7.0/ReadableArrayType.AssemblyInfo.cs
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/ReadableArrayType/obj/Release/net7.0/ReadableArrayType.csproj.CoreCompileInputs.cache
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/ReadableArrayType/obj/Release/net7.0/ReadableArrayType.dll
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/ReadableArrayType/obj/Release/net7.0/refint/ReadableArrayType.dll
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/ReadableArrayType/obj/Release/net7.0/ReadableArrayType.pdb
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/ReadableArrayType/obj/Release/net7.0/ref/ReadableArrayType.dll

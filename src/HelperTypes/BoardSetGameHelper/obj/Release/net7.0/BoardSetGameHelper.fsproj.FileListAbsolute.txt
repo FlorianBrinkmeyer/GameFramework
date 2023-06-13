@@ -1,0 +1,13 @@
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/HelperTypes/BoardSetGameHelper/bin/Release/net7.0/BoardSetGameHelper.deps.json
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/HelperTypes/BoardSetGameHelper/bin/Release/net7.0/BoardSetGameHelper.dll
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/HelperTypes/BoardSetGameHelper/bin/Release/net7.0/BoardSetGameHelper.pdb
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/HelperTypes/BoardSetGameHelper/bin/Release/net7.0/BoardSetGameHelper.xml
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/HelperTypes/BoardSetGameHelper/obj/Release/net7.0/BoardSetGameHelper.fsproj.AssemblyReference.cache
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/HelperTypes/BoardSetGameHelper/obj/Release/net7.0/BoardSetGameHelper.AssemblyInfoInputs.cache
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/HelperTypes/BoardSetGameHelper/obj/Release/net7.0/BoardSetGameHelper.AssemblyInfo.fs
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/HelperTypes/BoardSetGameHelper/obj/Release/net7.0/BoardSetGameHelper.fsproj.CoreCompileInputs.cache
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/HelperTypes/BoardSetGameHelper/obj/Release/net7.0/BoardSetGameHelper.dll
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/HelperTypes/BoardSetGameHelper/obj/Release/net7.0/refint/BoardSetGameHelper.dll
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/HelperTypes/BoardSetGameHelper/obj/Release/net7.0/BoardSetGameHelper.xml
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/HelperTypes/BoardSetGameHelper/obj/Release/net7.0/BoardSetGameHelper.pdb
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/HelperTypes/BoardSetGameHelper/obj/Release/net7.0/ref/BoardSetGameHelper.dll

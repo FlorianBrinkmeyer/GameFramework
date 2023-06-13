@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doc>
+<assembly><name>ImmutableBoardSetTwoPlayerGame</name></assembly>
+<members>
+<member name="T:GameFramework.ZSValueCalcDelegate`1">
+<summary>
+Current board -&gt; zero-sum value
+</summary>
+</member>
+<member name="T:GameFramework.CalculatePossibleMovesDelegate`3">
+<summary>
+Current board * previous player * optional state -&gt; active player * possible moves | GameOver
+</summary>
+</member>
+<member name="T:GameFramework.MakeMoveDelegate`4">
+<summary>
+Chosen move * Current board * active player * optional state -&gt; next board * board events * next optional state
+</summary>
+</member>
+</members>
+</doc>

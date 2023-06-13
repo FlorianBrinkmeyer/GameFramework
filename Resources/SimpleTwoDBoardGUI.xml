@@ -42,7 +42,6 @@
             <property name="can-focus">False</property>
             <child>
               <object class="GtkMenuItem">
-                <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="label" translatable="yes">_Datei</property>
                 <property name="use-underline">True</property>
@@ -181,7 +180,6 @@
         </child>
         <child>
           <object class="GtkBox">
-            <property name="visible">True</property>
             <property name="can-focus">False</property>
             <property name="homogeneous">True</property>
             <child>

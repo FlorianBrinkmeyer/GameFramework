@@ -1,0 +1,17 @@
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Initialization/InitializationHelperTypes/bin/Release/net7.0/InitializationHelperTypes.deps.json
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Initialization/InitializationHelperTypes/bin/Release/net7.0/InitializationHelperTypes.dll
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Initialization/InitializationHelperTypes/bin/Release/net7.0/InitializationHelperTypes.pdb
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Initialization/InitializationHelperTypes/bin/Release/net7.0/InitializationHelperTypes.xml
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Initialization/InitializationHelperTypes/bin/Release/net7.0/AI_Informer.dll
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Initialization/InitializationHelperTypes/bin/Release/net7.0/AI_Informer.pdb
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Initialization/InitializationHelperTypes/bin/Release/net7.0/AI_Informer.xml
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Initialization/InitializationHelperTypes/obj/Release/net7.0/InitializationHelperTypes.fsproj.AssemblyReference.cache
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Initialization/InitializationHelperTypes/obj/Release/net7.0/InitializationHelperTypes.AssemblyInfoInputs.cache
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Initialization/InitializationHelperTypes/obj/Release/net7.0/InitializationHelperTypes.AssemblyInfo.fs
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Initialization/InitializationHelperTypes/obj/Release/net7.0/InitializationHelperTypes.fsproj.CoreCompileInputs.cache
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Initialization/InitializationHelperTypes/obj/Release/net7.0/InitializationHelperTypes.fsproj.CopyComplete
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Initialization/InitializationHelperTypes/obj/Release/net7.0/InitializationHelperTypes.dll
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Initialization/InitializationHelperTypes/obj/Release/net7.0/refint/InitializationHelperTypes.dll
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Initialization/InitializationHelperTypes/obj/Release/net7.0/InitializationHelperTypes.xml
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Initialization/InitializationHelperTypes/obj/Release/net7.0/InitializationHelperTypes.pdb
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/Initialization/InitializationHelperTypes/obj/Release/net7.0/ref/InitializationHelperTypes.dll

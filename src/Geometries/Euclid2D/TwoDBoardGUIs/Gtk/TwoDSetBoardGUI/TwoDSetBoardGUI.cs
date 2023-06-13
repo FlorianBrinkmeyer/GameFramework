@@ -41,6 +41,11 @@ public abstract class TwoDSetBoardGUI<Piece> : TwoDBoardGUI<ITwoDSetBoard<Piece>
             Fields![entry.Item1,entry.Item2].Sensitive = false;
         }
         GameBoard!.MakeMove (position.AsTuple);
+        if (Game is IPausableGame<String> pausableGame)
+        {
+            if (pausableGame.Paused)
+                pausableGame.SingleStep ();
+        }
     }
     protected virtual void OnBoardInformerEvent (object? sender, BoardSetEvent<Tuple<int,int>> evnt)
     {

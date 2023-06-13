@@ -1,0 +1,17 @@
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/AI_Interfaces/AI_InterfacesForInitialization/AI_WithMultiThreading/bin/Release/net7.0/AI_WithMultiThreading.deps.json
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/AI_Interfaces/AI_InterfacesForInitialization/AI_WithMultiThreading/bin/Release/net7.0/AI_WithMultiThreading.dll
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/AI_Interfaces/AI_InterfacesForInitialization/AI_WithMultiThreading/bin/Release/net7.0/AI_WithMultiThreading.pdb
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/AI_Interfaces/AI_InterfacesForInitialization/AI_WithMultiThreading/bin/Release/net7.0/AI_WithMultiThreading.xml
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/AI_Interfaces/AI_InterfacesForInitialization/AI_WithMultiThreading/bin/Release/net7.0/AI_WithConsiderationTime.dll
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/AI_Interfaces/AI_InterfacesForInitialization/AI_WithMultiThreading/bin/Release/net7.0/AI_WithConsiderationTime.pdb
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/AI_Interfaces/AI_InterfacesForInitialization/AI_WithMultiThreading/bin/Release/net7.0/AI_WithConsiderationTime.xml
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/AI_Interfaces/AI_InterfacesForInitialization/AI_WithMultiThreading/obj/Release/net7.0/AI_WithMultiThreading.fsproj.AssemblyReference.cache
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/AI_Interfaces/AI_InterfacesForInitialization/AI_WithMultiThreading/obj/Release/net7.0/AI_WithMultiThreading.AssemblyInfoInputs.cache
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/AI_Interfaces/AI_InterfacesForInitialization/AI_WithMultiThreading/obj/Release/net7.0/AI_WithMultiThreading.AssemblyInfo.fs
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/AI_Interfaces/AI_InterfacesForInitialization/AI_WithMultiThreading/obj/Release/net7.0/AI_WithMultiThreading.fsproj.CoreCompileInputs.cache
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/AI_Interfaces/AI_InterfacesForInitialization/AI_WithMultiThreading/obj/Release/net7.0/AI_WithMultiThreading.fsproj.CopyComplete
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/AI_Interfaces/AI_InterfacesForInitialization/AI_WithMultiThreading/obj/Release/net7.0/AI_WithMultiThreading.dll
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/AI_Interfaces/AI_InterfacesForInitialization/AI_WithMultiThreading/obj/Release/net7.0/refint/AI_WithMultiThreading.dll
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/AI_Interfaces/AI_InterfacesForInitialization/AI_WithMultiThreading/obj/Release/net7.0/AI_WithMultiThreading.xml
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/AI_Interfaces/AI_InterfacesForInitialization/AI_WithMultiThreading/obj/Release/net7.0/AI_WithMultiThreading.pdb
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/AI_Interfaces/AI_InterfacesForInitialization/AI_WithMultiThreading/obj/Release/net7.0/ref/AI_WithMultiThreading.dll

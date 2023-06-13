@@ -1,0 +1,15 @@
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/BoardInterfaces/BoardInterfacesForGUI/bin/Release/net7.0/BoardInterfacesForGUI.deps.json
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/BoardInterfaces/BoardInterfacesForGUI/bin/Release/net7.0/BoardInterfacesForGUI.dll
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/BoardInterfaces/BoardInterfacesForGUI/bin/Release/net7.0/BoardInterfacesForGUI.pdb
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/BoardInterfaces/BoardInterfacesForGUI/bin/Release/net7.0/PieceBase.dll
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/BoardInterfaces/BoardInterfacesForGUI/bin/Release/net7.0/PieceBase.pdb
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/BoardInterfaces/BoardInterfacesForGUI/obj/Release/net7.0/BoardInterfacesForGUI.csproj.AssemblyReference.cache
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/BoardInterfaces/BoardInterfacesForGUI/obj/Release/net7.0/BoardInterfacesForGUI.GeneratedMSBuildEditorConfig.editorconfig
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/BoardInterfaces/BoardInterfacesForGUI/obj/Release/net7.0/BoardInterfacesForGUI.AssemblyInfoInputs.cache
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/BoardInterfaces/BoardInterfacesForGUI/obj/Release/net7.0/BoardInterfacesForGUI.AssemblyInfo.cs
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/BoardInterfaces/BoardInterfacesForGUI/obj/Release/net7.0/BoardInterfacesForGUI.csproj.CoreCompileInputs.cache
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/BoardInterfaces/BoardInterfacesForGUI/obj/Release/net7.0/BoardInterfacesForGUI.csproj.CopyComplete
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/BoardInterfaces/BoardInterfacesForGUI/obj/Release/net7.0/BoardInterfacesForGUI.dll
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/BoardInterfaces/BoardInterfacesForGUI/obj/Release/net7.0/refint/BoardInterfacesForGUI.dll
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/BoardInterfaces/BoardInterfacesForGUI/obj/Release/net7.0/BoardInterfacesForGUI.pdb
+/home/flo/Copy/Dokumente/Informatik/MasterarbeitAbgabe/GameFramework/src/BoardInterfaces/BoardInterfacesForGUI/obj/Release/net7.0/ref/BoardInterfacesForGUI.dll
