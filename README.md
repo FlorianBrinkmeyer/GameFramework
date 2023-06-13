@@ -31,3 +31,7 @@ https://creativecommons.org/licenses/by-sa/3.0/
 The GUIs utilize the GTK framework and the GtkSharp wrapper for .NET: <br>
 https://www.gtk.org/ <br>
 https://github.com/GtkSharp/GtkSharp
+
+# Known Limitations
+
+The GUIs currently need a display resolution of at least 720p in order to be fully displayed.
