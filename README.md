@@ -7,7 +7,7 @@ The currently implemented AI algorithms are **Negamax** and **MonteCarlo tree se
 The key objective for the program was to create an architecture with a high degree of code reusability, modularization, and clarity. <br>
 Hence, depending on how similar they are to the already provided, implementing further games should be comparatively easy.
 
-Performance, on the other hand, was only a subordinate goal. As a result, the play strength of the currently implemented AI agents is, at least regarding chess, comparatively weak.
+Performance, on the other hand, was only a subordinate goal. As a result, the playing strength of the currently implemented AI agents is, at least regarding chess, comparatively weak.
 
 The approach is unusual in that the core of the program widely refrains from side effects: Instead of altering a game state, a new one is created. This results in AI algorithms that could be written in a very functional style, since during simulations of possible games former states are preserved and don't have to be restored.
 
